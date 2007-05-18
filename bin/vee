@@ -1,0 +1,512 @@
+#!/bin/sh
+
+VERSION=0.9.9-beta
+
+#
+# vee is a zero configuration, commandline blog tool that
+# requires NO installation other than dropping the vee 
+# script into your ~/bin, or someother directory in your PATH
+#
+# vee accepts input when in batch mode (-b), so it is well 
+# suited for use in batch situations, such as in a cronjob 
+#
+
+# change log
+# Applied patch from efbeha@gmail.com: 
+#   added code to keep words whole when using fold
+#   added code to remove extraneous lines from groff
+#
+
+function disclaimer
+{ echo "Copyright (c) 2007 /me" 
+  echo "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:"
+  echo "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software."
+  echo "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+}
+
+#
+# vee - the minimal, zero configuration command line blog thingy
+#
+# Contact (bugs, patches, suggestions)
+#  estrabd+vee 'at' gmail
+#  AIM: bz743
+# 
+# Instructions:
+#  1. put in directory accessible via PATH
+#  2. go to a web visible directory and type 'vee'
+#  3. put in your title and write your post in vi
+#  4. tell your mom to visit: http://..../yourdir/vee.html
+#
+# Tips:
+#
+# 1 You can force the index to be index.html using "-I", or 
+#   you can specify the index with "-i somefile.html". But,
+#   if you do this, you'll have to specify this for all other
+#   commands, otherwise vee defaults to vee.html 
+#
+# 2 vee respects your EDITOR environmental variable 
+#
+# 3 What you do with vee.html or the formatting is up to you :)
+#
+
+# CREDITS
+#  efbeha (efbeha@gmail.com) - supplied first patch ever :)
+#  Oliver @ forums.bsdnexus.com
+#  arun   @ chat.taucher.net #bsd
+#  J65nko @ bsdforums.com
+
+if [ ! ${EDITOR} ]; then
+  EDITOR=vi
+fi
+FORMAT_FUNC=format_with_groff
+MARGIN=64
+FORMAT=html
+INDEX=vee.html
+DIR=.vee
+DRAFT=${DIR}/.vee.tmp.$$
+DATE=`date`
+YEAR=`date "+%Y"`
+TIME=`date "+%Y-%m-%dT%H:%M:%S"`
+SEC=`date "+%s"`
+TITLE=
+DEFAULT_TITLE="Entry #${SEC}";
+HEADERTXT=  # text or `cat some.header.txt` 
+FOOTERTXT="Powered by <a href=\"http://www.0x743.com/vee\">vee</a><br/>Copyright &copy; 2006-${YEAR}"  
+TOP_TPL=./vee-top.tpl
+BOT_TPL=./vee-bottom.tpl
+USE_EDITOR=1
+LISTENSTDIN=0
+
+# ideas:
+#  email2groff ... would process stdin to get message, title from email format
+#  groffXYZ ... process using other groff options 
+#  latex ... not standard, would use pdflatex to generate pdf file
+function set_format_func
+{ case "$1" in
+    default) FORMAT_FUNC=format_with_groff
+             echo using $FORMAT_FUNC
+             ;;
+    groff)   FORMAT_FUNC=format_with_groff
+             echo using $FORMAT_FUNC
+             ;;
+    fold)    FORMAT_FUNC=format_with_fold
+             echo using $FORMAT_FUNC
+             ;;
+    none)    FORMAT_FUNC=with_no_formatting
+             echo using $FORMAT_FUNC
+             ;;
+    custom)  echo "add your own function and list here"
+             die_cleanly
+             ;;
+    *)       echo "bad format type" 
+             die_cleanly
+  esac 
+}
+
+function usage
+{ echo "                                                                              " 
+  echo " vee - the Zero-conf, commandline blog tool thingy                            "
+  echo "                                                                              "
+  echo "Version: ${VERSION}                                                           "
+  echo "                                                                              "
+  echo "Usage:                                                                        "
+  echo "  %vee [-c fold_column] [-t title] [-m message] [-b #toggle batchmode]        "
+  echo "                                                                              " 
+  echo "Options:                                                                      " 
+  echo "  -i  'custom.html' specify a custom index file over the default              "
+  echo "  -I                force index file to be \"index.html\"                     "
+  echo "  -d  'publis_dir'  specify the directory .vee is in - defaults to PWD        " 
+  echo "  -t  'title'       specify title at commandline and avoid annoying default prompt" 
+  echo "  -T  file          define top template; default is ./vee-top.tpl             " 
+  echo "  -l                edit latest post's *.raw; used with '-r' publishes changes"
+  echo "  -m  'message ...' specify entry message at commandline and avoid vi         " 
+  echo "  -f  'format'      use defined format instead of the default, groff;"
+  echo "                    'groff', 'fold', and 'none' are supported out of the box"
+  echo "  -c  [1-9\d*]      specify the number of characters 'fold' allows per line   " 
+  echo "                      this only applies when 'fold' (-f) is used              " 
+  echo "  -b                batch mode; used when piping in msg via stdin             " 
+  echo "  -B  file          define bottom template; default is ./vee-bottom.tpl       " 
+  echo "  -n                lists all entries, newest first, then quits               "
+  echo "  -o                lists all entries, oldest first, then quits               "
+  echo "  -r                reformats _all_ .vee/*.raw files; -c applies as well      "
+  echo "  -h                prints this blurb                                         " 
+  echo "  -v                version and exit                                          " 
+  echo "                                                                              " 
+  echo "Examples:                                                                     "
+  echo "                                                                              " 
+  echo "%vee                                                                          " 
+  echo "                                                                              " 
+  echo " user will be prompted for title and presented with vi                        "
+  echo "                                                                              " 
+  echo " if no default dir/files are found, they will be created                      "
+  echo "                                                                              " 
+  echo "%vee -t \"this is the title\"                                                 "
+  echo "                                                                              " 
+  echo " user will just be presented with a vi session;                               "
+  echo "                                                                              " 
+  echo "%cat text.txt | vee -b -t \"my title\" -m \"text to go before stdin\"         " 
+  echo "                                                                              " 
+  echo " publishes contents of text.txt with provided title; -m's msg will be         " 
+  echo " shown above the cat'd text                                                   " 
+  echo "                                                                              " 
+  echo "%vee -lr                                                                      " 
+  echo "                                                                              " 
+  echo " brings up the latest entry as a vi sessions; when changes are save,          " 
+  echo " all messages are reformatted                                                 " 
+  echo "                                                                              " 
+  echo "Notes:                                                                        "
+  echo "                                                                              " 
+  echo "1. Batch mode looks for piped input via STDIN; if none after a short time,    "
+  echo "   message creation fails UNLESS something was passed in via '-m' as well.    " 
+  echo "   If nothing was passed in via '-t' for the title, some default is used;     "
+  echo "   This is set at the top of the script as 'DEFAULT_TITLE'.                   "
+  echo "                                                                              " 
+  echo "2. Interactive mode (default) prompts for a title if no '-t' is provided.     "
+  echo "   Such is the case even if '-m' is used.  If '-m' is not used in this        "
+  echo "                                                                              " 
+  echo "3. Patches are welcome; the goal is not more feature bloat, but a nicer       "
+  echo "   way of dealing with standard in, etc would be welcomed.                    " 
+  echo "                                                                              " 
+  echo `disclaimer` 
+  echo "                                                                              " 
+  echo "(press 'q' for commandline)                                                   " 
+  exit 1
+}
+
+function output_top
+{ echo ${HEADERTXT} > ${FINAL}
+  if [ -e "${TOP_TPL}" ]; then
+     cat "${TOP_TPL}" >> ${FINAL}
+     echo "<pre>"   >> ${FINAL}
+   else
+     echo "<!-- <?xml version=\"1.0\" encoding=\"UTF-8\" ?> --><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\">"  >> ${FINAL}
+     echo "<head><title>${TITLE} - ${DATE}</title></head>"  >> ${FINAL}
+     echo "<body>"  >> ${FINAL}
+     echo "<pre>"   >> ${FINAL}
+     echo "<a href=\"../${INDEX}\">[index]</a><a href=\"./${RAWNAME}\">[raw]</a><a href=\"../\">[main]</a>" >> ${FINAL}
+   fi
+   echo           >> ${FINAL}
+}
+
+function output_bottom
+{ echo          >> ${FINAL}
+  echo --       >> ${FINAL}
+  echo ${FOOTERTXT} >> ${FINAL}
+  if [ -e "${BOT_TPL}" ]; then
+    cat "${BOT_TPL}" >> ${FINAL}
+  else
+    echo "</pre>" >>  ${FINAL}
+    echo "</body>" >>  ${FINAL}
+    echo "</html>" >>  ${FINAL}
+  fi
+} 
+
+# begin formatting funcs
+
+function format_with_groff
+{
+  #sed 1liner from http://sed.sourceforge.net/sed1line.txt
+  groff -man -Tascii ${RAW} >> bla.raw
+  sed '/^$/N;/\n$/D' bla.raw >> ${FINAL}
+  rm bla.raw
+#  groff -man -Tascii ${RAW} >> ${FINAL}
+}
+
+function with_no_formatting
+{
+  cat ${RAW} >> ${FINAL}
+} 
+
+function format_with_fold
+{
+  if [ 0 -lt "${MARGIN}" ]; then
+    fold -s -w ${MARGIN} ${RAW} >> ${FINAL}
+  else
+    with_no_formatting 
+  fi
+}
+
+# end formatting funcs 
+
+function format_main
+{ FINAL=${DIR}/${1}
+  FINALNAME=${1}
+  RAW=${DIR}/${2}
+  RAWNAME=${2}
+  # save raw form before formatting if it doesn't exist
+  # which is the case when reformatting all
+  if [ ! -e ${RAW} ]; then
+    echo ${DATE}   > ${RAW}     # in RAW, line 1 is date
+    echo          >> ${RAW}
+    echo ${TITLE} >> ${RAW}     # in RAW, line 2 is title
+    echo          >> ${RAW}
+    echo "--"     >> ${RAW}
+    echo          >> ${RAW}     # this blank line is important
+    cat ${DRAFT}  >> ${RAW}
+  fi
+  output_top
+  ${FORMAT_FUNC} 
+  output_bottom
+}
+
+function reformat_singleton
+{  if [ -e "${DIR}/${1}.raw" ]; then
+     echo "Reformatting message: \"${1}\""
+     cat "${DIR}/${1}.raw" > "${DRAFT}"
+     format_main "${1}.${FORMAT}" "${1}.raw"
+   fi
+}
+     
+
+function reformat_all
+{ FILES=`ls -c ${DIR}/*.raw | sort -t"." +0f -1 +1nr`
+   for RAW in $FILES; do
+     # From: Randall R Schulz <rrschulz at cris dot com>
+     FULLNAME="${RAW}"
+     DIR="${FULLNAME%/*}"
+     FILE="${FULLNAME##*/}"
+     MAXBASE="${FILE%.*}"
+     MINBASE="${FILE%%.*}"
+     MAXSUF="${FILE#*.}"
+     MINSUF="${FILE##*.}"
+     reformat_singleton "${MAXBASE}"
+   done
+}
+
+function newest_first 
+{ FILES=`ls -c ${DIR}/*.raw | sort -t"." -nr`
+  echo ${FILES}
+}
+
+function list_newest_first
+{ FILES=`newest_first`
+  for FILE in ${FILES}; do
+     FULLNAME="${FILE}"
+     DIR="${FULLNAME%/*}"
+     FILE="${FULLNAME##*/}"
+     MAXBASE="${FILE%.*}"
+     echo ${MAXBASE}
+  done
+}
+
+function oldest_first
+{ FILES=`ls -c ${DIR}/*.raw | sort -t"." -n`
+  echo ${FILES}
+}
+
+function list_oldest_first
+{ FILES=`oldest_first`
+  for FILE in ${FILES}; do
+     FULLNAME="${FILE}"
+     DIR="${FULLNAME%/*}"
+     FILE="${FULLNAME##*/}"
+     MAXBASE="${FILE%.*}"
+     echo ${MAXBASE}
+  done
+}
+
+# would like to make this so that user can request
+# a msg relative to the last; example:
+# vee -l2 -r   ..... this would open up 2 entries
+# back from the current; vee -l 1 -r would open up
+# the one right before the latest, etc 
+function get_latest # gets *just* the latest one for now 
+{ FILES=`ls -c ${DIR}/*.raw | sort -t"." -nr`
+  for FILE in ${FILES}; do
+     FULLNAME="${FILE}"
+     DIR="${FULLNAME%/*}"
+     FILE="${FULLNAME##*/}"
+     MAXBASE="${FILE%.*}"
+     echo ${MAXBASE}
+     break
+  done
+}
+
+function die_cleanly
+{ if [ -e ${DRAFT} ]; then
+    rm -f ${DRAFT}
+  fi
+  exit 0
+}
+
+REFORMATLAST=0
+REFORMATALL=0
+EDITLAST=0
+MESSAGE=
+# get opts ! stdin append to anything passed in by -m 
+while getopts 'f:m:t:T:c:d:i:IbB:hRrlnov' option; do
+    case "$option" in
+    i) INDEX="${OPTARG}"  # specify INDEX to $OPTARG
+       ;;
+    I) INDEX="index.html" # force INDEX to index.html
+       ;;
+    d) if [ -d "${OPTARG}" ]; then
+         cd "${OPTARG}"
+       else
+         echo "${OPTARG}" is not a directory!
+         die_cleanly
+       fi
+       echo `pwd`
+       ;;
+    r) REFORMATLAST=1 
+       ;;
+    R) REFORMATALL=1
+       ;;
+    b) LISTENSTDIN=1 
+       USE_EDITOR=0
+       ;;
+    B) BOT_TPL="${OPTARG}"
+       ;;
+    f) set_format_func "${OPTARG}" 
+       ;;
+    c) MARGIN=${OPTARG}
+       ;;
+    l) EDITLAST=1
+       ;;
+    m) MESSAGE="${OPTARG}" 
+       USE_EDITOR=0
+       ;;
+    n) list_newest_first
+       die_cleanly 
+       ;;
+    o) list_oldest_first
+       die_cleanly 
+       ;; 
+    t) TITLE=${OPTARG}
+       ;;
+    T) TOP_TPL="${OPTARG}"
+       ;;
+    v) echo $VERSION
+       die_cleanly
+       ;;
+    h) usage | less
+       die_cleanly
+       ;;
+    ?) usage | less
+       die_cleanly
+       ;;
+    esac
+done
+
+function post_opts 
+{ # read in config file, will override vars set in opts 
+  if [ -e ./.veerc ]; then
+    . ./.veerc
+  fi
+ 
+  if [ ${EDITLAST} -eq 1 ]; then
+    LATEST=`get_latest`
+    ${EDITOR} ${DIR}/${LATEST}.raw
+    echo "Updated: ${LATEST} (remember to reformat)"
+  fi
+
+  if [ ${REFORMATLAST} -eq 1 ]; then
+    LATEST=`get_latest`
+    reformat_singleton "${LATEST}"
+    die_cleanly
+  fi
+
+  # if "-R", or reformat all, is set 
+  if [ ${REFORMATALL} -eq 1 ]; then
+    # future may yield seperate "rebuild reindex" functionality 
+    reformat_all
+    die_cleanly
+  fi
+
+  # blocks vee -l (without the -r) from going on 
+  if [ ${EDITLAST} -eq 1 ]; then
+    die_cleanly
+  fi
+
+  # Batch message creation: -m and stdin
+  # handles -m
+  if [ -n "${MESSAGE}" ]; then
+    echo "${MESSAGE}" >> ${DRAFT}
+  fi
+
+  if [ ${LISTENSTDIN} -eq 1 ]; then
+    IFS="" # ensures that leading spaces are retained
+    while read -r IN <&0 ; do # break after 1 sec of no stdin
+      echo "${IN}"            # echo's stdin back out so user can see 
+      echo "${IN}" >> ${DRAFT} 
+      LISTENSTDIN=1
+      USE_EDITOR=0
+    done
+  fi
+}
+
+function setup
+{ mkdir -p ${DIR} || echo ${DIR} exists...
+  if [ ! -e ${INDEX} ]; then
+    echo
+    echo "...creating ${INDEX}"
+    echo "<!-- ;1000000000000000000000000; open pre tag --><!-- <?xml version=\"1.0\" encoding=\"UTF-8\" ?> --><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>my vee index</title></head><body><pre>" >> ${INDEX}
+    echo "<!-- ;100000000000000000000000; fixed content -->" >> ${INDEX}
+    echo "<!-- ;10000000000000000000000;  fixed content -->" >> ${INDEX}
+    echo "<!-- ;1000000000000000000000;   fixed content -->" >> ${INDEX}
+    echo "<!-- ;3; fixed content -->" >> ${INDEX}
+    echo "<!-- ;2; fixed content -->" >> ${INDEX}
+    echo "<!-- ;1; fixed content -->Powered by <a href=\"http://www.0x743.com/vee\">vee</a>" >> ${INDEX}
+    echo "<!-- ;0; closing pre tag --></pre></body></html>" >> ${INDEX}
+    echo
+  fi
+}
+
+function sort_index
+{ #echo sorting ${INDEX} ...
+  sort -t";" +0f -1 +1nr ${INDEX} > .${INDEX}.$$.sorted
+  #echo rebuilding ${INDEX} 
+  mv .${INDEX}.$$.sorted ${INDEX} # "rebuild ${INDEX}
+}
+
+function use_editor
+{ if [ ${USE_EDITOR} -eq 1 ]; then 
+    OK=0
+    ${EDITOR} ${DRAFT} && OK=1
+    if [ $OK -ne 1 ]; then
+      echo there has been a problem with your editor session
+      exit
+    fi
+  #else
+    #echo ...vi mode off
+  fi
+}
+
+function update_index 
+{ PUBLISHED=`date "+%m/%d/%Y"`
+  echo "<!-- ;${SEC}; -->${SEC}:<a href=\"${DIR}/${SEC}.${TIME}.${FORMAT}\"> ${TITLE}</a> ... ${PUBLISHED}" >> ${INDEX}
+  sort_index
+}
+
+# ask for title if not set with -t and not in batch mode
+# if in batch mode with no -t set, use default title below
+function get_title
+{ if [ -z "${TITLE}"  ]; then
+    TITLE=$DEFAULT_TITLE
+  fi
+}
+
+function read_config
+{ if [ -e ./.veerc ]; then
+    . ./.veerc
+  fi
+} 
+
+# Main program body
+
+read_config   # done after all options are read in, could look in -d before
+              # opts are processed though so opts could override defaults
+              # and config file .. yeah do that
+post_opts
+setup
+get_title 
+use_editor
+
+if [ -e ${DRAFT} ]; then
+  format_main "${SEC}.${TIME}.${FORMAT}" "${SEC}.${TIME}.raw" 
+  update_index 
+  die_cleanly
+else
+  echo Error! ${DRAFT} not found
+fi
+
