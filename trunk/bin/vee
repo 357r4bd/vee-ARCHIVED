@@ -449,15 +449,19 @@ function post_opts
   fi
 }
 
+# generates INDEX file if none exists
 function setup
 { mkdir -p ${DIR} || echo ${DIR} exists...
   if [ ! -e ${INDEX} ]; then
     echo
     echo "...creating ${INDEX}"
-    echo "<!-- ;1000000000000000000000000; open pre tag --><!-- <?xml version=\"1.0\" encoding=\"UTF-8\" ?> --><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>my vee index</title></head><body><pre>" >> ${INDEX}
+    echo "<!-- ;10000000000000000000000000; open pre tag --><!-- <?xml version=\"1.0\" encoding=\"UTF-8\" ?> --><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>my vee index</title></head><body><pre>" >> ${INDEX}
+    echo "<!-- ;1000000000000000000000000; utf8 meta tag  --><meta http-equiv=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">" >> ${INDEX}
+   # header stuff
     echo "<!-- ;100000000000000000000000; fixed content -->" >> ${INDEX}
     echo "<!-- ;10000000000000000000000;  fixed content -->" >> ${INDEX}
     echo "<!-- ;1000000000000000000000;   fixed content -->" >> ${INDEX}
+   # footer stuff
     echo "<!-- ;3; fixed content -->" >> ${INDEX}
     echo "<!-- ;2; fixed content -->" >> ${INDEX}
     echo "<!-- ;1; fixed content -->Powered by <a href=\"http://www.0x743.com/vee\">vee</a>" >> ${INDEX}
