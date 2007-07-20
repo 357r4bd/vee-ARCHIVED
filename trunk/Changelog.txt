@@ -1,1 +1,12 @@
-* This started after version 0.9.9-beta, so there is nothing here yet.
+20 July 2007
+
+- put sort commands into variables at the top of the code so that
+  those experiencing issues with :number being deprecated can make
+  it stop complaing by doing the right thing
+- look at groff errors - seems to be eluding me, but over all it is
+  mainly an annoyance
+- tested some more, please report any bugs
+
+18 July 2007
+
+Added handling for groff-utf8, but need to test.

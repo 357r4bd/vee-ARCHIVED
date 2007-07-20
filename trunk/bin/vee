@@ -76,6 +76,10 @@ TOP_TPL=./vee-top.tpl
 BOT_TPL=./vee-bottom.tpl
 USE_EDITOR=1
 LISTENSTDIN=0
+SORT_ALL="sort -t. +0f -1 +1nr"   # sorts all in file listing
+SORT_NEWEST="sort -t. -nr"        # sorts all new to old 
+SORT_OLDEST="sort -t. -r"         # sorts all old to new
+SORT_INDEX="sort -t; +0f -1 +1nr" # sorts lines in index file based on line number in <!-- ... ; --> 
 
 # ideas:
 #  email2groff ... would process stdin to get message, title from email format
@@ -273,7 +277,7 @@ function reformat_singleton
      
 
 function reformat_all
-{ FILES=`ls -c ${DIR}/*.raw | sort -t"." +0f -1 +1nr`
+{ FILES=`ls -c ${DIR}/*.raw | ${SORT_ALL}`
    for RAW in $FILES; do
      # From: Randall R Schulz <rrschulz at cris dot com>
      FULLNAME="${RAW}"
@@ -288,7 +292,7 @@ function reformat_all
 }
 
 function newest_first 
-{ FILES=`ls -c ${DIR}/*.raw | sort -t"." -nr`
+{ FILES=`ls -c ${DIR}/*.raw | ${SORT_NEWEST}`
   echo ${FILES}
 }
 
@@ -304,7 +308,7 @@ function list_newest_first
 }
 
 function oldest_first
-{ FILES=`ls -c ${DIR}/*.raw | sort -t"." -n`
+{ FILES=`ls -c ${DIR}/*.raw | ${SORT_OLDEST}`
   echo ${FILES}
 }
 
@@ -325,7 +329,7 @@ function list_oldest_first
 # back from the current; vee -l 1 -r would open up
 # the one right before the latest, etc 
 function get_latest # gets *just* the latest one for now 
-{ FILES=`ls -c ${DIR}/*.raw | sort -t"." -nr`
+{ FILES=`ls -c ${DIR}/*.raw | ${SORT_NEWEST}`
   for FILE in ${FILES}; do
      FULLNAME="${FILE}"
      DIR="${FULLNAME%/*}"
@@ -472,7 +476,8 @@ function setup
 
 function sort_index
 { #echo sorting ${INDEX} ...
-  sort -t";" +0f -1 +1nr ${INDEX} > .${INDEX}.$$.sorted
+  #sort -t";" +0f -1 +1nr ${INDEX} > .${INDEX}.$$.sorted
+  ${SORT_INDEX} ${INDEX} > .${INDEX}.$$.sorted
   #echo rebuilding ${INDEX} 
   mv .${INDEX}.$$.sorted ${INDEX} # "rebuild ${INDEX}
 }
