@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bnin/sh
 
 VERSION=0.9.9-beta
 
@@ -135,7 +135,8 @@ function usage
   echo "  -B  file          define bottom template; default is ./vee-bottom.tpl       " 
   echo "  -n                lists all entries, newest first, then quits               "
   echo "  -o                lists all entries, oldest first, then quits               "
-  echo "  -r                reformats _all_ .vee/*.raw files; -c applies as well      "
+  echo "  -r                reformats the latest post; used in conjuction with -l     "
+  echo "  -R                reformats _all_ .vee/*.raw files; -c applies as well      "
   echo "  -h                prints this blurb                                         " 
   echo "  -v                version and exit                                          " 
   echo "                                                                              " 
