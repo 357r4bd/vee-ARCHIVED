@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION=0.9.9-beta
+VERSION=0.9.9
 
 #
 # vee is a zero configuration, commandline blog tool that
@@ -80,6 +80,7 @@ SORT_ALL="sort -t. +0f -1 +1nr"   # sorts all in file listing
 SORT_NEWEST="sort -t. -nr"        # sorts all new to old 
 SORT_OLDEST="sort -t. -r"         # sorts all old to new
 SORT_INDEX="sort -t; +0f -1 +1nr" # sorts lines in index file based on line number in <!-- ... ; --> 
+PUBLISHED=`date "+%m/%d/%Y"`      # date formated for index page entry
 
 # ideas:
 #  email2groff ... would process stdin to get message, title from email format
@@ -497,8 +498,7 @@ function use_editor
 }
 
 function update_index 
-{ PUBLISHED=`date "+%m/%d/%Y"`
-  echo "<!-- ;${SEC}; -->${SEC}:<a href=\"${DIR}/${SEC}.${TIME}.${FORMAT}\"> ${TITLE}</a> ... ${PUBLISHED}" >> ${INDEX}
+{ echo "<!-- ;${SEC}; -->${SEC}:<a href=\"${DIR}/${SEC}.${TIME}.${FORMAT}\"> ${TITLE}</a> ... ${PUBLISHED}" >> ${INDEX}
   sort_index
 }
 
