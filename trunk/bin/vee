@@ -353,6 +353,7 @@ REFORMATLAST=0
 REFORMATALL=0
 EDITLAST=0
 MESSAGE=
+
 # get opts ! stdin append to anything passed in by -m 
 while getopts 'f:m:t:T:c:d:i:IbB:hRrlnov' option; do
     case "$option" in
@@ -409,12 +410,7 @@ while getopts 'f:m:t:T:c:d:i:IbB:hRrlnov' option; do
 done
 
 function post_opts 
-{ # read in config file, will override vars set in opts 
-  if [ -e ./.veerc ]; then
-    . ./.veerc
-  fi
- 
-  if [ ${EDITLAST} -eq 1 ]; then
+{ if [ ${EDITLAST} -eq 1 ]; then
     LATEST=`get_latest`
     ${EDITOR} ${DIR}/${LATEST}.raw
     echo "Updated: ${LATEST} (remember to reformat)"
