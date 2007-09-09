@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION=0.9.9
+VERSION=0.9.9-epsilon
 
 #
 # vee is a zero configuration, commandline blog tool that
