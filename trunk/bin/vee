@@ -15,7 +15,8 @@ VERSION=0.9.9-epsilon
 # Applied patch from efbeha@gmail.com: 
 #   added code to keep words whole when using fold
 #   added code to remove extraneous lines from groff
-#
+# made sort options customizable
+# made publish date format customizable
 
 function disclaimer
 { echo "Copyright (c) 2007 /me" 
