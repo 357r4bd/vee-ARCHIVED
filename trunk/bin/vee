@@ -3,7 +3,7 @@
 # PLEASE SUBMIT BUGS AND REQUESTS AT:
 #  http://code.google.com/p/vee/issues/list
 
-VERSION=0.9.9-epsilon
+VERSION=0.9.9-zeta
 
 #
 # vee is a zero configuration, commandline blog tool that
@@ -20,6 +20,7 @@ VERSION=0.9.9-epsilon
 #   added code to remove extraneous lines from groff
 # made sort options customizable
 # made publish date format customizable
+# initial implementation of pre format filter
 
 function disclaimer
 { echo "Copyright (c) 2007 /me" 
@@ -62,7 +63,6 @@ function disclaimer
 if [ ! ${EDITOR} ]; then
   EDITOR=vi
 fi
-FORMAT_FUNC=format_with_groff
 MARGIN=64
 FORMAT=html
 INDEX=vee.html
@@ -78,6 +78,8 @@ HEADERTXT=  # text or `cat some.header.txt`
 FOOTERTXT="Powered by <a href=\"http://www.0x743.com/vee\">vee</a><br/>Copyright &copy; 2006-${YEAR}"  
 TOP_TPL=./vee-top.tpl
 BOT_TPL=./vee-bottom.tpl
+PREFORMAT_FILTER=./vee-pre
+POSTFORMAT_FILTER=./vee-post
 USE_EDITOR=1
 LISTENSTDIN=0
 SORT_ALL="sort -t. +0f -1 +1nr"   # sorts all in file listing
@@ -85,12 +87,13 @@ SORT_NEWEST="sort -t. -nr"        # sorts all new to old
 SORT_OLDEST="sort -t. -r"         # sorts all old to new
 SORT_INDEX="sort -t; +0f -1 +1nr" # sorts lines in index file based on line number in <!-- ... ; --> 
 PUBLISHED=`date "+%m/%d/%Y"`      # date formated for index page entry
+FORMAT_FUNC=format_with_groff
+FORMAT_DISPATCHER=default_set_format_func # change here (NOT in .veerc)
+FORMAT_CUSTOM_DEFS=                       # define here (NOT in .veerc); usage dictates definition of a new dispatcher in this file, 
+                                          # or the modification of the default one, "set_format_func"
 
 # ideas:
-#  email2groff ... would process stdin to get message, title from email format
-#  groffXYZ ... process using other groff options 
-#  latex ... not standard, would use pdflatex to generate pdf file
-function set_format_func
+function default_set_format_func
 { case "$1" in
     default) FORMAT_FUNC=format_with_groff
              echo using $FORMAT_FUNC
@@ -98,7 +101,7 @@ function set_format_func
     groff)   FORMAT_FUNC=format_with_groff
              echo using $FORMAT_FUNC
              ;;
-    groff-utf8) FORMAT_FUNC=format_with_groff_utf8
+    groff-utf8)FORMAT_FUNC=format_with_groff_utf8
              echo using $FORMAT_FUNC
              ;;
     fold)    FORMAT_FUNC=format_with_fold
@@ -144,6 +147,8 @@ function usage
   echo "  -R                reformats _all_ .vee/*.raw files; -c applies as well      "
   echo "  -h                prints this blurb                                         " 
   echo "  -v                version and exit                                          " 
+  echo "  -x  filter        defines filter if not using default "./vee-pre"; filter     "
+  echo "                    must be executable, i.e., chmod 755 vee-pre               "
   echo "                                                                              " 
   echo "Examples:                                                                     "
   echo "                                                                              " 
@@ -250,13 +255,37 @@ function format_with_fold
   fi
 }
 
+# load custom functions if defined above and file exists
+if [ -e "${FORMAT_CUSTOM_DEFS}" ]; then
+  . "${FORMAT_CUSTOM_DEFS}"
+fi
+
 # end formatting funcs 
+
+#
+# all filters must accepted STDIN and output via STDOUT
+# default arguments include:
+#
+function preformat
+{ if [ -x "${PREFORMAT_FILTER}" ]; then
+    cat "${DRAFT}" | "${PREFORMAT_FILTER}" "${FORMAT_FUNC}" > "${DRAFT}.tmp" 
+    mv -f "${DRAFT}.tmp" "${DRAFT}" 
+  fi 
+}
+
+#function postformat
+#{ if [ -x "${POSTFORMAT_FILTER}" ]; then
+#    cat "${FINAL}" | "${POSTFORMAT_FILTER}" > "${FINAL}.tmp" 
+#    mv -f "${FINAL}.tmp" "${FINAL}" 
+#  fi 
+#}
 
 function format_main
 { FINAL=${DIR}/${1}
   FINALNAME=${1}
   RAW=${DIR}/${2}
   RAWNAME=${2}
+  preformat
   # save raw form before formatting if it doesn't exist
   # which is the case when reformatting all
   if [ ! -e ${RAW} ]; then
@@ -271,6 +300,7 @@ function format_main
   output_top
   ${FORMAT_FUNC} 
   output_bottom
+  #postformat # not sure about this one yet
 }
 
 function reformat_singleton
@@ -280,7 +310,6 @@ function reformat_singleton
      format_main "${1}.${FORMAT}" "${1}.raw"
    fi
 }
-     
 
 function reformat_all
 { FILES=`ls -c ${DIR}/*.raw | ${SORT_ALL}`
@@ -359,7 +388,7 @@ EDITLAST=0
 MESSAGE=
 
 # get opts ! stdin append to anything passed in by -m 
-while getopts 'f:m:t:T:c:d:i:IbB:hRrlnov' option; do
+while getopts 'f:m:t:T:c:d:i:IbB:hRrlnovx:X:' option; do
     case "$option" in
     i) INDEX="${OPTARG}"  # specify INDEX to $OPTARG
        ;;
@@ -382,7 +411,7 @@ while getopts 'f:m:t:T:c:d:i:IbB:hRrlnov' option; do
        ;;
     B) BOT_TPL="${OPTARG}"
        ;;
-    f) set_format_func "${OPTARG}" 
+    f) ${FORMAT_DISPATCHER} "${OPTARG}"  # default is set_format_func
        ;;
     c) MARGIN=${OPTARG}
        ;;
@@ -407,6 +436,8 @@ while getopts 'f:m:t:T:c:d:i:IbB:hRrlnov' option; do
     h) usage | less
        die_cleanly
        ;;
+    x) PREFORMAT_FILTER="${OPTARG}"
+       ;; 
     ?) usage | less
        die_cleanly
        ;;
