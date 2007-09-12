@@ -78,8 +78,7 @@ HEADERTXT=  # text or `cat some.header.txt`
 FOOTERTXT="Powered by <a href=\"http://www.0x743.com/vee\">vee</a><br/>Copyright &copy; 2006-${YEAR}"  
 TOP_TPL=./vee-top.tpl
 BOT_TPL=./vee-bottom.tpl
-PREFORMAT_FILTER=./vee-pre
-POSTFORMAT_FILTER=./vee-post
+PREFORMAT_FILTER=./vee-filter     # the filter is assumed to be executable, else it is ignored
 USE_EDITOR=1
 LISTENSTDIN=0
 SORT_ALL="sort -t. +0f -1 +1nr"   # sorts all in file listing
@@ -88,10 +87,10 @@ SORT_OLDEST="sort -t. -r"         # sorts all old to new
 SORT_INDEX="sort -t; +0f -1 +1nr" # sorts lines in index file based on line number in <!-- ... ; --> 
 PUBLISHED=`date "+%m/%d/%Y"`      # date formated for index page entry
 FORMAT_FUNC=format_with_groff
-FORMAT_DISPATCHER=default_set_format_func # change here (NOT in .veerc)
-FORMAT_CUSTOM_DEFS=                       # define here (NOT in .veerc); usage dictates definition of a new dispatcher in this file, 
-                                          # or the modification of the default one, "set_format_func"
-
+FORMAT_DISPATCHER=default_set_format_func         # change here (NOT in .veerc)
+FORMAT_CUSTOM_DISPATCHER=custom_set_format_func
+FORMAT_CUSTOM_DEFS=./vee-custom.sh                # define here (NOT in .veerc); usage dictates definition of a new dispatcher in this file, 
+                                                  # or the modification of the default one, "set_format_func"
 # ideas:
 function default_set_format_func
 { case "$1" in
@@ -113,8 +112,14 @@ function default_set_format_func
     custom)  echo "add your own function and list here"
              die_cleanly
              ;;
-    *)       echo "bad format type" 
-             die_cleanly
+    *)       if [ -e "${FORMAT_CUSTOM_DEFS}" ]; then
+               # look here
+               . "${FORMAT_CUSTOM_DEFS}"
+               ${FORMAT_CUSTOM_DISPATCHER} "${1}"
+             else
+               echo "bad format type" 
+               die_cleanly
+             fi
   esac 
 }
 
