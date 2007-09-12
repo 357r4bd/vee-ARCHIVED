@@ -1,0 +1,3 @@
+INDEX=index.html
+FOOTERTXT="hijacked by .veerc"
+PREFORMAT_FILTER=./vee-filter.pl
