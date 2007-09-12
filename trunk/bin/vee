@@ -418,7 +418,7 @@ while getopts 'f:m:t:T:c:d:i:IbB:hRrlnovx:X:' option; do
        ;;
     f) ${FORMAT_DISPATCHER} "${OPTARG}"  # default is set_format_func
        ;;
-    c) MARGIN=${OPTARG}
+    c) MARGIN=${OPTARG} # this option is about to be deprecated
        ;;
     l) EDITLAST=1
        ;;
