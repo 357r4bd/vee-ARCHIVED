@@ -3,7 +3,7 @@
 # PLEASE SUBMIT BUGS AND REQUESTS AT:
 #  http://code.google.com/p/vee/issues/list
 
-VERSION=0.9.9-zeta
+VERSION=0.9.9-zeta-testing
 
 #
 # vee is a zero configuration, commandline blog tool that
@@ -133,24 +133,29 @@ function usage
   echo "  %vee [-c fold_column] [-t title] [-m message] [-b #toggle batchmode]        "
   echo "                                                                              " 
   echo "Options:                                                                      " 
-  echo "  -i  'custom.html' specify a custom index file over the default              "
-  echo "  -I                force index file to be \"index.html\"                     "
-  echo "  -d  'publis_dir'  specify the directory .vee is in - defaults to PWD        " 
-  echo "  -t  'title'       specify title at commandline and avoid annoying default prompt" 
-  echo "  -T  file          define top template; default is ./vee-top.tpl             " 
-  echo "  -l                edit latest post's *.raw; used with '-r' publishes changes"
-  echo "  -m  'message ...' specify entry message at commandline and avoid vi         " 
-  echo "  -f  'format'      use defined format instead of the default, groff;"
-  echo "                    'groff', 'fold', and 'none' are supported out of the box"
-  echo "  -c  [1-9\d*]      specify the number of characters 'fold' allows per line   " 
-  echo "                      this only applies when 'fold' (-f) is used              " 
   echo "  -b                batch mode; used when piping in msg via stdin             " 
   echo "  -B  file          define bottom template; default is ./vee-bottom.tpl       " 
-  echo "  -n                lists all entries, newest first, then quits               "
-  echo "  -o                lists all entries, oldest first, then quits               "
-  echo "  -r                reformats the latest post; used in conjuction with -l     "
-  echo "  -R                reformats _all_ .vee/*.raw files; -c applies as well      "
+  echo "  -c  [1-9\d*]      specify the number of characters 'fold' allows per line   " 
+  echo "                      this only applies when 'fold' (-f) is used              " 
+  echo "  -d  'publis_dir'  specify the directory .vee is in - defaults to PWD        " 
+  echo "  -f  'format'      use defined format instead of the default, groff;"
+  echo "                    'groff', 'fold', and 'none' are supported out of the box"
   echo "  -h                prints this blurb                                         " 
+  echo "  -i  'custom.html' specify a custom index file over the default              "
+  echo "  -I                force index file to be \"index.html\"                     "
+  echo "  -l                edit latest post's *.raw; used with '-r' publishes changes;"
+  echo "                    calls reformat automatically;                             " 
+  echo "  -L  [1-9\d*]      edit the Nth latest, relative to last post; lp starts at 1"
+  echo "  -m  'message ...' specify entry message at commandline and avoid vi         " 
+  echo "  -n                lists all entries, newest first, then quits               "
+  echo "  -o                lists all entries, oldest first, then quits               " 
+  echo "  -p                see what *raw files don't have an entry in the INDEX      "
+  echo "  -P                forever deletes all *raw and formatted files associated with"
+  echo "                    posts that are listed with -p;                            "
+  echo "  -r  [1-9\d*]      reformats the Nth latest post                             "
+  echo "  -R                reformats _all_ .vee/*.raw files; -c applies as well      "
+  echo "  -t  'title'       specify title at commandline and avoid annoying default prompt" 
+  echo "  -T  file          define top template; default is ./vee-top.tpl             " 
   echo "  -v                version and exit                                          " 
   echo "  -x  filter        defines filter if not using default "./vee-pre"; filter     "
   echo "                    must be executable, i.e., chmod 755 vee-pre               "
@@ -172,7 +177,16 @@ function usage
   echo " publishes contents of text.txt with provided title; -m's msg will be         " 
   echo " shown above the cat'd text                                                   " 
   echo "                                                                              " 
-  echo "%vee -lr                                                                      " 
+  echo "%vee -l       # edit and reformat the latest post                             " 
+  echo "%vee -L 5     # allows one to edit and reformats the fifth latest post        " 
+  echo "%vee -r 8     # reformats the 8th latest post                                 " 
+  echo "%vee -R       # reformats ALL posts that have *.raw files                     " 
+  echo "                                                                              " 
+  echo "To delete a post forever:                                                     " 
+  echo "1) delete the entry in the INDEX                                              " 
+  echo "2) purge the entry: "
+  echo "  vee -p    # make sure it is the one you want to purge"
+  echo "  vee -P    # purge it!"
   echo "                                                                              " 
   echo " brings up the latest entry as a vi sessions; when changes are save,          " 
   echo " all messages are reformatted                                                 " 
@@ -310,7 +324,7 @@ function format_main
 
 function reformat_singleton
 {  if [ -e "${DIR}/${1}.raw" ]; then
-     echo "Reformatting message: \"${1}\""
+     #echo "Reformatting message: \"${1}\""
      cat "${DIR}/${1}.raw" > "${DRAFT}"
      format_main "${1}.${FORMAT}" "${1}.raw"
    fi
@@ -338,12 +352,16 @@ function newest_first
 
 function list_newest_first
 { FILES=`newest_first`
+  COUNT=1
   for FILE in ${FILES}; do
      FULLNAME="${FILE}"
      DIR="${FULLNAME%/*}"
      FILE="${FULLNAME##*/}"
      MAXBASE="${FILE%.*}"
-     echo ${MAXBASE}
+     TITLE=`head -n 3 ${DIR}/${FILE} | tail -n 1` 
+     printf "%7d)  " $COUNT
+     echo ${MAXBASE} ::  ${TITLE}
+     COUNT=`expr $COUNT + 1`
   done
 }
 
@@ -359,25 +377,53 @@ function list_oldest_first
      DIR="${FULLNAME%/*}"
      FILE="${FULLNAME##*/}"
      MAXBASE="${FILE%.*}"
-     echo ${MAXBASE}
+     TITLE=`head -n 3 ${DIR}/${FILE} | tail -n 1` 
+     echo ${MAXBASE} ::  ${TITLE}
   done
 }
 
-# would like to make this so that user can request
-# a msg relative to the last; example:
-# vee -l2 -r   ..... this would open up 2 entries
-# back from the current; vee -l 1 -r would open up
-# the one right before the latest, etc 
-function get_latest # gets *just* the latest one for now 
+function get_path2post
 { FILES=`ls -c ${DIR}/*.raw | ${SORT_NEWEST}`
+  GOAL=${1}
+  COUNT=1
   for FILE in ${FILES}; do
      FULLNAME="${FILE}"
      DIR="${FULLNAME%/*}"
      FILE="${FULLNAME##*/}"
      MAXBASE="${FILE%.*}"
+    if [ ${COUNT} -eq ${GOAL} ]; then
      echo ${MAXBASE}
      break
+    fi
+    COUNT=`expr ${COUNT} + 1`
   done
+}
+
+function purge_entries
+{ LEVEL=$1 
+  COUNT=0
+  if [ ! -e "${INDEX}" ]; then
+    echo "Can't find index, \"${INDEX}\""
+    die_cleanly
+  fi
+  FILES=`newest_first`
+  for FILE in ${FILES}; do
+     FULLNAME="${FILE}"
+     DIR="${FULLNAME%/*}"
+     FILE="${FULLNAME##*/}"
+     MAXBASE="${FILE%.*}"
+     ENTRY=`grep "$MAXBASE" $INDEX`
+     if [ -z "${ENTRY}" ]; then
+       COUNT=`expr $COUNT + 1`
+       if [ $LEVEL -eq 1 ]; then
+         echo "$DIR/$FILE (not really purged, use -P for realz)"
+       elif [ $LEVEL -eq 2 ]; then
+         echo "$DIR/$MAXBASE[.raw,$FORMAT] (purged for realz)"
+         rm -f $DIR/$MAXBASE*
+       fi
+     fi
+  done
+  echo removed $COUNT entrie\(s\)...
 }
 
 function die_cleanly
@@ -387,13 +433,14 @@ function die_cleanly
   exit 0
 }
 
-REFORMATLAST=0
+POST2REFORMAT=0
 REFORMATALL=0
-EDITLAST=0
+PURGELEVEL=0
+POST2EDIT=0
 MESSAGE=
 
 # get opts ! stdin append to anything passed in by -m 
-while getopts 'f:m:t:T:c:d:i:IbB:hRrlnovx:X:' option; do
+while getopts 'f:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pp' option; do
     case "$option" in
     i) INDEX="${OPTARG}"  # specify INDEX to $OPTARG
        ;;
@@ -407,7 +454,7 @@ while getopts 'f:m:t:T:c:d:i:IbB:hRrlnovx:X:' option; do
        fi
        echo `pwd`
        ;;
-    r) REFORMATLAST=1 
+    r) POST2REFORMAT="${OPTARG}"
        ;;
     R) REFORMATALL=1
        ;;
@@ -420,7 +467,9 @@ while getopts 'f:m:t:T:c:d:i:IbB:hRrlnovx:X:' option; do
        ;;
     c) MARGIN=${OPTARG} # this option is about to be deprecated
        ;;
-    l) EDITLAST=1
+    l) POST2EDIT=1
+       ;;
+    L) POST2EDIT="${OPTARG}"
        ;;
     m) MESSAGE="${OPTARG}" 
        USE_EDITOR=0
@@ -438,6 +487,10 @@ while getopts 'f:m:t:T:c:d:i:IbB:hRrlnovx:X:' option; do
     v) echo $VERSION
        die_cleanly
        ;;
+    p) PURGELEVEL=1
+       ;; 
+    P) PURGELEVEL=2 
+       ;; 
     h) usage | less
        die_cleanly
        ;;
@@ -450,14 +503,19 @@ while getopts 'f:m:t:T:c:d:i:IbB:hRrlnovx:X:' option; do
 done
 
 function post_opts 
-{ if [ ${EDITLAST} -eq 1 ]; then
-    LATEST=`get_latest`
+{ if [ ${PURGELEVEL} -ge 1 ]; then
+    purge_entries "${PURGELEVEL}"
+    die_cleanly
+  fi 
+
+  if [ ${POST2EDIT} -ge 1 ]; then
+    LATEST=`get_path2post ${POST2EDIT}`
     ${EDITOR} ${DIR}/${LATEST}.raw
-    echo "Updated: ${LATEST} (remember to reformat)"
+    POST2REFORMAT=${POST2EDIT}
   fi
 
-  if [ ${REFORMATLAST} -eq 1 ]; then
-    LATEST=`get_latest`
+  if [ "${POST2REFORMAT}" -ge "1" ]; then
+    LATEST=`get_path2post ${POST2REFORMAT}`
     reformat_singleton "${LATEST}"
     die_cleanly
   fi
@@ -470,7 +528,7 @@ function post_opts
   fi
 
   # blocks vee -l (without the -r) from going on 
-  if [ ${EDITLAST} -eq 1 ]; then
+  if [ ${POST2EDIT} -ge 1 ]; then
     die_cleanly
   fi
 
