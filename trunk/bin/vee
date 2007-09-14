@@ -14,6 +14,10 @@ VERSION=0.9.9-zeta-testing
 # suited for use in batch situations, such as in a cronjob 
 #
 
+# System utilities required via PATH:
+
+# cd, pwd, ls, sort, head, tail, cat, grep, groff, fold, expr (built in)
+
 # change log
 # Applied patch from efbeha@gmail.com: 
 #   added code to keep words whole when using fold
@@ -21,6 +25,8 @@ VERSION=0.9.9-zeta-testing
 # made sort options customizable
 # made publish date format customizable
 # initial implementation of pre format filter
+# externalized the use of custom formats
+# added ability to edit and reformat any post
 
 function disclaimer
 { echo "Copyright (c) 2007 /me" 
