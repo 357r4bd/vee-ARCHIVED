@@ -130,7 +130,7 @@ function usage
   echo "Version: ${VERSION}                                                           "
   echo "                                                                              "
   echo "Usage:                                                                        "
-  echo "  %vee [-c fold_column] [-t title] [-m message] [-b #toggle batchmode]        "
+  echo "  See below.                                                                              " 
   echo "                                                                              " 
   echo "Options:                                                                      " 
   echo "  -b                batch mode; used when piping in msg via stdin             " 
@@ -491,12 +491,12 @@ while getopts 'f:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pp' option; do
        ;; 
     P) PURGELEVEL=2 
        ;; 
-    h) usage | less
+    h) usage
        die_cleanly
        ;;
     x) PREFORMAT_FILTER="${OPTARG}"
        ;; 
-    ?) usage | less
+    ?) #usage | less
        die_cleanly
        ;;
     esac
@@ -514,7 +514,7 @@ function post_opts
     POST2REFORMAT=${POST2EDIT}
   fi
 
-  if [ "${POST2REFORMAT}" -ge "1" ]; then
+  if [ ${POST2REFORMAT} -ge 1 ]; then
     LATEST=`get_path2post ${POST2REFORMAT}`
     reformat_singleton "${LATEST}"
     die_cleanly
