@@ -5,6 +5,41 @@
 
 VERSION=0.9.9-zeta-testing
 
+if [ ! ${EDITOR} ]; then
+  EDITOR=vi
+fi
+MARGIN=64
+FORMAT=html
+INDEX=vee.html
+DIR=.vee
+DRAFT=${DIR}/.vee.tmp.$$
+DATE=`date`
+YEAR=`date "+%Y"`
+TIME=`date "+%Y-%m-%dT%H:%M:%S"`
+SEC=`date "+%s"`
+TITLE=
+DEFAULT_TITLE="Entry #${SEC}";
+HEADERTXT=  # text or `cat some.header.txt` 
+FOOTERTXT="Powered by <a href=\"http://www.0x743.com/vee\">vee</a><br/>Copyright &copy; 2006-${YEAR}"  
+TOP_TPL=./vee-top.tpl
+BOT_TPL=./vee-bottom.tpl
+PREFORMAT_FILTER=./vee-filter     # the filter is assumed to be executable, else it is ignored
+USE_EDITOR=1
+LISTENSTDIN=0
+SORT_ALL="sort -t. +0f -1 +1nr"   # sorts all in file listing
+SORT_NEWEST="sort -t. -nr"        # sorts all new to old 
+SORT_OLDEST="sort -t. -r"         # sorts all old to new
+SORT_INDEX="sort -t; +0f -1 +1nr" # sorts lines in index file based on line number in <!-- ... ; --> 
+PUBLISHED=`date "+%m/%d/%Y"`      # date formated for index page entry
+FORMAT_FUNC=format_with_groff
+FORMAT_DISPATCHER=default_set_format_func       
+FORMAT_CUSTOM_DISPATCHER=custom_set_format_func
+UPDATE_INDEX=update_index
+OUTPUT_TOP=output_top
+OUTPUT_BOT=output_bottom
+# define custom format file
+FORMAT_CUSTOM_DEFS=./vee-custom.sh              # see example in vee/sample-custom-format/   
+
 #
 # vee is a zero configuration, commandline blog tool that
 # requires NO installation other than dropping the vee 
@@ -66,36 +101,9 @@ function disclaimer
 #  arun   @ chat.taucher.net #bsd
 #  J65nko @ bsdforums.com
 
-if [ ! ${EDITOR} ]; then
-  EDITOR=vi
+if [ -e "${FORMAT_CUSTOM_DEFS}" ]; then
+  . "${FORMAT_CUSTOM_DEFS}"
 fi
-MARGIN=64
-FORMAT=html
-INDEX=vee.html
-DIR=.vee
-DRAFT=${DIR}/.vee.tmp.$$
-DATE=`date`
-YEAR=`date "+%Y"`
-TIME=`date "+%Y-%m-%dT%H:%M:%S"`
-SEC=`date "+%s"`
-TITLE=
-DEFAULT_TITLE="Entry #${SEC}";
-HEADERTXT=  # text or `cat some.header.txt` 
-FOOTERTXT="Powered by <a href=\"http://www.0x743.com/vee\">vee</a><br/>Copyright &copy; 2006-${YEAR}"  
-TOP_TPL=./vee-top.tpl
-BOT_TPL=./vee-bottom.tpl
-PREFORMAT_FILTER=./vee-filter     # the filter is assumed to be executable, else it is ignored
-USE_EDITOR=1
-LISTENSTDIN=0
-SORT_ALL="sort -t. +0f -1 +1nr"   # sorts all in file listing
-SORT_NEWEST="sort -t. -nr"        # sorts all new to old 
-SORT_OLDEST="sort -t. -r"         # sorts all old to new
-SORT_INDEX="sort -t; +0f -1 +1nr" # sorts lines in index file based on line number in <!-- ... ; --> 
-PUBLISHED=`date "+%m/%d/%Y"`      # date formated for index page entry
-FORMAT_FUNC=format_with_groff
-FORMAT_DISPATCHER=default_set_format_func       
-FORMAT_CUSTOM_DISPATCHER=custom_set_format_func
-FORMAT_CUSTOM_DEFS=./vee-custom.sh              # see example in vee/sample-custom-format/   
  
 # ideas:
 function default_set_format_func
@@ -115,7 +123,6 @@ function default_set_format_func
              # if not a supplied format, see if it is in
              # the custom format file, if it exists
     *)       if [ -e "${FORMAT_CUSTOM_DEFS}" ]; then
-               . "${FORMAT_CUSTOM_DEFS}"
                # call dispatch function that is defined in
                # the custom format file, pass on format nickname
                ${FORMAT_CUSTOM_DISPATCHER} "${1}"
@@ -213,6 +220,15 @@ function usage
   exit 1
 }
 
+# formats post link on index page
+function update_index 
+{ echo "<!-- ;${SEC}; -->${PUBLISHED}:<a href=\"${DIR}/${SEC}.${TIME}.${FORMAT}\"> ${TITLE}</a>" >> ${INDEX}
+  if [ -n "${SUMMARY}" ]; then
+    SEC=`expr $SEC - 1`
+    echo "<!-- ;${SEC}; -->${SUMMARY}" >> ${INDEX}
+  fi
+}
+
 function output_top
 { echo ${HEADERTXT} > ${FINAL}
   if [ -e "${TOP_TPL}" ]; then
@@ -306,9 +322,9 @@ function format_main
     echo          >> ${RAW}     # this blank line is important
     cat ${DRAFT}  >> ${RAW}
   fi
-  output_top
+  ${OUTPUT_TOP} 
   ${FORMAT_FUNC} 
-  output_bottom
+  ${OUTPUT_BOT} 
   #postformat # not sure about this one yet
 }
 
@@ -427,10 +443,11 @@ POST2REFORMAT=0
 REFORMATALL=0
 PURGELEVEL=0
 POST2EDIT=0
+SUMMARY=
 MESSAGE=
 
 # get opts ! stdin append to anything passed in by -m 
-while getopts 'f:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pp' option; do
+while getopts 'f:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:' option; do
     case "$option" in
     i) INDEX="${OPTARG}"  # specify INDEX to $OPTARG
        ;;
@@ -470,7 +487,9 @@ while getopts 'f:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pp' option; do
     o) list_oldest_first
        die_cleanly 
        ;; 
-    t) TITLE=${OPTARG}
+    s) SUMMARY="${OPTARG}"
+       ;; 
+    t) TITLE="${OPTARG}"
        ;;
     T) TOP_TPL="${OPTARG}"
        ;;
@@ -581,11 +600,6 @@ function use_editor
   fi
 }
 
-function update_index 
-{ echo "<!-- ;${SEC}; -->${SEC}:<a href=\"${DIR}/${SEC}.${TIME}.${FORMAT}\"> ${TITLE}</a> ... ${PUBLISHED}" >> ${INDEX}
-  sort_index
-}
-
 # ask for title if not set with -t and not in batch mode
 # if in batch mode with no -t set, use default title below
 function get_title
@@ -612,7 +626,8 @@ use_editor
 
 if [ -e ${DRAFT} ]; then
   format_main "${SEC}.${TIME}.${FORMAT}" "${SEC}.${TIME}.raw" 
-  update_index 
+  $UPDATE_INDEX 
+  sort_index
   die_cleanly
 else
   echo Error! ${DRAFT} not found
