@@ -164,6 +164,7 @@ function usage
   echo "                    posts that are listed with -p;                            "
   echo "  -r  [1-9\d*]      reformats the Nth latest post                             "
   echo "  -R                reformats _all_ .vee/*.raw files; -c applies as well      "
+  echo "  -s  "summary"     placed below title in INDEX                               "
   echo "  -t  'title'       specify title at commandline and avoid annoying default prompt" 
   echo "  -T  file          define top template; default is ./vee-top.tpl             " 
   echo "  -v                version and exit                                          " 
