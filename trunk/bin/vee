@@ -29,7 +29,6 @@ LISTENSTDIN=0
 SORT_ALL="sort -t. +0f -1 +1nr"   # sorts all in file listing
 SORT_NEWEST="sort -t. -nr"        # sorts all new to old 
 SORT_OLDEST="sort -t. -r"         # sorts all old to new
-SORT_INDEX="sort -t; +0f -1 +1nr" # sorts lines in index file based on line number in <!-- ... ; --> 
 PUBLISHED=`date "+%m/%d/%Y"`      # date formated for index page entry
 FORMAT_FUNC=format_with_groff
 FORMAT_DISPATCHER=default_set_format_func       
@@ -581,9 +580,10 @@ function setup
 }
 
 function sort_index
-{ #echo sorting ${INDEX} ...
+{ echo sorting ${INDEX} ...
   #sort -t";" +0f -1 +1nr ${INDEX} > .${INDEX}.$$.sorted
-  ${SORT_INDEX} ${INDEX} > .${INDEX}.$$.sorted
+  #${SORT_INDEX} 
+  sort -t';' +0f -1 +1nr ${INDEX} > .${INDEX}.$$.sorted
   #echo rebuilding ${INDEX} 
   mv .${INDEX}.$$.sorted ${INDEX} # "rebuild ${INDEX}
 }
