@@ -62,7 +62,7 @@ FORMAT_CUSTOM_DEFS=./vee-custom.sh              # see example in vee/sample-cust
 # externalized the use of custom formats
 # added ability to edit and reformat any post
 
-function disclaimer
+ disclaimer()
 { echo "Copyright (c) 2007 /me" 
   echo "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:"
   echo "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software."
@@ -103,9 +103,9 @@ function disclaimer
 if [ -e "${FORMAT_CUSTOM_DEFS}" ]; then
   . "${FORMAT_CUSTOM_DEFS}"
 fi
- 
+
 # ideas:
-function default_set_format_func
+ default_set_format_func()
 { case "$1" in
     default) FORMAT_FUNC=format_with_groff
              echo using $FORMAT_FUNC
@@ -132,14 +132,14 @@ function default_set_format_func
   esac 
 }
 
-function usage
+ usage()
 { echo "                                                                              " 
   echo " vee - the Zero-conf, commandline blog tool thingy                            "
   echo "                                                                              "
   echo "Version: ${VERSION}                                                           "
   echo "                                                                              "
   echo "Usage:                                                                        "
-  echo "  See below.                                                                              " 
+  echo "  See below.                                                                  " 
   echo "                                                                              " 
   echo "Options:                                                                      " 
   echo "  -b                batch mode; used when piping in msg via stdin             " 
@@ -215,13 +215,11 @@ function usage
   echo "   way of dealing with standard in, etc would be welcomed.                    " 
   echo "                                                                              " 
   echo `disclaimer` 
-  echo "                                                                              " 
-  echo "(press 'q' for commandline)                                                   " 
   exit 1
 }
 
 # formats post link on index page
-function update_index 
+ update_index() 
 { echo "<!-- ;${SEC}; -->${PUBLISHED}:<a href=\"${DIR}/${SEC}.${TIME}.${FORMAT}\"> ${TITLE}</a>" >> ${INDEX}
   if [ -n "${SUMMARY}" ]; then
     SEC=`expr $SEC - 1`
@@ -229,7 +227,7 @@ function update_index
   fi
 }
 
-function output_top
+ output_top()
 { echo ${HEADERTXT} > ${FINAL}
   if [ -e "${TOP_TPL}" ]; then
      cat "${TOP_TPL}" >> ${FINAL}
@@ -245,7 +243,7 @@ function output_top
    echo           >> ${FINAL}
 }
 
-function output_bottom
+ output_bottom()
 { echo          >> ${FINAL}
   echo --       >> ${FINAL}
   echo ${FOOTERTXT} >> ${FINAL}
@@ -260,7 +258,7 @@ function output_bottom
 
 # begin formatting funcs
 
-function format_with_groff
+ format_with_groff()
 { #sed 1liner from http://sed.sourceforge.net/sed1line.txt
   groff -man -Tascii ${RAW} >> bla.raw
   sed '/^$/N;/\n$/D' bla.raw >> ${FINAL}
@@ -268,11 +266,11 @@ function format_with_groff
 #  groff -man -Tascii ${RAW} >> ${FINAL}
 }
 
-function with_no_formatting
+ with_no_formatting()
 { cat ${RAW} >> ${FINAL}
 } 
 
-function format_with_fold
+ format_with_fold()
 { if [ 0 -lt "${MARGIN}" ]; then
     fold -s -w ${MARGIN} ${RAW} >> ${FINAL}
   else
@@ -291,21 +289,21 @@ fi
 # all filters must accepted STDIN and output via STDOUT
 # default arguments include:
 #
-function preformat
+ preformat()
 { if [ -x "${PREFORMAT_FILTER}" ]; then
     cat "${DRAFT}" | "${PREFORMAT_FILTER}" "${FORMAT_FUNC}" > "${DRAFT}.tmp" 
     mv -f "${DRAFT}.tmp" "${DRAFT}" 
   fi 
 }
 
-#function postformat
+# postformat()
 #{ if [ -x "${POSTFORMAT_FILTER}" ]; then
 #    cat "${FINAL}" | "${POSTFORMAT_FILTER}" > "${FINAL}.tmp" 
 #    mv -f "${FINAL}.tmp" "${FINAL}" 
 #  fi 
 #}
 
-function format_main
+ format_main()
 { FINAL=${DIR}/${1}
   FINALNAME=${1}
   RAW=${DIR}/${2}
@@ -328,7 +326,7 @@ function format_main
   #postformat # not sure about this one yet
 }
 
-function reformat_singleton
+ reformat_singleton()
 {  if [ -e "${DIR}/${1}.raw" ]; then
      #echo "Reformatting message: \"${1}\""
      cat "${DIR}/${1}.raw" > "${DRAFT}"
@@ -336,7 +334,7 @@ function reformat_singleton
    fi
 }
 
-function reformat_all
+ reformat_all()
 { FILES=`ls -c ${DIR}/*.raw | ${SORT_ALL}`
    for RAW in $FILES; do
      # From: Randall R Schulz <rrschulz at cris dot com>
@@ -351,12 +349,12 @@ function reformat_all
    done
 }
 
-function newest_first 
+ newest_first() 
 { FILES=`ls -c ${DIR}/*.raw | ${SORT_NEWEST}`
   echo ${FILES}
 }
 
-function list_newest_first
+ list_newest_first()
 { FILES=`newest_first`
   COUNT=1
   for FILE in ${FILES}; do
@@ -371,12 +369,12 @@ function list_newest_first
   done
 }
 
-function oldest_first
+ oldest_first()
 { FILES=`ls -c ${DIR}/*.raw | ${SORT_OLDEST}`
   echo ${FILES}
 }
 
-function list_oldest_first
+ list_oldest_first()
 { FILES=`oldest_first`
   for FILE in ${FILES}; do
      FULLNAME="${FILE}"
@@ -388,7 +386,7 @@ function list_oldest_first
   done
 }
 
-function get_path2post
+ get_path2post()
 { FILES=`ls -c ${DIR}/*.raw | ${SORT_NEWEST}`
   GOAL=${1}
   COUNT=1
@@ -405,7 +403,7 @@ function get_path2post
   done
 }
 
-function purge_entries
+ purge_entries()
 { LEVEL=$1 
   COUNT=0
   if [ ! -e "${INDEX}" ]; then
@@ -432,7 +430,7 @@ function purge_entries
   echo removed $COUNT entrie\(s\)...
 }
 
-function die_cleanly
+ die_cleanly()
 { if [ -e ${DRAFT} ]; then
     rm -f ${DRAFT}
   fi
@@ -511,7 +509,7 @@ while getopts 'f:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:' option; do
     esac
 done
 
-function post_opts 
+ post_opts() 
 { if [ ${PURGELEVEL} -ge 1 ]; then
     purge_entries "${PURGELEVEL}"
     die_cleanly
@@ -559,7 +557,7 @@ function post_opts
 }
 
 # generates INDEX file if none exists
-function setup
+ setup()
 { mkdir -p ${DIR} || echo ${DIR} exists...
   if [ ! -e ${INDEX} ]; then
     echo
@@ -579,8 +577,8 @@ function setup
   fi
 }
 
-function sort_index
-{ echo sorting ${INDEX} ...
+ sort_index()
+{ #echo sorting ${INDEX} ...
   #sort -t";" +0f -1 +1nr ${INDEX} > .${INDEX}.$$.sorted
   #${SORT_INDEX} 
   sort -t';' +0f -1 +1nr ${INDEX} > .${INDEX}.$$.sorted
@@ -588,7 +586,7 @@ function sort_index
   mv .${INDEX}.$$.sorted ${INDEX} # "rebuild ${INDEX}
 }
 
-function use_editor
+ use_editor()
 { if [ ${USE_EDITOR} -eq 1 ]; then 
     OK=0
     ${EDITOR} ${DRAFT} && OK=1
@@ -603,13 +601,13 @@ function use_editor
 
 # ask for title if not set with -t and not in batch mode
 # if in batch mode with no -t set, use default title below
-function get_title
+ get_title()
 { if [ -z "${TITLE}"  ]; then
     TITLE=$DEFAULT_TITLE
   fi
 }
 
-function read_config
+ read_config()
 { if [ -e ./.veerc ]; then
     . ./.veerc
   fi
