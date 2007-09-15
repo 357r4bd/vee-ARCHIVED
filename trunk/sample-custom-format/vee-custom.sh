@@ -4,11 +4,11 @@
 #OUTPUT_TOP=custom_output_top
 #OUTPUT_BOT=custom_output_bottom
 
-function format_with_null # example implements the same as -f none
+ format_with_null() # example implements the same as -f none
 { cat ${RAW} >> ${FINAL}
 }
 
-function format_with_groff_utf8
+ format_with_groff_utf8()
 { #sed 1liner from http://sed.sourceforge.net/sed1line.txt
   exe=`which groff-utf8 2> /dev/null || echo -1`
   if [ "-1" != ${exe} ]; then
@@ -21,7 +21,7 @@ function format_with_groff_utf8
   fi
 }
 
-function custom_set_format_func
+ custom_set_format_func()
 { case "$1" in
     null) FORMAT_FUNC=format_with_null
             echo using $FORMAT_FUNC
@@ -36,7 +36,7 @@ function custom_set_format_func
 }
 
 # formats post link on index page
-function custom_update_index
+ custom_update_index()
 { echo "<!-- ;${SEC}; -->${PUBLISHED}:<a href=\"${DIR}/${SEC}.${TIME}.${FORMAT}\"> ${TITLE}</a>" >> ${INDEX}
   if [ -n "${SUMMARY}" ]; then
     SEC=`expr $SEC - 1`
@@ -44,7 +44,7 @@ function custom_update_index
   fi
 }
 
-function custom_output_top
+ custom_output_top()
 { echo ${HEADERTXT} > ${FINAL}
   if [ -e "${TOP_TPL}" ]; then
      cat "${TOP_TPL}" >> ${FINAL}
@@ -60,7 +60,7 @@ function custom_output_top
    echo           >> ${FINAL}
 }
 
-function custom_output_bottom
+ custom_output_bottom()
 { echo          >> ${FINAL}
   echo --       >> ${FINAL}
   echo ${FOOTERTXT} >> ${FINAL}
