@@ -3,7 +3,7 @@
 # PLEASE SUBMIT BUGS AND REQUESTS AT:
 #  http://code.google.com/p/vee/issues/list
 
-VERSION=0.9.9-zeta-testing
+VERSION=0.9.9-zeta
 
 if [ ! ${EDITOR} ]; then
   EDITOR=vi
