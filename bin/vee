@@ -30,15 +30,18 @@ SORT_ALL="sort -t. +0f -1 +1nr"   # sorts all in file listing
 SORT_NEWEST="sort -t. -nr"        # sorts all new to old 
 SORT_OLDEST="sort -t. -r"         # sorts all old to new
 PUBLISHED=`date "+%m/%d/%Y"`      # date formated for index page entry
+OUTPUT_TOP=output_top
+OUTPUT_BOT=output_bottom
+
+# define custome formatting 
 FORMAT_FUNC=format_with_groff
 FORMAT_DISPATCHER=default_set_format_func       
 FORMAT_CUSTOM_DISPATCHER=custom_set_format_func
-UPDATE_INDEX=update_index
-OUTPUT_TOP=output_top
-OUTPUT_BOT=output_bottom
-# define custom format file
-FORMAT_CUSTOM_DEFS=./vee-custom.sh              # see example in vee/sample-custom-format/   
-FORMAT_CUSTOM_SETUP=default_setup
+
+# define custom functions file; see example in vee/sample-custom-format/   
+FORMAT_CUSTOM_DEFS=./vee-custom.sh  
+UPDATE_INDEX=default_update_index
+CUSTOM_SETUP=default_setup   
 
 #
 # vee is a zero configuration, commandline blog tool that
@@ -220,7 +223,7 @@ fi
 }
 
 # formats post link on index page
- update_index() 
+ default_update_index() 
 { echo "<!-- ;${SEC}; -->${PUBLISHED}:<a href=\"${DIR}/${SEC}.${TIME}.${FORMAT}\"> ${TITLE}</a>" >> ${INDEX}
   if [ -n "${SUMMARY}" ]; then
     SEC=`expr $SEC - 1`
@@ -619,7 +622,7 @@ read_config   # done after all options are read in, could look in -d before
               # opts are processed though so opts could override defaults
               # and config file .. yeah do that
 post_opts
-$FORMAT_CUSTOM_SETUP # can be defined in .veerc
+$CUSTOM_SETUP # can be defined in .veerc
 get_title 
 use_editor
 
