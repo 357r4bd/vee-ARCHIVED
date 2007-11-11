@@ -38,6 +38,7 @@ OUTPUT_TOP=output_top
 OUTPUT_BOT=output_bottom
 # define custom format file
 FORMAT_CUSTOM_DEFS=./vee-custom.sh              # see example in vee/sample-custom-format/   
+FORMAT_CUSTOM_SETUP=default_setup
 
 #
 # vee is a zero configuration, commandline blog tool that
@@ -49,7 +50,6 @@ FORMAT_CUSTOM_DEFS=./vee-custom.sh              # see example in vee/sample-cust
 #
 
 # System utilities required via PATH:
-
 # cd, pwd, ls, sort, head, tail, cat, grep, groff, fold, expr (built in)
 
 # change log
@@ -95,6 +95,7 @@ FORMAT_CUSTOM_DEFS=./vee-custom.sh              # see example in vee/sample-cust
 #
 
 # CREDITS
+#  Francois Saint-Jacques (fsaintjacques@networkdump.com) supplied 2nd patch ever :) 
 #  efbeha (efbeha@gmail.com) - supplied first patch ever :)
 #  Oliver @ forums.bsdnexus.com
 #  arun   @ chat.taucher.net #bsd
@@ -557,7 +558,7 @@ done
 }
 
 # generates INDEX file if none exists
- setup()
+ default_setup()
 { mkdir -p ${DIR} || echo ${DIR} exists...
   if [ ! -e ${INDEX} ]; then
     echo
@@ -618,7 +619,7 @@ read_config   # done after all options are read in, could look in -d before
               # opts are processed though so opts could override defaults
               # and config file .. yeah do that
 post_opts
-setup
+$FORMAT_CUSTOM_SETUP # can be defined in .veerc
 get_title 
 use_editor
 
