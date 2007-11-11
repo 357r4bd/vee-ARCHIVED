@@ -1,0 +1,30 @@
+--- vee	2007-09-21 23:13:23.000000000 -0400
++++ /usr/local/bin/vee	2007-11-10 21:36:42.000000000 -0500
+@@ -38,6 +38,7 @@
+ OUTPUT_BOT=output_bottom
+ # define custom format file
+ FORMAT_CUSTOM_DEFS=./vee-custom.sh              # see example in vee/sample-custom-format/   
++FORMAT_CUSTOM_SETUP=setup
+ 
+ #
+ # vee is a zero configuration, commandline blog tool that
+@@ -557,7 +558,7 @@
+ }
+ 
+ # generates INDEX file if none exists
+- setup()
++default_setup()
+ { mkdir -p ${DIR} || echo ${DIR} exists...
+   if [ ! -e ${INDEX} ]; then
+     echo
+@@ -577,6 +578,10 @@
+   fi
+ }
+ 
++setup() {
++$FORMAT_CUSTOM_SETUP
++}
++
+  sort_index()
+ { #echo sorting ${INDEX} ...
+   #sort -t";" +0f -1 +1nr ${INDEX} > .${INDEX}.$$.sorted
