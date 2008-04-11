@@ -104,27 +104,18 @@ CUSTOM_SETUP=default_setup
 #  arun   @ chat.taucher.net #bsd
 #  J65nko @ bsdforums.com
 
-if [ -e "${FORMAT_CUSTOM_DEFS}" ]; then
-  . "${FORMAT_CUSTOM_DEFS}"
-fi
-
 # ideas:
  default_set_format_func()
 { case "$1" in
     default) FORMAT_FUNC=format_with_groff
-             echo using $FORMAT_FUNC
              ;;
     groff)   FORMAT_FUNC=format_with_groff
-             echo using $FORMAT_FUNC
              ;;
     fold)    FORMAT_FUNC=format_with_fold
-             echo using $FORMAT_FUNC
              ;;
     none)    FORMAT_FUNC=with_no_formatting
-             echo using $FORMAT_FUNC
              ;;
-             # if not a supplied format, see if it is in
-             # the custom format file, if it exists
+             # if not a supplied format, see if it is in the custom format file, if it exists
     *)       if [ -e "${FORMAT_CUSTOM_DEFS}" ]; then
                # call dispatch function that is defined in
                # the custom format file, pass on format nickname
@@ -134,6 +125,7 @@ fi
                die_cleanly
              fi
   esac 
+  echo using $FORMAT_FUNC
 }
 
  usage()
@@ -281,13 +273,6 @@ fi
     with_no_formatting 
   fi
 }
-
-# load custom functions if defined above and file exists
-if [ -e "${FORMAT_CUSTOM_DEFS}" ]; then
-  . "${FORMAT_CUSTOM_DEFS}"
-fi
-
-# end formatting funcs 
 
 #
 # all filters must accepted STDIN and output via STDOUT
@@ -447,6 +432,7 @@ PURGELEVEL=0
 POST2EDIT=0
 SUMMARY=
 MESSAGE=
+SET_DEFAULT_FORMAT_FUNC=
 
 # get opts ! stdin append to anything passed in by -m 
 while getopts 'f:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:' option; do
@@ -472,7 +458,7 @@ while getopts 'f:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:' option; do
        ;;
     B) BOT_TPL="${OPTARG}"
        ;;
-    f) ${FORMAT_DISPATCHER} "${OPTARG}"  # default is set_format_func
+    f) SET_DEFAULT_FORMAT_FUNC="${OPTARG}"
        ;;
     c) MARGIN=${OPTARG} # this option is about to be deprecated
        ;;
@@ -514,7 +500,15 @@ while getopts 'f:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:' option; do
 done
 
  post_opts() 
-{ if [ ${PURGELEVEL} -ge 1 ]; then
+{ if [ -e "${FORMAT_CUSTOM_DEFS}" ]; then
+    . "${FORMAT_CUSTOM_DEFS}"
+  fi
+
+  if [ -n "${SET_DEFAULT_FORMAT_FUNC}" ]; then 
+    ${FORMAT_DISPATCHER} "${OPTARG}"  # default is set_format_func
+  fi
+
+  if [ ${PURGELEVEL} -ge 1 ]; then
     purge_entries "${PURGELEVEL}"
     die_cleanly
   fi 
@@ -616,7 +610,7 @@ done
   fi
 } 
 
-# Main program body
+# -- main program body
 
 read_config   # done after all options are read in, could look in -d before
               # opts are processed though so opts could override defaults
