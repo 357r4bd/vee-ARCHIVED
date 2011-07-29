@@ -26,7 +26,6 @@ BOT_TPL=./vee-bottom.tpl
 PREFORMAT_FILTER=./vee-filter     # the filter is assumed to be executable, else it is ignored
 USE_EDITOR=1
 LISTENSTDIN=0
-SORT_ALL="sort -t. +0f -1 +1nr"   # sorts all in file listing
 SORT_NEWEST="sort -t. -nr"        # sorts all new to old 
 SORT_OLDEST="sort -t. -r"         # sorts all old to new
 PUBLISHED=`date "+%m/%d/%Y"`      # date formated for index page entry
@@ -324,7 +323,7 @@ CUSTOM_SETUP=default_setup
 }
 
  reformat_all()
-{ FILES=`ls -c ${DIR}/*.raw | ${SORT_ALL}`
+{ FILES=`ls -c ${DIR}/*.raw | ${SORT_OLDEST}`
    for RAW in $FILES; do
      # From: Randall R Schulz <rrschulz at cris dot com>
      FULLNAME="${RAW}"
