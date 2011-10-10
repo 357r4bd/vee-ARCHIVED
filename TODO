@@ -1,0 +1,12 @@
+1. create a "template" filter that will allow one to define a set of templates
+
+a) basic template filter
+b) more functional, advanced template filter using Perl's template toolkit, URL 
+extraction/detection, and text formatting
+
+2. abstract backend; default to classic file based .raw, but offer an advanced 
+interface using a backend like SQLite; this is for raw content, and doesn't imply
+a database driven site. Content is meant to be static.
+
+3. develop some sample utilities (outside of ./vee) that allow for various post 
+management tasks
