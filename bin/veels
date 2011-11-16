@@ -1,0 +1,116 @@
+#!/bin/sh
+
+#-- USAGE:
+#--     %veels [-dr [-a] [[-l][-L "ls opts"]]] 
+
+#-- NOTE:
+#--     NON-DESTRUCTIVE - does NOT modify or delete files;
+
+#-- SYNOPSIS: 
+#--     A general purpose "ls" utility for vee .raw files, should be used as
+#--     the basis for tools that require listing of vee files; missing functionality
+#--     will be added to suite this role. 
+
+#-- BUGS:
+#--     Please report them to Github - https://github.com/estrabd/vee/issues
+
+#-- MORE INFO:
+#--     http://www.0x743.com/.vee/1321369959.2011-11-15T09:12:39.html
+
+#-- CREDITS:
+#--     B. Estrade, created on 16 Nov. 2011
+
+#-- LICENSE:
+#--     DWTFYW
+
+VEEDIR=./.vee
+
+SORT_NEW_FIRST='sort -t. -nr'
+SORT_OLD_FIRST='sort -t. -n'
+SORT=$SORT_NEW_FIRST
+SHOWALL=0
+USELS=0
+LSOPTS='-lat'
+
+ die_error()
+{ 
+  echo $1
+  exit 1
+}
+
+ die_cleanly()
+{ 
+  exit 0
+}
+
+ usage() 
+{
+    echo "man file coming, in the meantime, Use the Source, Luke."
+    echo '    %veels [-dr [-a] [[-l][-L "ls opts"]]]' 
+}
+
+while getopts 'ad:hlL:r' option; do
+    case "$option" in
+    a) SHOWALL=1 # show filename, date, and title of post
+       ;;
+    d) if [ -d "${OPTARG}" ]; then # choose another directory to check for .raw files
+         VEEDIR="${OPTARG}"
+       else
+         die_error "${OPTARG} is not a directory!"
+       fi
+       ;; 
+    l) USELS=1 #use ls with default opts
+       ;;
+    L) USELS=1 #use ls with custom opts
+       LSOPTS="${OPTARG}"
+       ;;
+    r) SORT=$SORT_OLD_FIRST  # list in reverse post order
+       ;;
+    h) usage # some help page
+       die_cleanly
+       ;;
+    esac
+done
+
+cd "${VEEDIR}"
+
+ get_sorted()
+{
+    ls -1 ./*.raw | $SORT
+}
+
+ get_title()
+{
+    TITLE=`head -n 3 $1 | tail -n 1`
+    echo $TITLE
+}
+
+ get_date()
+{
+    DATE=`head -n 1 $1`
+    echo $DATE
+}
+
+ _ls ()
+{
+   ls ${LSOPTS} $1
+}
+
+for f in `get_sorted`; 
+do
+    # title is the 3rd line
+    TITLE=`get_title "$f"`
+
+    # full date string (not epoch) is the first line
+    DATE=`get_date "$f"`
+
+    if [ 1 -eq $USELS ]; then
+        _ls "$f"
+    else
+	    if [ 1 -eq $SHOWALL ]; then
+		echo "$f [$DATE] $TITLE"
+	    else 
+		echo "$f"
+	    fi
+    fi
+done

@@ -36,6 +36,7 @@ fi
 echo "<!-- ;1000000000000000000000000; initial HTML -->"
 echo "<!-- ;100000000000000000000000; more HTML -->"
 echo "<!-- ;10000000000000000000000; new index regenerated on $GENDATE -->"
+echo "<!-- ;1000000000000000000000; pre tag --><pre>"
 
 for f in `ls -1 $VEEDIR/*.raw | sort -t. -nr`; 
 do
@@ -51,7 +52,7 @@ do
     DATE=`echo $DATE | sed -e "s/$TZ_DATE/$TZ_SYS/"`
 
     # reformate date for indexing purposes (.raw files untouched)
-    FORMATTED_DATE=`date -j -f "%a %b %d %T %Z %Y" "$DATE" "+%Y-%m-%d"` 
+    FORMATTED_DATE=`date -j -f "%a %b %d %T %Z %Y" "$DATE" "+%m/%d/%Y"` 
 
     # get epoch for purpose of adding reasonable post index numbers 
     EPOCH=`date -j -f "%a %b %d %T %Z %Y" "$DATE" "+%s"` 
@@ -60,9 +61,9 @@ do
     FILENAME=$(basename $f)
     BASENAME=${FILENAME%.*}
     # output HTML index (can be modified to output in whatever format)
-    echo "<!-- ;$EPOCH; -->$FORMATTED_DATE <a href=$VEEDIR/$BASENAME.$HTMLEXT>$TITLE</a><br/>"
+    echo "<!-- ;$EPOCH; -->$FORMATTED_DATE <a href=$VEEDIR/$BASENAME.$HTMLEXT>$TITLE</a>"
 done
 
 echo "<!-- ;2; closing -->"
 echo '<!-- ;1; closing -->Powered by <a href="http://www.0x743.com/vee">vee</a>'
-echo "<!-- ;0; closing -->"
+echo "<!-- ;0; closing pre tag --></pre>"
