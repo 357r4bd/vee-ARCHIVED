@@ -19,3 +19,37 @@ estrabd at gmail dot commie
 It's also on Freshmeat:
 
 	http://freshmeat.net/projects/vee-the-blog-tool
+
+Version: 0.9.9-zeta                                                           
+                                                                              
+Usage:                                                                        
+  See below.                                                                  
+                                                                              
+Options:                                                                      
+  -b                batch mode; used when piping in msg via stdin             
+  -B  file          define bottom template; default is ./vee-bottom.tpl       
+  -c  [1-9\d*]      specify the number of characters 'fold' allows per line   
+                    this only applies when 'fold' (-f) is used                
+  -d  'publis_dir'  specify the directory .vee is in - defaults to PWD        
+  -f  'format'      use defined format instead of the default, groff;         
+                    'groff', 'fold', and 'none' are supported out of the box  
+  -h                prints this blurb                                         
+  -i  'custom.html' specify a custom index file over the default              
+  -I                force index file to be "index.html"                     
+  -l                edit latest post's *.raw; used with '-r' publishes changes;
+                    calls reformat automatically;                             
+  -L  [1-9\d*]      edit the Nth latest, relative to last post; lp starts at 1
+  -m  'message ...' specify entry message at commandline and avoid vi         
+  -n                lists all entries, newest first, then quits               
+  -o                lists all entries, oldest first, then quits               
+  -p                see what *raw files don't have an entry in the INDEX      
+  -P                forever deletes all *raw and formatted files associated with
+                    posts that are listed with -p;                            
+  -r  [1-9\d*]      reformats the Nth latest post                             
+  -R                reformats _all_ .vee/*.raw files; -c applies as well      
+  -s  summary     placed below title in INDEX                               
+  -t  'title'       specify title at commandline and avoid annoying default prompt
+  -T  file          define top template; default is ./vee-top.tpl             
+  -v                version and exit                                          
+  -x  filter        defines filter if not using default ./vee-pre; filter   
+                    must be executable, i.e., chmod 755 vee-pre
