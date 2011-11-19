@@ -1,29 +1,29 @@
 #!/bin/sh
 
-#-- USAGE:
-#--     %veels [-dr [-a] [[-l][-L "ls opts"]]] 
+# USAGE:
+#     %veels [-dr [-a] [[-l][-L "ls opts"]]] 
 
-#-- NOTE:
-#--     NON-DESTRUCTIVE - does NOT modify or delete files;
+# NOTE:
+#     NON-DESTRUCTIVE - does NOT modify or delete files;
 
-#-- SYNOPSIS: 
-#--     A general purpose "ls" utility for vee .raw files, should be used as
-#--     the basis for tools that require listing of vee files; missing functionality
-#--     will be added to suite this role. 
+# SYNOPSIS: 
+#     A general purpose "ls" utility for vee .raw files, should be used as
+#     the basis for tools that require listing of vee files; missing functionality
+#     will be added to suite this role. 
 
-#-- BUGS:
-#--     Please report them to Github - https://github.com/estrabd/vee/issues
+# BUGS:
+#     Please report them to Github - https://github.com/estrabd/vee/issues
 
-#-- MORE INFO:
-#--     http://www.0x743.com/.vee/1321454075.2011-11-16T08:34:35.html
+# MORE INFO:
+#     http://www.0x743.com/.vee/1321454075.2011-11-16T08:34:35.html
 
-#-- CREDITS:
-#--     B. Estrade, created on 16 Nov. 2011
+# CREDITS:
+#     B. Estrade, created on 16 Nov. 2011
 
-#-- LICENSE:
-#--     DWTFYW
+# LICENSE:
+#     DWTFYW
 
-VEEDIR=./.vee
+DIR=.vee
 
 SORT_NEW_FIRST='sort -t. -nr'
 SORT_OLD_FIRST='sort -t. -n'
@@ -53,12 +53,14 @@ while getopts 'ad:hlL:r' option; do
     case "$option" in
     a) SHOWALL=1 # show filename, date, and title of post
        ;;
-    d) if [ -d "${OPTARG}" ]; then # choose another directory to check for .raw files
-         VEEDIR="${OPTARG}"
+    d) if [ -d "${OPTARG}" ]; then
+         cd "${OPTARG}"
        else
-         die_error "${OPTARG} is not a directory!"
+         echo "${OPTARG}" is not a directory!
+         die_cleanly
        fi
-       ;; 
+       #echo `pwd`
+       ;;
     l) USELS=1 #use ls with default opts
        ;;
     L) USELS=1 #use ls with custom opts
@@ -72,11 +74,15 @@ while getopts 'ad:hlL:r' option; do
     esac
 done
 
-cd "${VEEDIR}"
+ read_config()
+{ if [ -e ./.veerc ]; then
+    . ./.veerc
+  fi
+} 
 
  get_sorted()
 {
-    ls -1 ./*.raw | $SORT
+    ls -1 ${DIR}/*.raw | $SORT
 }
 
  get_title()
@@ -95,6 +101,12 @@ cd "${VEEDIR}"
 {
    ls ${LSOPTS} $1
 }
+
+#-- main program body
+
+#-- read config, `pwd`/.veerc (happens after "-d" so it's consistent
+#--      with how bin/vee does it)
+read_config   
 
 for f in `get_sorted`; 
 do

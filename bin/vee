@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # PLEASE SUBMIT BUGS AND REQUESTS AT:
-#  http://code.google.com/p/vee/issues/list
+# 	https://github.com/estrabd/vee/issues
 
 VERSION=0.9.9-zeta
 
@@ -190,8 +190,8 @@ CUSTOM_SETUP=default_setup
   echo "To delete a post forever:                                                     " 
   echo "1) delete the entry in the INDEX                                              " 
   echo "2) purge the entry:                                                           "
-  echo "  vee -p    # make sure it is the one you want to purge                       "
-  echo "  vee -P    # purge it!                                                       "
+  echo "  %vee -p    # make sure it is the one you want to purge                       "
+  echo "  %vee -P    # purge it!                                                       "
   echo "                                                                              " 
   echo " brings up the latest entry as a vi sessions; when changes are save,          " 
   echo " all messages are reformatted                                                 " 
@@ -459,7 +459,7 @@ while getopts 'f:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:' option; do
        ;;
     f) SET_DEFAULT_FORMAT_FUNC="${OPTARG}"
        ;;
-    c) MARGIN=${OPTARG} # this option is about to be deprecated
+    c) MARGIN="${OPTARG}" # this option is about to be deprecated
        ;;
     l) POST2EDIT=1
        ;;
@@ -515,7 +515,7 @@ done
   if [ ${POST2EDIT} -ge 1 ]; then
     LATEST=`get_path2post ${POST2EDIT}`
     ${EDITOR} ${DIR}/${LATEST}.raw
-    POST2REFORMAT=${POST2EDIT}
+    POST2REFORMAT="${POST2EDIT}"
   fi
 
   if [ ${POST2REFORMAT} -ge 1 ]; then
@@ -539,7 +539,7 @@ done
   # Batch message creation: -m and stdin
   # handles -m
   if [ -n "${MESSAGE}" ]; then
-    echo "${MESSAGE}" >> ${DRAFT}
+    echo "${MESSAGE}" >> "${DRAFT}"
   fi
 
   if [ ${LISTENSTDIN} -eq 1 ]; then
@@ -609,7 +609,7 @@ done
   fi
 } 
 
-# -- main program body
+#-- main program body
 
 read_config   # done after all options are read in, could look in -d before
               # opts are processed though so opts could override defaults
