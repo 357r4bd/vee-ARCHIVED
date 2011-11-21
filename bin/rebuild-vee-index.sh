@@ -1,28 +1,28 @@
 #!/bin/sh
 
-#-- USAGE:
-#--     %cd <to parent dir of .vee>
-#--     %sh rebuild-vee-index.sh > new-index.html
+# USAGE:
+#     %cd <to parent dir of .vee>
+#     %sh rebuild-vee-index.sh > new-index.html
 
-#-- NOTE:
-#--     NON-DESTRUCTIVE - does NOT modify or delete files;
+# NOTE:
+#     NON-DESTRUCTIVE - does NOT modify or delete files;
 
-#-- SYNOPSIS: 
-#--     script to rebuild index based on .raw files in .vee/ created out of necessity, but
-#--     provides a good example of how to do some indexed based stuff and read the basic
-#--     formate in the .raw files
+# SYNOPSIS: 
+#     script to rebuild index based on .raw files in .vee/ created out of necessity, but
+#     provides a good example of how to do some indexed based stuff and read the basic
+#     formate in the .raw files
 
-#-- BUGS:
-#--     Please report them to Github - https://github.com/estrabd/vee/issues
+# BUGS:
+#     Please report them to Github - https://github.com/estrabd/vee/issues
 
-#-- MORE INFO:
-#--     http://www.0x743.com/.vee/1321369959.2011-11-15T09:12:39.html
+# MORE INFO:
+#     http://www.0x743.com/.vee/1321369959.2011-11-15T09:12:39.html
 
-#-- CREDITS:
-#--     B. Estrade, created on 15 Nov. 2011
+# CREDITS:
+#     B. Estrade, created on 15 Nov. 2011
 
-#-- LICENSE:
-#--     DWTFYW
+# LICENSE:
+#     DWTFYW
 
 GENDATE=`date`
 VEEDIR=./.vee

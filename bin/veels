@@ -27,7 +27,7 @@ DIR=.vee
 
 SORT_NEW_FIRST='sort -t. -nr'
 SORT_OLD_FIRST='sort -t. -n'
-SORT=$SORT_NEW_FIRST
+SORT="${SORT_NEW_FIRST}"
 SHOWALL=0
 USELS=0
 LSOPTS='-lat'

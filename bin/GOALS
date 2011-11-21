@@ -1,0 +1,16 @@
+The goals of the current additions are:
+
+1. to create a suite of vee related tools that function harmoniously in the Unix way
+2. eventually fold vee-ified tools into vee itself, thus making vee itself an application
+   built out of these special tools
+
+The goals above represent the desire to transform into something that represents the Unix
+traditions as closely as possible. In doing so, maximal flexibility will be achieved. For
+example, vee's largest weakness is that post management is virtually nonexistent. It's my
+hope to provide the commandline tools that make it possible to write very interesting post
+management tools. And ultimately, vee itself will be more about putting together these tools
+to provide the expected functionality that vee has come to provide.
+
+This approach is opposite of trying to make vee a kitche-sink type of application. I wish
+to take it in the opposite direction, and in doing so hope to better serve those using this
+application even better.

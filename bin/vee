@@ -52,7 +52,7 @@ CUSTOM_SETUP=default_setup
 #
 
 # System utilities required via PATH:
-# cd, pwd, ls, sort, head, tail, cat, grep, groff, fold, expr (built in)
+# cat cd date env find fold grep groff head ls pwd sort tail which
 
 # change log
 # Applied patch from efbeha@gmail.com: 

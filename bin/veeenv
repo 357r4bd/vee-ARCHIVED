@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# will function as a gate way to audit where vee & friends are finding their utilities
+
+AUDIT="cat cd date env find fold grep groff head ls pwd sort tail which"
+
+# temporarily modify PATH; eventually will make it's way to vee & friends
+PATH=/bin:/usr/bin
+
+for u in "${AUDIT}"; do
+  which $u
+done
