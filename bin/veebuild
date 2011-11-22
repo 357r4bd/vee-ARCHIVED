@@ -38,13 +38,13 @@ echo "<!-- ;100000000000000000000000; more HTML -->"
 echo "<!-- ;10000000000000000000000; new index regenerated on $GENDATE -->"
 echo "<!-- ;1000000000000000000000; pre tag --><pre>"
 
-for f in `ls -1 $VEEDIR/*.raw | sort -t. -nr`; 
+for f in `veels`; 
 do
     # title is the 3rd line
-    TITLE=`head -n 3 $f | tail -n 1`
+    TITLE=`veecat -t $f`
 
     # full date string (not epoch) is the first line
-    DATE=`head -n 1 $f`
+    DATE=`veecat -d $f`
 
     # deal with with timezone info in a brutish way (seems like a TZ mismatch in data input will cause error)
     TZ_SYS=`date "+%Z"`
