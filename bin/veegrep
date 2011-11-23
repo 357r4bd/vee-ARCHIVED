@@ -1,0 +1,112 @@
+#!/bin/sh
+
+# USAGE:
+#     %veels | veegrep [[-a][-t "pattern" -b "pattern"] -g "grep options"]
+#         -b "pattern": match just the body text of the *.raw file
+#         -t "pattern": match just the title " "
+#         -a          : modifier, match BOTH body and title (mutually exclusive with -o)
+#         -o          : modifier, match either the body OR the title  (mutually exclusive with -a)
+#     -g "grep opts"  : grep options, passed onto grep
+#
+# USAGE NOTES: 
+#     1. "pattern" is passed directly to grep
+#     2. "-ao" results in undefined behavior (i.e., could be either -a or -o, but clearly not both)
+#     3. "-t foo -b foo" implies title contains "foo" OR body contains foo (equivalent to "-t foo -o -b foo")
+#     4. "-t foo -a -b foo" does the right thing, i.e., both the title and the body must contain "foo" 
+
+# NOTE:
+#     NON-DESTRUCTIVE - does NOT modify or delete files;
+#
+#     Also, there is no support for the Date field since format can't be 
+#     guaranteed to be the default output of `data` or even consistent across
+#     *.raw files. 
+
+# SYNOPSIS: 
+#     Given *.raw file, return file name if criteria is matched
+
+# BUGS:
+#     Please report them to Github - https://github.com/estrabd/vee/issues
+
+# MORE INFO:
+#     http://www.0x743.com/.vee/1321454075.2011-11-16T08:34:35.html
+
+# CREDITS:
+#     B. Estrade, created on 21 Nov. 2011
+
+# LICENSE:
+#     DWTFYW
+
+
+# preserve new lines
+IFS=""
+
+ die_error()
+{ 
+  echo $1
+  exit 1
+}
+
+ die_cleanly()
+{ 
+  exit 0
+}
+
+MATCHBODY=0
+BODYHAS=
+MATCHTITLE=0
+TITLEHAS=
+MATCHBOTH=0
+MATCHEITHER=0
+# defaults to file name returned on match
+GREPOPTS="-l" 
+
+while getopts 'ab:g:ot:' option; do
+    case "$option" in
+       a) MATCHBOTH=1
+          MATCHEITHER=0 # force mutual exclusivity in case of -ao
+          ;;
+       b) MATCHBODY=1
+          BODYHAS="${OPTARG}"
+          ;; 
+       g) GREPOPTS="${OPTARG}"
+          ;;
+       o) MATCHEITHER=1
+          MATCHBOTH=0    # force mutual exclusivity in case of -ao
+          ;; 
+       t) MATCHTITLE=1
+          TITLEHAS="${OPTARG}"
+          ;; 
+    esac
+done
+
+# if no -b or -t
+if [ $MATCHTITLE -eq 0 ] && [ $MATCHBODY -eq 0 ]; then
+    # nothing to do
+    die_cleanly 
+fi
+
+# check appropriateness of -a or -o, which is only the case when -t and -b are used
+if [ $MATCHTITLE -eq 0 ] || [ $MATCHBODY -eq 0 ]; then
+    # if -t foo -b foo, then no need to consider both or either 
+    MATCHBOTH=0
+    MATCHEITHER=0
+fi
+
+while read -r IN <&0 ; do 
+  # make sure file exists, else just ignore line (more Unix-y this way)
+  if [ -e "${IN}" ]; then
+      if [ $MATCHBOTH -eq 1 ]; then
+          #echo "grep $GREPOPTS ${IN}"
+      elif [ $MATCHEITHER -eq 1 ]; then
+          #echo "grep $GREPOPTS ${IN}"
+      else
+          TEXTTOGREP=
+          if [ $MATCHBODY -eq 1 ]; then
+              TEXTTOGREP=`veecat -b "${IN}"`
+          elif [ $MATCHTITLE -eq 1 ]; then
+              TEXTTOGREP=`veecat -b "${IN}"`
+          fi
+          echo $TEXTTOGREP 
+      fi
+  fi
+done

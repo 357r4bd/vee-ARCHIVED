@@ -41,10 +41,10 @@ echo "<!-- ;1000000000000000000000; pre tag --><pre>"
 for f in `veels`; 
 do
     # title is the 3rd line
-    TITLE=`veecat -t $f`
+    TITLE=`echo $f | veecat -t`
 
     # full date string (not epoch) is the first line
-    DATE=`veecat -d $f`
+    DATE=`echo $f | veecat -d`
 
     # deal with with timezone info in a brutish way (seems like a TZ mismatch in data input will cause error)
     TZ_SYS=`date "+%Z"`

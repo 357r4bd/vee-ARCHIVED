@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # USAGE:
-#     %veecat [[-a][-tbd]]
+#     %veels | veecat [[-a][-tbd]]
 #         -b: output just the body text of the *.raw file
 #         -d: output just the date  " " 
 #         -t: output just the title " "
