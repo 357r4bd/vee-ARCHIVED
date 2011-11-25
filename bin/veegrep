@@ -92,21 +92,32 @@ if [ $MATCHTITLE -eq 0 ] || [ $MATCHBODY -eq 0 ]; then
     MATCHEITHER=0
 fi
 
-while read -r IN <&0 ; do 
+ get_title()
+{
+    TITLE=`head -n 3 $1 | tail -n 1`
+    echo $TITLE
+}
+
+ get_body()
+{
+    # figure out how many lones file is for `tail` command
+    LC=`wc -l $1 | awk '{print $1}'`
+    BC=$(($LC-6))
+    echo `cat $1 | tail -n $BC`
+    
+}
+
+while read IN <&0 ; do 
   # make sure file exists, else just ignore line (more Unix-y this way)
   if [ -e "${IN}" ]; then
       if [ $MATCHBOTH -eq 1 ]; then
-          #echo "grep $GREPOPTS ${IN}"
       elif [ $MATCHEITHER -eq 1 ]; then
-          #echo "grep $GREPOPTS ${IN}"
       else
-          TEXTTOGREP=
           if [ $MATCHBODY -eq 1 ]; then
-              TEXTTOGREP=`veecat -b "${IN}"`
+              get_body "${IN}" | grep $GREPOPTS "${BODYHAS}" > /dev/null && echo $IN
           elif [ $MATCHTITLE -eq 1 ]; then
-              TEXTTOGREP=`veecat -b "${IN}"`
+              get_title "${IN}" | grep $GREPOPTS "${TITLEHAS}" > /dev/null && echo $IN
           fi
-          echo $TEXTTOGREP 
       fi
   fi
 done

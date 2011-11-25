@@ -30,7 +30,7 @@
 
 
 # preserve new lines
-IFS=""
+IFS=
 
  get_title()
 {

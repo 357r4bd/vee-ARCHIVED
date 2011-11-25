@@ -1,0 +1,3 @@
+For now anything in here must be run with Perl's "prove" TAP 
+harnes; but I have aspirations of writing a Bourne shell compatible
+TAP harness in the spirit of vee and friends.
