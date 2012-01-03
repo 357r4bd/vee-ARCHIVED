@@ -38,7 +38,8 @@
 
 
 # preserve new lines
-IFS=""
+OLD_IFS=$IFS
+IFS=
 
  die_error()
 { 

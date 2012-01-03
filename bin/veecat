@@ -30,6 +30,7 @@
 
 
 # preserve new lines
+OLD_IFS=$IFS
 IFS=
 
  get_title()
