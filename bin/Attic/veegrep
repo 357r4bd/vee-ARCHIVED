@@ -1,0 +1,54 @@
+#!/bin/sh
+
+OLD_IFS=$IFS
+IFS=
+GREPOPTS=
+TITLEHAS=
+MATCHBOTH=0
+MATCHEITHER=0 
+MATCHBODY=0
+MATCHTITLE=0
+
+while getopts 'ab:g:ot:' option; do
+    case "$option" in
+       a) MATCHBOTH=1
+          MATCHEITHER=0
+          ;;
+       b) MATCHBODY=1
+          BODYHAS="${OPTARG}"
+          MATCHTITLE=0
+          ;; 
+       g) GREPOPTS="${OPTARG}"
+          ;;
+       o) MATCHEITHER=1
+          MATCHBOTH=0
+          ;; 
+       t) MATCHTITLE=1
+          TITLEHAS="${OPTARG}"
+          MATCHBODY=0
+          ;; 
+    esac
+done
+
+ get_title()
+{
+    TITLE=`head -n 3 $1 | tail -n 1`
+    echo $TITLE
+}
+
+ get_body()
+{
+    # figure out how many lones file is for `tail` command
+    LC=`wc -l $1 | awk '{print $1}'`
+    BC=$(($LC-6))
+    echo `cat $1 | tail -n $BC`
+    
+}
+
+while read IN <&0; do
+    if [ $MATCHTITLE ]; then 
+        get_title "${IN}" | grep $GREPOPTS "${TITLEHAS}" > /dev/null && echo $IN
+    elif [ $MATCHBODY -eq 1 ]; then
+        get_body "${IN}" | grep $GREPOPTS "${BODYHAS}" > /dev/null && echo $IN
+    fi
+done
