@@ -1,7 +1,31 @@
 #!/bin/sh
 
-count=0
+JUST_TITLE=0
+JUST_BODY=1
+STRING='.'  # everything?
+
+while getopts 'bs:t' option; do
+    case "$option" in
+    b) JUST_TITLE=0
+       JUST_BODY=1
+       ;;
+    s) STRING="${OPTARG}" 
+       ;;
+    t) JUST_TITLE=1
+       JUST_BODY=0
+       ;;
+    esac
+done
+
 for f in `veels`; do
-  echo $f  $count
-  count=$((count+1))
+  if [ $JUST_TITLE -eq 1 ]; then
+    if [ `echo $f | veecat -t | grep -c $STRING` -gt 0 ]; then
+        echo $f
+    fi 
+  fi
+  if [ $JUST_BODY -eq 1 ]; then
+    if [ `echo $f | veecat -b | grep -c $STRING` -gt 0 ]; then
+        echo $f
+    fi 
+  fi
 done
