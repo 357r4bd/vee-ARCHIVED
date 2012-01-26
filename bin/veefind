@@ -1,0 +1,54 @@
+#!/bin/sh
+
+JUST_TITLE=0
+JUST_BODY=1
+STRING='.'  # everything?
+
+while getopts 'AOXbs:t' option; do
+    case "$option" in
+    A) TITLE_AND_BODY=1
+       TITLE_OR_BODY=0
+       TITLE_XOR_BODY=0
+       JUST_TITLE=0
+       JUST_BODY=0
+       ;;
+    O) TITLE_AND_BODY=0
+       TITLE_OR_BODY=1
+       TITLE_XOR_BODY=0
+       JUST_TITLE=0
+       JUST_BODY=0
+       ;;
+    X) TITLE_AND_BODY=0
+       TITLE_OR_BODY=0
+       TITLE_XOR_BODY=1
+       JUST_TITLE=0
+       JUST_BODY=0
+       ;;
+    b) JUST_TITLE=0
+       JUST_BODY=1
+       JUST_TITLE=0
+       JUST_BODY=0
+       ;;
+    s) STRING="${OPTARG}" 
+       ;;
+    t) JUST_TITLE=1
+       JUST_BODY=0
+       JUST_TITLE=0
+       JUST_BODY=0
+       ;;
+    esac
+done
+
+ _title_grep() {
+   echo $1 | veecat -t | grep -c $STRING
+}
+
+ _body_grep() {
+   echo $1 | veecat -t | grep -c $STRING
+}
+
+for f in `veels`; do
+    if [ "${JUST_TITLE}" -gt 0 ]; then
+       _title_grep $f
+    fi
+done
