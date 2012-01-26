@@ -1,0 +1,12 @@
+Fri May 23 00:02:59 EDT 2008
+
+A very good read on Erlang
+
+--
+
+Not only is this paper a nice overview of Erlang's history, but it also has some golden nuggets regarding concurrent, distributed, and fault-tolerant systems.
+
+'nf
+<a href=http://www.cs.chalmers.se/Cs/Grundutb/Kurser/ppxt/HT2007/general/languages/armstrong-erlang_history.pdf>Paper here!</a>
+
+'fi

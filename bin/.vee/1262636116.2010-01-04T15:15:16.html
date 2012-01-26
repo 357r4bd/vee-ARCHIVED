@@ -1,0 +1,525 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>0x743</title>
+
+<LINK REL="SHORTCUT ICON" HREF="/favicon.ico" type="image/x-icon">
+<LINK REL="ICON"          HREF="/favicon.ico" type="image/x-icon">
+
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+<link rel="stylesheet" href="http://www.0x743.com/style.css" type="text/css">
+
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+_uacct = "UA-1688064-1";
+urchinTracker();
+
+		if (top.location!= self.location) {
+			top.location = self.location.href
+		}
+
+</script>
+<style>
+#vee { overflow: auto; width: 100%; height: 2000px; border: dashed }
+</style>
+
+</head>
+<body>
+
+<table cellpadding="5" width=80% align=center>
+<tr><td valign="top" width="100">
+      <table WIDTH="145" BORDER="0" CELLSPACING="0" CELLPADDING="5">
+        <tr> <td class="menuheading">Menu</td> </tr> <tr>
+	  <td class="leftmenu" nowrap>
+            ~~~~Main<br/>
+            <a href=http://www.0x743.com>Home</a><br>
+            <a href=http://www.0x743.com/contact.php>Contact</a><br/>
+
+            <p/>~~~~Projects<br/>
+            <a href=http://www.0x743.com/vee>vee</a><br/>
+            <a href=http://www.patchlodge.com/x/computermeritbadge>Computer Merit Badge</a><br/>
+            <a href=http://www.patchlodge.com>PatchLodge.com</a><br/>
+            <a href=http://www.0x743.com/projects>Projects Summary</a><br/>
+
+            <p/>~~~~My Bookmarks<br/>
+            <a href=http://acm.lsu.edu/wiki/Resources>ACM@LSU CS Resources</a><br/>
+            <a href=http://share.xmarks.com/folder/bookmarks/JVB1K4n8vD>Programming</a><br/>
+            <a href=http://share.xmarks.com/folder/bookmarks/3FOmEcDzqY>Operating Systems</a><br/>
+            <a href=http://share.xmarks.com/folder/bookmarks/jdvNK7PRGf>Computer Architecture</a><br/>
+            <a href=http://share.xmarks.com/folder/bookmarks/Sz3sD6C2YU>Databases</a><br/>
+            <br/>
+          </td>
+        </tr>
+      </table>
+</td>
+<td valign="top" width="100%">
+
+<!-- SiteSearch Google -->
+<form method="get" action="http://www.google.com/custom" target="_top">
+<table border="0">
+<tr><td nowrap="nowrap" valign="top" align="left" height="32">
+</td>
+<td nowrap="nowrap">
+<input type="hidden" name="domains" value="www.0x743.com"></input>
+<label for="sbi" style="display: none">Enter your search terms</label>
+<input type="text" name="q" size="31" maxlength="255" value="" id="sbi"></input>
+<label for="sbb" style="display: none">Submit search form</label>
+<input type="submit" name="sa" value="Search" id="sbb"></input>
+</td></tr>
+<tr>
+<td>&nbsp;</td>
+<td nowrap="nowrap">
+<table>
+<tr>
+<td>
+<input type="radio" name="sitesearch" value="" id="ss0"></input>
+<label for="ss0" title="Search the Web"><font size="-1" color="#000000">Web</font></label></td>
+<td>
+<input type="radio" name="sitesearch" value="www.0x743.com" checked id="ss1"></input>
+<label for="ss1" title="Search www.0x743.com"><font size="-1" color="#000000">www.0x743.com</font></label></td>
+</tr>
+</table>
+<input type="hidden" name="client" value="pub-2603268298460480"></input>
+<input type="hidden" name="forid" value="1"></input>
+<input type="hidden" name="ie" value="ISO-8859-1"></input>
+<input type="hidden" name="oe" value="ISO-8859-1"></input>
+<input type="hidden" name="safe" value="active"></input>
+<input type="hidden" name="cof" value="GALT:#0066CC;GL:1;DIV:#000000;VLC:336633;AH:center;BGC:FFFFFF;LBGC:ffffff;ALC:0066CC;LC:0066CC;T:000000;GFNT:666666;GIMP:666666;FORID:1"></input>
+<input type="hidden" name="hl" value="en"></input>
+</td></tr></table>
+</form>
+<!-- SiteSearch Google -->
+<!-- content -->
+<pre>
+
+Mon Jan 4 15:15:16 EST 2010
+
+The  Computer Merit Badge: how I'd complete the requirements NOW;
+Part 5
+
+--
+
+(draft - in progress, subject to massive revisions)
+
+In this installment, I am going to discuss some  more  about  the
+second requirement - which deals primarily with programming.
+
+For  most of the languages mentioned below, I have many links un-
+der my "programming language" bookmarks (look to the left) -  in-
+cluding free high quality books.
+
+In  the  previous article, I talked about what a program was on a
+very high level. To review, a program is in its  purest  form,  a
+description of the special purpose computing machine the program-
+mer wishes to make a generally  programmable  computer  (i.e.,  a
+Universal  Turing Machine) emulate or mimic. I mentioned that one
+could literally describe this machine explicitly  (somehow),  but
+more  realistically  they  would describe this machine implicitly
+using a programming language.
+
+In more practical terms, a program begins as a text file  written
+in  some  programming language. If the program is a compiled lan-
+guage (e.g., C, Java, Fortran), it must be translated into object
+code using a compiler. This is because a computer does not under-
+stand the relatively high level language in which the program  is
+written. High level languages were created for the convenience of
+humans - and for nothing more. When a program  is  written  in  a
+high  level language, a compiler must literally translate our in-
+structions into a form the computer  can  understand.   The  text
+file  is usually referred to as the "source" code.  The file that
+is created when the compiler translates, or compiles, the  source
+is  called  the executable, or object code.  The object code con-
+tains the very low level (we're talking primitive "op-codes", en-
+coded in 1's and 0's now) commands that the computer must perform
+inorder to follow the instructions contained in the original pro-
+gram.
+
+Okay,  so there's my obligatory introduction to programming. What
+remains is a basic description of what I understand the  program-
+ming  language landscape to be. In a later post, I intend on pro-
+viding some straightforward advice for getting a programming  en-
+vironment set up for learning. My intent in this future post will
+be get someone interested in programming (or "coding") as quickly
+as possible.
+
+Compiled Languages vs Scripting Languages
+
+Syntax  and  "paradigm" aside, the main difference between a com-
+piled language and a scripting language is  straightforward.  The
+compiled  languages  requires  a  compiler, from which the source
+code is turned into a standalone executable program.   This  exe-
+cutable  program can be invoked without any additional tools. Ex-
+amples of a compiled language are: C, C++, Fortran
+
+This executable is normally platform  specific  and  it  contains
+more  than  just  the pure instructions. It also includes what is
+usually called a "run time environment".  This is why, for  exam-
+ple,  a  single  source file that might be a couple of KB in size
+creates an executable that is larger - maybe even orders of  mag-
+nitude so (e.g., Ada executables are notorious for this.
+
+<a href=http://www.muppetlabs.com/~breadbox/software/tiny/>some info on Linux ELF executables</a> (muppetlabs.com)
+
+A  scripting  language  on the otherhand is NOT compiled. But, it
+requires an "interpreter" to execute it.  This can be thought  of
+as a combination of the compilation and execution phases. The in-
+terpreter is generic and can run *any* valid program written in a
+scripting  language.   It  does sacrifice speed over flexibility,
+when compared to compiled languages. These issues can be  largely
+overcome,  since most scripting languages are designed to use li-
+braries written in a compiled  language.  Examples  of  scripting
+languages are: Perl, Python, Ruby
+
+Here's a neat article on "scripting":
+
+<a href=http://www.perl.com/pub/a/2007/12/06/soto-11.html><i>Programming is Hard, Let's Go Scripting...</i></a> (perl.com)
+
+In it, Larry Wall makes the observations that human langauges are
+"Turing Complete"...and you know what, he's absolutely right.
+
+In general, scripting languages provide the lowest barrier of en-
+try  for writing a program. They also allow for rapid prototyping
+of program ideas and concepts - in fact, the initial  implementa-
+tions  of  many  programs are often programmed in a language like
+Perl. Also, many dynamic websites are written in  scripting  lan-
+guages.
+
+Language Platforms
+
+Irregardless  of  a  language being compiled or interpreted, most
+modern languages run directly  on  the  native  operating  system
+(e.g., Windows, FreeBSD, etc). However, some languages run on top
+of a layer of abstraction ABOVE the native operating system.
+
+This layer is often called a "virtual machine", and  it  is  used
+for two purposes: 1) cross platform compatibility and 2) security
+(increasingly so).  Java, for example, is touted as a language in
+which  you write a program "once" and can run it "anywhere". This
+is not always the case, but if one sticks to the standard library
+provided by the Java Standard Development Kit (SDK), it is likely
+that one can run a program once and that it will run "anywhere" -
+anywhere  that can support a Java Virtual Machine (JVM), that is.
+Java's trick is that that when it is compiled, it produces an in-
+termediate  representation  of the program called "bytecode". The
+bytecode can be undertood by any JVM, so while  the  bytecode  is
+not  specific  to  a particular operating system, the JVM is pro-
+grammed to work specifically on a  particular  operating  system.
+In otherwords, while you can run a Java program's bytecode on any
+JVM (and hence, any platform), you can not run a JVM  created  to
+work on Windows on a Linux or Macintosh machine.
+
+More  languages  are  taking  this "virtual machine" approach for
+more reasons than just the convenience of "writing once". A  vir-
+tual  machine can potentially provide a safe way to run untrusted
+code. Since the virtual machine, to the program, looks  like  the
+actual  operating  system,  the virtual machine can provide for a
+front line of defense against malicious code.  This  approach  is
+well  known  in academic and research circles, but it is just now
+starting to make its way into mainstream products.
+
+The JVM is an old technology, and the "machine" is what is called
+"stack  based". This has to do with how it manages the memory, as
+seen by the program. Newer VMs are being developed that are bene-
+fitting  from years of computer architecture research. The Parrot
+Virtual Machine, for example, is a Perl Foundation project  which
+seeks  to provide a virtual machine that can be used for a multi-
+tude of different languages. This  virtual  machine  is  register
+based,  which  is  basically  how modern digital computers manage
+their memory resources.  It is also targeted for use by scripting
+languages,  such as upcoming Perl 6. It supports any language for
+which a bytecode compiler exists, but has features most useful by
+scripting languages. And yes, that is right, it also uses its own
+type of bytecode.
+
+<a href=http://www.parrotcode.org>The Parrot Virtual Machine</a> (parrotcode.org)
+
+Language Paradigms
+
+Before this section progesses, it should be noted  (and  repeated
+time  and time again), that no "Turing Complete" programming lan-
+guages is any more computationally powerful than  the  other.  No
+matter  the  syntax or other buzz words associated with them, any
+computation that can be performed in language A can  be  done  in
+language B.
+
+Paradigm 1: Imperative
+
+Imperative  programming languages are, to me, languages that work
+by giving to the programming direct access to the "global program
+state".  In  otherwords,  it  has  the  equivalent of variables -
+through which the values of the memory may be directly  affected.
+Most mainstream languages are imperative, for example - C.
+
+Procedural languages, providing direct access to the global memo-
+ry state, fit right in with the notion the von Neumann  architec-
+ture,  which has already been discussed.  It is also the style of
+programming that is the cornerstone of Alan Turing's famous views
+on  computational  power.  Turing  demonstrated  that the allowed
+means of accessing a computing device's memory had everything  to
+do  with its computational power; his demonstrations were methods
+associated with directly reading and writing to  "memory".   This
+direct  access to the memory is the basis for the von Neumann ar-
+chitecture - and thus, the languages that  give  the  programmers
+the  means  of directly reading and writing memory (i.e., usually
+through the use of "variables").
+
+In a imperative program, therefore, memory locations (i.e., vari-
+ables)  are directly manipulated. This lends the programming lan-
+guages to be more of a set of explicit instructions for the  com-
+puter to follow. For example: "assign X the value of 5", Multiply
+whatever is in X by 2, then assign the answer to Y", etc. It also
+makes  use  of  "comparison"  operators, if statements, and other
+program "flow" control statementes (e.g., for, while, etc).
+
+Examples of imperative languages include: C, Fortran
+
+Despite the cries of a small minority of  programmers  interested
+the  following paradigm described (i.e., functional programming),
+the imperative paradigm is the one that is most easily understood
+by humans.  It should be stressed, that despite the criticisms of
+functional programming proponents, imperative programming is nei-
+ther  less elegant or less useful for real programming tasks. In-
+fact, in many cases it is both more  practical,  productive,  and
+efficient than functional programming. In addition to this, func-
+tional programming environments (in almost all cases) are  imple-
+mented  *inside* of an environment that facilitates direct memory
+access - therefore, for many, functional programming (which meth-
+ods  are certainly nice for many situaions in its own right) rep-
+resents the tying of one's hands behind his back.
+
+More on imperative programming:
+
+<a href=http://en.wikipedia.org/wiki/Imperative_programming>Imperative Programming</a> (wikipedia.com)
+
+Paradigm 2: Declarative (e.g., functional)
+
+Whereas imperative languages tell the computer what to do and ma-
+nipulate  the  global  program  state  directly, declarative (for
+functional languages) describe what needs to be  done.  Okay,  so
+this is a bad description.
+
+Under  the  subset  of declarative paradigm approaches is what is
+called, "functional programming". It  is  often  referred  to  as
+"higher order" programming, since it is not as intuitive for most
+humans as the imperative paradigm is; however I reject the notion
+that  functional programming is not for, "mere mortals", as a lot
+of people like to say.
+
+In a purely functional language, the program has NO access to the
+global program state. There are no variables, and no means to di-
+rectly control the value of the memory used by the  program.  And
+from  what basis does this paradigm derive its computational pow-
+er? The power of this approach is proven to  be  as  powerful  as
+Turing's  by  none  other than his PhD advisor, Alonzo Church. So
+the man who  developed  and  popularized  direct  memory  access,
+worked  with  the  man who invented what is called "Lambda Calcu-
+lus".
+
+To be honest, while I understand the concepts  behind  functional
+programming,  I  do  not  know  enough  to attempt to get details
+across. What I can say is that it is called "functional" program-
+ming because functions can both accept other functions as parame-
+ters and produce new functions as output. The anonymous functions
+that  are created and returned are called "lambdas", and in doing
+so, they abstract the general idea of variables.
+
+Most practical functional languages do in fact provide direct ac-
+cess  to  the  global program state. This causes problems because
+modifying the global state of the  program  can  have  unintended
+"side  effects".  It  is the elimination of possible side effects
+that functional programming fans like about that paradigm because
+it  makes writing programs more efficient and less prone to error
+- once, of course, this approach is mastered.
+
+Functional programming must be understood, however, because it is
+very  much "the other side of the coin" when it comes to program-
+ming. When one understands what functional programming is and how
+it  differs fundamentally from imperative programming, he is also
+able to understand a program from a whole new  perspective.  It's
+at  this  point  that terms like "global program state" and "side
+effects" mean something significant.
+
+Examples of  functional  languages  include:  dialects  of  Lisp,
+Haskell, ML
+
+More on declarative and functional programming:
+
+<a href=http://en.wikipedia.org/wiki/Declarative_programming>Declarative Programming</a> (wikipedia.com)
+<a href=http://en.wikipedia.org/wiki/Functional_programming>Functional Programming</a> (wikipedia.com)
+
+Paradigm 3: Mixed - Imperative/Declarative
+
+It  is  becoming  increasingly  common to see both imperative and
+functional features available in the  same  language.  There's  a
+reason for this - neither approach is the best one for all appli-
+cations. It's a continuum, with imperative on one side and  func-
+tional on the other.  Few programs are best implemented as purely
+imperitive or purely function - the optimal implementation  (sub-
+jectively speaking) lies somewhere along this continuum. It's de-
+termined by both the  programmer's  knowledge  of  the  language,
+problem,  envisioned  solution, and ultimately what they consider
+to be the most valid definition of the program's global state.
+
+Examples of languages that provide both imperative and functional
+features are mostly scripting languages, such as Perl and Python.
+Still others are becoming more mixed with each release,  such  as
+Java  and  C++.  A  new language on the scene that shows a lot of
+promise is, the D Language.
+
+Recently, a very nice book on using functional programming  meth-
+ods  in  Perl  called,  "Higher Order Perl", has been made freely
+available.
+
+<a href=http://hop.perl.plover.com/book/>Higher Order Perl</a> (plover.com)
+
+Originally functional languages are also now loosening their  no-
+tions  of purity. Common Lisp has allowed the direct manipulation
+of global state for a very long time; Haskell, one  of  the  more
+popular  purely  functional  languages, is also beginning to make
+affecting the global state possible - though it is still  clearly
+not something that is recommended.
+
+Adding  functional  features to imperative languages is often the
+most practical and useful thing to do. As stated  above,  impera-
+tive languages already provide the means of directly manipulating
+state (e.g., variables). It's not hard to  provide  some  "handi-
+capped"  language  constructs for use in and among the imperative
+commands.  Adding direct state manipulation  to  functional  lan-
+guages  is  a  bit  more  tricky  - can be seen by the pains that
+Haskell takes to provide I/O libraries and facilities.
+
+Ultimately, it is up to the programmer to decide  what  the  best
+solution  is and what tool he should use. Whether the language of
+choice is purely imperative, functional, or a mix of both; it  is
+still  up  to  the  programmer to implement the solution as effi-
+ciently and enjoyably as possible.
+
+Object Oriented Programming
+
+OOP can be viewed as a paradigm, but I am  not  including  it  as
+one.  It is really a way to organize and compose a program. There
+are out there that provide for imperative OOP,  declarative  OOP,
+and  a  mixture  of both. OOP is favored by many, but detested by
+many. One must understand what it is, but it is not a requirement
+to  master  in  my opinion. In many ways, it is inappropriate for
+many tasks - but it is especially inappropriate when the program-
+mer just doesn't like using it.
+
+But as always, the features it provides are helpful when used ap-
+propriately and along with other  reasonable  and  practical  ap-
+proaches. Simple class definitions and a minimal amount of useful
+methods for each class useful inside of a larger program, but  as
+with any way of doing things, it is more important to be pragmat-
+ic about its application than to use it inappropriately.
+
+Examples of OOP languages include: Java, Smalltalk
+
+More on OOP:
+
+<a href=http://en.wikipedia.org/wiki/Object-oriented_programming>Object Oriented Programming</a> (wikipedia.com)
+
+More info on programming paradigms:
+
+<a href=http://en.wikipedia.org/wiki/Programming_paradigm>Programming Paradigms</a> (wikipedia.com)
+
+Languages and Their Uses
+
+Below, list some common languages and a few of my  favorite  lan-
+guages  (even if I don't use them or don't know how to use them:)
+and for what applications they're primarily used.
+
+0. Perl
+
+Perl is a scripting language that provides both imperative, func-
+tional,  and  OOP features. I hate when people say it is simply a
+text processing language, because it is SO MUCH MORE. Perl is  my
+favorite  language  of  all  time.  It's  useful for all kinds of
+tasks, especially for rapidly prototyping a program or idea. Perl
+5  is the most popular version, but Perl 6 earning a repuation in
+its own right. Perl 6 looks absolutely incredible (to me), and as
+mentioned above, it uses the Parrot Virtual Machine environment -
+which looks like the JVM, only "done right".
+
+1. C
+
+C is a compiled language, used for performance sensitive applica-
+tions. It was originally created to make Unix portable, and there
+are a ton of compilers for nearly any platform. Knowing it, or at
+least  understand its role and approach, is essential to reaching
+any computational Zen state.
+
+2. Java
+
+Java is the most popular "write once, run anywhere" language;  it
+is  OOP,  has some nice features, and is becoming more functional
+all of the time. It's used a lot for  computer  science  research
+tool kits.
+
+3. Fortran
+
+Fortran  is  the  mother of all languages. It was created to help
+scientists write programs used in their  research.  It  maximizes
+speed  and efficiency. It's the prototypical imperative language.
+I like it a lot and respect its role  in  historical  and  modern
+computing.
+
+4. D
+
+To me, it's like a compiled Perl. It makes associative arrays and
+string handling very easy. It's my next favorite  language  after
+C,  and  this is only because its compiler is not as supported as
+C's many compilers...but then again, which languages' is?
+
+5. C++
+
+I dislike C++ very much. It's an attempt to strap on  OOP  to  C.
+Learn and use it at your own risk. Don't say I didn't warn you.
+
+6. Python
+
+Python  is  a scripting language that has become very popular. It
+offers an alternative to Perl, but I don't know  of  many  people
+who love Perl who have left it for Python.  It fits the needs for
+a great many talented programmers, and while I don't  use  it,  I
+respect the language and the people who use it.
+
+7. Qore
+
+Qore is a truly multi-threaded scripting language that I've taken
+to recently. It's syntax is similar to Perl, but completely unre-
+lated  underneath.  What  it  has over Perl, is its native multi-
+threading. Perl (and Python) "fake" threads - which is not  some-
+thing I like very much.
+
+more later (including a summary and conclusion)
+
+
+--
+Powered by <a href="http://www.0x743.com/vee">vee</a><br/>Copyright &copy; 2006-2011
+<!-- content -->
+</td>
+<td valign="top">
+      <table WIDTH="145" BORDER="0" CELLSPACING="0" CELLPADDING="5">
+        <tr> <td class="menuheading">Links</td> </tr>
+        <tr> 
+          <td class="rightmenu">
+            <!-- right top menu -->
+            <a href="http://www.freebsd.org">FreeBSD</a></br/>
+            <a href="http://www.perl.org">Perl</a></br/>
+            <a href="http://www.qore.org">Qore</a>
+          </td>
+        </tr>
+      </table>
+</td>
+</tr>
+</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>

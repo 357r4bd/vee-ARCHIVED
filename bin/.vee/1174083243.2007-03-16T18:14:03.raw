@@ -1,0 +1,26 @@
+Fri Mar 16 18:14:03 EDT 2007
+
+[vee] batch example (repost)
+
+--
+
+I decided to keep just the one vee-log.  For vee stuff, I am going to use the "[vee]" tag at the beginning.  This is a repost of the vee in batch mode example.
+
+---
+
+I  have  a cronjob running a pretty meaningless clamav scan every
+10 minutes.  The command part of the crontab entry looks like:
+
+clamscan -r -i --move=./infected | vee  -b  -I   -d  ./clamav  -t
+"clamav scan of archive files"
+
+You can see the vee-log live in action at:
+
+Here
+
+Please report any problems that you might be experiencing.
+
+One  thing  is  for  sure, it would be nice for vee to reformat a
+particular message all by its lonesome.  Hmmmm.....
+
+Cheers.

@@ -1,0 +1,27 @@
+Mon Nov 14 17:16:20 CST 2011
+
+Other Unix tools...
+
+--
+
+I started thinking the other day that there might be a good way to analyze all of the fundamental Unix tools out there that to find
+holes in this matrix (of sorts) where no tool exists, but should.
+
+I was pointed to this page today, and it looks pretty neat. Some of the utils deal with more complex command linking, most notably
+"pee". It's like "tee", but for deviating to another process rather than output STDOUT to a file.
+
+'nf
+<a href=http://kitenet.net/~joey/code/moreutils/>more utils...</a>
+'fi
+
+I was further excited this weekend by learning of the parallel gzip utility that provides a gzip workalike, but actually takes
+advantage of manycore machines. It's called "pigz". Another great name.
+
+'nf
+<a href=http://www.zlib.net/pigz/>pigz</a>
+'fi
+
+I've been very interested in learning more about Unix's deep rooted and practical philosophies; and it might be just enough motivate
+to attempt to write my own fundamental Unix tools that do one thing, do it well, and work play well with others.
+
+This also motivates me a little to think of how I can make vee more of a utility and not just for blagging over the commandline.

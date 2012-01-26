@@ -1,0 +1,13 @@
+Sun Dec 6 17:56:43 EST 2009
+
+GOTO
+
+--
+
+It occurs to me why the GOTO statement is so bad, as in Dijkstra's eyes. Most other commentaries on GOTO indicate that it is bad because it creates unreadable code; which is true - unreadable for humans.  It is not all that, however, when you want to do well defined things very fast - and of course, it helps that the source code is automatically generated.
+
+During the activity of "programming", or enumerating the steps that a computer is to follow, it is necessary to strike a balance between implicit and explicit expression of methods and steps.
+
+Pure functional programming is nearly fully implicit, being declarative (i.e., "what" rather than "how"). Shared memory parallelism achieve much of its gains over explicit message based parallelism due to the fact that much of what happens is implicit, and is therefore encoded in the nature of the method or procedure. The other extreme, i.e., of being maximally explicit, can be illustrated through assembly lanuage programming - though there is still room for implicit methods to be used (especially through automation, via a compiler).
+
+The GOTO statement is bad if wielded unwisely because it provides the programmer with too much access to the explicit flow of the program or change in state.  These statements are not even possible in purely functional languages, but are in procedural languages - therefore it is not a problem there. In terms of maximizing efficient execution, the GOTO statement is indeed a valuable tool to have.  One clear example would be in the programming of Finite State Machines in a language.  The Ragel State Machine Compiler makes use of GOTOs with extreme prejudice; and it is okay here because the source code creation is automated (i.e., one describes the FSM in the Ragel description language, and picks a target language for which the FSM is written for source compilation and execution).  FSM are one example where GOTOs are okay because FSM (i.e., non-deterministic ones) have defined for each input, an action - and in that case, automating code (using GOTOs or not) is safe (though not necessarily "easy").

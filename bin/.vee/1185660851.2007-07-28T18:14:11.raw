@@ -1,0 +1,14 @@
+Sat Jul 28 18:14:11 EDT 2007
+
+[vee] Controlling line breaks
+
+--
+
+I don't know why I didn't think of this before, but controlling line breaks (at least with groff) is as easy as knowing the syntax!
+
+Placing "'nf" above a line says, "don't break the following text". To re-enable regular line breaks, use the "'fi" command before the text you want to start breaking.
+
+Here is the link (brought to you thanks to the 'nf control):
+
+'nf
+<a href="http://www.sunsite.ualberta.ca/Documentation/Gnu/groff-1.16/html_node/groff_66.html#SEC69">http://www.sunsite.ualberta.ca/Documentation/Gnu/groff-1.16/html_node/groff_66.html#SEC69</a>

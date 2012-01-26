@@ -1,0 +1,32 @@
+Tue Mar 2 15:57:19 EST 2010
+
+Plan 9 -> Alef -> {C Threads, Limbo} -> Go
+
+--
+
+I am reading the paper describing Plan 9:
+
+'nf
+<a href=http://plan9.bell-labs.com/sys/doc/9.html>http://plan9.bell-labs.com/sys/doc/9.html</a>
+'fi
+
+And in the section talking about "Parallel Programming", it mentions that instead of C, one should use "Alef" to write parallel programs. I had heard of this before, but decided to look it up on WP.
+
+'nf
+<a href=http://en.wikipedia.org/wiki/Alef_(programming_language)>http://en.wikipedia.org/wiki/Alef_(programming_language)</a>
+'fi
+
+And, interestingly it not only says that Alef basically failed for maintenance reasons, but lead directly to the creation of "the thread library for C". I assume this is pthreads, but I have no real idea ATM.  Alef also inspired both Limbo [1] (a language for writing distributed systems in for the Inferno Operating System [2]), but also, Go. 
+
+So, there is a clear lineage here from Plan 9 to Go. And while the devil of Plan 9 seems to be in the details, I would imagine that if Google was seriously looking to create the most robust and enduring distributed computing empire on Earth, then their logical conclusion would be to go with the one, true "Unix successor"; i.e., Plan 9. I just wonder how much of their network and infrastructure is currently running this set up. The Plan 9 creators are now clearly bought and paid for by Google, which has been made clear by Go - not that this is a bad thing. It seems to me to be a very good and cool thing. 
+
+Okay, back to reading :)
+
+'nf
+<pre>
+References
+  [1] <a href=http://en.wikipedia.org/wiki/Limbo_(programming_language)>http://en.wikipedia.org/wiki/Limbo_(programming_language)</a>
+  [2] <a href=http://en.wikipedia.org/wiki/Inferno_(operating_system)>http://en.wikipedia.org/wiki/Inferno_(operating_system)</a>
+</pre>
+
+

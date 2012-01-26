@@ -1,0 +1,25 @@
+Fri Feb 26 22:22:39 EST 2010
+
+Go and it's relation to Plan 9
+
+--
+
+At first, I was thinking the logo looked similar to Plan 9's "Glenda".  
+
+It was pointed out to me on a forum that, <i>"Plan 9's Glenda and Go's gopher were both created by Renee French -- who is married to Rob Pike."</i>
+
+'nf
+  <a href=http://forums.freebsd.org/showthread.php?t=8320>http://forums.freebsd.org/showthread.php?t=8320</a>
+'fi
+
+Though, there's no source attributed to this. 
+
+Perhaps it's relation to Plan 9 or the apparent fact that Google uses Plan 9 a lot had been lost on me.
+
+'nf
+  <a href=http://go-lang.cat-v.org/>http://go-lang.cat-v.org/</a>
+'fi
+
+<i>This site aims to collect various information and other resources about the Go programming language designed by Ken Thompson, Rob Pike and Robert Griesemer at Google.</i>
+
+Interesting! If I find more, I'll post - but I just find it weird that these connections are not so clear. It makes sense that Google would use Plan 9, perhaps for their "cloud". It makes even more sense that Google would want a Plan 9..err, cloud, scripting language. Perhaps Go fits this bill well.

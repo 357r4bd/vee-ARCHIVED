@@ -1,0 +1,24 @@
+Thu Oct 18 23:29:46 EDT 2007
+
+recursively generating iterators in Perl
+
+--
+
+I finally posted my write up at Perlmonks.
+
+<i>
+The motivating application for learning to do this is related to problem of generating valid strings given a deterministic finite automata (DFA), which is a machine that can be described using pure regular expressions.
+
+Normally these machines are used as string acceptors, but here I wanted to do the opposite, and use them as string generators. I had recursive solutions, but I wanted something that I could use as an actual iterator - i.e., produce the next string and halt the execution until I wanted the next one.
+
+The idea of string generation is not as intimidating as it seems (especially if I am playing with it:) because the DFA can be taken as a directed graph where the states are the nodes, and the transitions between states are the edges. Each transition may have multiple labels (i.e., symbols), but this fortunately does not make what I need to do any more difficult conceptually.
+
+In order to find all paths that go from the start state (node) to an accepting state, one may use a depth first traversal (DFT) of the directed graph. Using this method, a valid string is simply the concatenation of the symbols labeling each edge in the valid path. A path is valid if it is acyclic and goes from the start state to some accepting state. A related method may find just the acyclic paths, but a DFT is also able to detect (and follow to a certain depth) cycles.
+
+I am familiar with implementing this as a recursive routine, and that works fine when all I want is a dump of all strings. It doesn't work so well if I want to create a real iterator that offers some control of the traversal's execution. Some DFAs may also create a lot of strings depending on how "deep" one wants to go, so it is not a good idea to have to generate a ton of strings if all I want is a few.
+</i>
+
+'nf
+<a href=http://www.perlmonks.com/?node_id=645222>Read more...</a>
+
+'fi

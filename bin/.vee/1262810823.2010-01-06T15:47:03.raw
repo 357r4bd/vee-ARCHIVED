@@ -1,0 +1,7 @@
+Wed Jan 6 15:47:03 EST 2010
+
+[vee] thinking about a new feature
+
+--
+
+vee is largely a "complete" tool - in that it does everything that I want; no more, no less. I was thinking about facilitating "&lt;prev" and "next&gt;" links, though. I think I know how to do it (using redirects). It's gotten me thinking a little more about how to more properly allow for better management of all posts. I still think that any serious post management should be done so using external utilities, so I don't want to cross this line. Looking at my friend's quest for 1 million words has gotten me interested in making this a tool that is more friendly to writing and publishing collections of work (e.g., a book comprising of many chapters, etc).  And still another issue that I have not resolved is how to incorporate versioning software such as Subversion or one of the fancy distributed VC tools out there....

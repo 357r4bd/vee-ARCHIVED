@@ -1,0 +1,11 @@
+Tue Mar 20 12:59:46 EDT 2007
+
+site redesign
+
+--
+
+I've been playing around with the actual look of 0x743 for a little while, and I like the current look of gray boxes and whatnot.  I found the basis for this page at the BSDCAN site, so I simply copied the index.php and style.css file.  I am not big on CSS, so all I did was tweak the colors of the boxes and removed the Canadian flag background that they had.
+
+I have not been actively tweaking vee because it pretty much does what I want it to.  I think this is really cool, and I am enjoying using it a lot.  It simplifies things a lot.  I don't think I am going to be using it for the Perl FLaT page because that is something that really should be done with a wiki.  And trust me, I have no desire to try to implement a wiki simply with vi and some unix tools!
+
+Cheers

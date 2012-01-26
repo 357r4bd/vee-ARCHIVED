@@ -1,0 +1,14 @@
+Wed Sep 10 11:33:48 EDT 2008
+
+Distributed Finite State Machines Using MPI
+
+--
+
+While I never got around to playing with Erlang this summer, I did find some time to play around with creating distributed finite state machines using MPI.
+
+These basic examples can be expanded into creating real distributed simulators for distributed algorithms, systems, and protocols.  It is simply meant for proof of concept and I still very much want to become familiar with Erlang.
+
+'nf
+<a href=http://www.cct.lsu.edu/~estrabd/mpi-fsm/>http://www.cct.lsu.edu/~estrabd/mpi-fsm/</a>
+
+'fi

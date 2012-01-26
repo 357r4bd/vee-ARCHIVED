@@ -1,0 +1,25 @@
+Sat Sep 8 12:56:27 EDT 2007
+
+[vee] themes, mods, and utilities
+
+--
+
+I started a page to track user contributed modifications, utilities, and themes. It is in anticipation of the flood of users coming after the Freshmeat announcement (yeah right!!) :).
+
+'nf
+<a href="http://www.0x743.com/vee/themes_and_mods.html">http://www.0x743.com/vee/themes_and_mods.html</a>
+
+'fi
+Utilities
+
+Tools that aid in post management, etc.  The purpose and scope of these tools fall outside of what vee's intent is - a simple, easy to use blog entry tool.
+
+Modifications:
+
+I don't see a lot of options here, but it encompasses user-modified versions of vee that provide functionality that is within the scope of vee, but is not something that I want to include in core.  Options include: spell checking, special formatting (latex -> pdf, etc), etc.
+
+Themes:
+
+This would essentially be bundles of top and bottom templates along with associated files.
+
+Cheers.

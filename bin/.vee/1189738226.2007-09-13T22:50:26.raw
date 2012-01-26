@@ -1,0 +1,54 @@
+Thu Sep 13 22:50:26 EDT 2007
+
+[vee] Post management improvements
+
+--
+
+Originally, vee only allowed one to modify the most recent post after it had been posted.  Now one has a lot more flexibility.  The features aren't sophisticated, but they make post management a lot easier. 
+
+The summary of these features is below:
+
+Before this begins, there is a new term.  "Post reference number" is how far back in line a post is from the most recent post.  For example, a post reference number of "10" means that the post is the 10th most recent post in the list. This may not always be the case, but this will be explained in a bit.
+
+1) Listing posts:
+
+'nf
+% vee -n # list posts, newest to oldest; includes current post reference number
+'fi
+
+'nf
+% vee -o # lost oldest to newest (not very useful and may be deprecated)
+'fi
+
+2) Editing posts:
+
+'nf
+% vee -l [-f someformat] # modify most recent post and reformat
+'fi
+
+'nf
+% vee -L refnum [-f someformat] # modify post number "ref#" and reformat
+'fi
+
+'nf
+% vee -r refnum [-f someformat] # reformat post number "ref#" (no chance to edit"
+'fi
+
+'nf
+% vee -R [-f someformat] # reformat all with someformat
+'fi
+
+Note: listing posts withe "-n" option will show the post's current reference number.
+
+3) Deleting a post:
+
+Deleting a post can be accomplished by deleting the entry in the main INDEX, then:
+
+'nf
+% vee -p # lists posts that have a *.raw file, but no entry in INDEX
+'fi
+
+'nf
+% vee -P # permanently deletes all posts list with "-p"
+'fi
+

@@ -1,0 +1,14 @@
+Mon Dec 28 22:15:25 EST 2009
+
+Devel::NYTProf profiler for Perl
+
+--
+
+This looks neat! It also allows for some exporting into Kcachegrind.
+
+'nf
+  <a href=http://blog.timbunce.org/2009/12/24/nytprof-v3-worth-the-wait/>Blog announcement...</a>
+  <a href=http://search.cpan.org/~timb/Devel-NYTProf-3.01/lib/Devel/NYTProf.pm>Devel::NYTProf's CPAN Page</a>
+'fi
+
+...now I just need a reason to use it! :)

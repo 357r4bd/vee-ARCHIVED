@@ -1,0 +1,21 @@
+Sat Jul 28 17:04:09 EDT 2007
+
+Good article on GAs
+
+--
+
+This article as New Scientist caught my eye because if gives a pretty good overview of evolutionary algorithms applied to problems of design. Their premise, that GA's are surpassing the abilities of human designers is not new nor is it noteworthy in my opinion. GA's do not exhibit intelligence, but they do allow an efficient way to search a very large search space of viable combinations of properties.
+
+<a href="http://xrl.us/3jy8">
+http://xrl.us/3jy8
+</a>
+
+From my point of view, the most difficult part of writing a genetic algorithm is determining how to formulate what you are evolving.  In the article, they talk about designing things like ship hulls.  In engineering design, there is often a balance between like the amount of material, stength, flexibility, etc.  In otherwords, the algorithms try combinations and designs that a human engineer never would.  In doing so, it is not unusual for superior designs to be found.  It is even more common that these designs are like nothing a person would have tried. 
+
+Now, when I say formulate the problem, I am not talking about the fitness function - the thing that tests if an individual is "fit" enough to be mated with another fit individual.  I am talking about deciding what parts are the "genes" - or in otherwords, how are the pieces and parts that are changed designed?
+
+One interesting aspect of this for me would be to apply it to algorithm design.  My problem here is, how do you break up an algorithm?  It seems to me that on some level you have to design some constituent parts that fit together - like Lego blocks.  It is these blocks that are then put together by the GA, tested for favorable characteristics.  The combinations of these characteristics are then propagated through the evolutionary process.
+
+Here is a thought exercise: how do you evolved a code?  It seems that you can't simply use the syntax of the language as the genes - it would be impressive just to get a piece of code that could compile.  So, you have to have chunks of code that you know are valid already - chunks that could then be placed into some sort of predefined template.  After thinking about this for sometime, it seems like you'd have to design your process to the point where you are really just selecting the combination of a certain set of routines that you know, when put together, do what you want them to.
+
+Maybe one day I'll sit down and write a program that evolves an "algorithm," but for now it seems to me that applications for GA's requires the problem to be broken up into pieces for which the evolutions simply the combinations of routines.  Is there a way to evolve chuncks of code in an interleaving fashion such that you can control what they do such that you have a good chance of having "individuals" that pass your fitness function?

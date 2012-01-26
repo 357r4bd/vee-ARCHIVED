@@ -1,0 +1,30 @@
+Wed Sep 12 00:17:18 EDT 2007
+
+[vee] Testing a new feature ... filters
+
+--
+
+I  am testing a new feature that should dramatically increase the
+functionality of vee.
+
+This new feature is a custom filter that is applied right  before
+formatting is applied.
+
+The following image has been inserted where a simple keyword once
+appeared.  The sample filter is basic, and I have  no  intentions
+of  creating anything beyond that.  Once I realease this it is my
+hope that users will create useful filters.
+
+I will be developing a "standard," but the main requirement  will
+be that it was accept the raw text of the post via STDIN and out-
+put the modified "raw" text via STDOUT.
+
+More later...oh, and here is that image:
+
+'nf
+<img src=http://www.emaspro.com/Portals/0/images/Logo%20-%20Auburn.jpg>
+'fi
+
+Cheers....
+
+PS: I have not committed it to SVN yet, but once I do I will increment minor version and will get around to creating tags at the various release points; this will allow me to have a "bleed edge".

@@ -1,0 +1,15 @@
+Thu Feb 14 14:56:24 EST 2008
+
+returning to FreeBSD
+
+--
+
+In celebration of the Lenton Season, I've decided to go back to FreeBSD.  I've been using Ubuntu for over a year, and it's time for a change.
+
+The reasons are many, but in short I just missed the wonderful interactive environment provided for by FreeBSD.  It is amazing how refreshing it is for me to be writing this entry from the new set up.
+
+It is hard to describe, but in retrospect my time of Ubuntu was easy and virtually pain free.  What's the problem you say?  Well, it made me complacent.  My time on the computer was no longer enjoyable or rewarding, and I could feel myself slowly getting sick of it.
+
+I am not saying that FreeBSD is hard - it is certainly not.  It is extremely rewarding, though, and it allows me to customize my environment the way I want it.  It also keeps me sharp - and I've been feeling like I've gotten dull with my skills lately.
+
+I am currently using Fluxbox as my window manager, but I am going to give Xmonad a try once I am able to install it from ports.  I've reported installation problems on both 6.2 and 7.0, so hopefully it is easily resolved and not something I am doing wrong.

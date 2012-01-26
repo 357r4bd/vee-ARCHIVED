@@ -1,0 +1,34 @@
+Thu Apr 10 16:09:43 EDT 2008
+
+the difference engine
+
+--
+
+ 
+'nf
+<a href=http://www.news.com/8301-13772_3-9915667-52.html?part=rss&subj=news&tag=2547-1_3-0-20>This is awesome</a>;
+'fi
+
+Some background: 
+ 
+It was used to tabulate polynomial functions, so it wasn't "universal" the way modern programmable computers are, but it was still an incredible achievement for its time and glipse of things to come. The theoretical model for computers as we know them today were developed and proven in 1937 by Alonzo Church and Alan Turing. 
+ 
+Modern computers represent Universal Turing Machines, and the hardware model used is called the "von Neumann" architecture. This architecture is pretty close to the conceptual "parts" of a TM, except it uses random access memory instead of a read-write tape. "Universal" means that it can be programmed to emulate any other "machine". In this case, a "machine" would be better known as a program today. 
+ 
+The difference engine is basically the physical representation of a program that can calculate polynomials based on specific input. In these terms, "programming" the difference engine is analagous to putting input parameters into the program that the machine represents. There is a specific TM (actually, infinitely many) that can be made to function identically. In a universal TM you'd write a program by which it emulates the appropriate TM, thus accomplishing what the difference engine does. 
+
+Babbage envisioned a more general machine, known as the analytical engine.
+
+'nf
+<a href=http://en.wikipedia.org/wiki/Analytical_engine>http://en.wikipedia.org/wiki/Analytical_engine</a>
+'fi
+ 
+The original universal computers were mostly mechanical, using relays and such. Here is a link to a hobby relay computer that somebody took the time to build. It is not 100% mechanical, but there's nothing stopping anyone from building one that is. 
+ 
+'nf
+<a href=http://web.cecs.pdx.edu/~harry/Relay/index.html>http://web.cecs.pdx.edu/~harry/Relay/index.html</a>
+'fi
+
+Enjoy! 
+
+ps: if I seem like I enjoy this stuff way too much, it is because I do; what is more remarkable is that I am actually starting to appreciate this sort of historical perspective.

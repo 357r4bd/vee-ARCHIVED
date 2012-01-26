@@ -1,0 +1,61 @@
+Fri Oct 2 12:42:34 EDT 2009
+
+The Computer Merit Badge: how I'd complete the requirements NOW; Part 3
+
+--
+
+This installment will not be as long or involved as the previous 2, but it does built upon what I discussed in them
+
+The second part of requirement #1 says, "Describe the major parts of a computer system." And this is what I will do, to some degree.
+
+Today, mainstream computers are based upon what is called, the "von Neumann" architecture.  This architecture was one proposed by a man named Jon von Neumann, who in his 50 years of life contributed significantly to many scientific fields.  Computer Science was one of them, and his contributions to the field arguably put computer technology (and the US) in a position to advanced significantly in the years to follow.
+
+The von Neumann architecture was proposed as a solution to the problem of how to construct a device that physically realized the theoretical general purpose computing model proposed by Turing.  This model is briefly discussed in the first installment of this series, but in short it provides the theoretical basis for constructing machines that are able to simulation other "machines". The machines that a Turing Machine can simulate are realized today as computer programs. The clear difference between the theoretical concept of a Turing Machine and what is physically realizable is, of course, the memory in a real machine can't be infinite. So, technically, any computer today (of von Neuman archecture or not), is really what is known as a "linearly bounded automata." But I digress.
+
+So what does the von Neumann architecture consist of?  Well:
+
+1. a processing unit (i.e., a CPU)
+
+2. memory, providing random access for the reading and writing of programs and raw data
+
+3. facilities for input and output devices
+
+Is this literally similar to the Turing Machine? No. A Turing Machine actually consists of a tape (i.e., the memory + input) and a "read/write" head to manipulate the tape. However, the read/write head allows for random access to memory (albeit not necessarily direct). There are technically no input or output devices beyond the tape. The initial values of the tape and starting position of the read/write head are all the TM provides for input. And to make matters more complicated, the "input" of the tape consists of data and program instructions encoded together. TMs are very interesting devices, but I do not have the time nor expertise to discuss them much here.
+
+Now, back to the major parts of a computer system.  Modern computers are very complex, but the basic parts that make in them of the von Neumann type are there.
+
+1. a processor
+
+2. RAM (i.e., random access memory)
+
+3. Hard drive (i.e., a persistent instance of random access memory, a.k.a, "storage") 
+
+4. input (keyboard, mouse, cd-rom/dvd, etc)
+
+5. output (monitor, printer, cd-rom/dvd, etc)
+
+Are there other types of architectures? The answer is YES, and they are called collectively as, "non-von Neumann" architectures.  And while some of them are modeled off of the Turing Machine concept, not all are.  For example, a man name Alonzo Church (i.e., Turing's PhD Advisor), created an equivalent but completely different may to investigate the questions of "computability" that Turing was addressing with his models. Church's formulation has come to be known as "Lamda Calculus," and is the basis for an approach to writing programs called, "functional programming." I will discuss this more when I discuss the requirement about programming.
+
+Since the time of Turing, Church, and von Neumann, there have been many conceptual models proposed that are as "powerful" as the Turing Machine.  Few, however, have provided the same basis for building computational devices than von Neumann's. One interesting factoid is that when one wishes to prove that their conceptual model is as powerful as a TM (or "universal"), the easiest way to prove this is to build a functioning TM out of their concept.  This can be done, for example, using the set of rules shown to be universal which are called, "Conway's Game of Life." (check out a little tool called Golly)
+
+So what sets the von Neumann architecture apart from the others, including machines that mimick the operation of a Turing Machine (well, linearly bounded automata)? The answer goes back efficiently accessing that vital ingredient required for computational power by a device - MEMORY! The von Neumann architecture is conceptually meant to facilitate one thing - the efficient access to memory.  Whereas in a TM, there is literally a single tape and read/write head containing the input data, the program's instructions, and the "working" memory required for the execution of the program; the von Neumann architecture provides direct (the key) access to all of the memory, which is intuitively how we think about the memory on our computers today. Another way to say this is, the von Neumann architecture gives one direct access to a running program's "state," whereas other paradigms either do not (in purely functional approaches) or in a very convoluted way (e.g., a "real" TM or a TM built from cellular automata in the GOL).
+
+This way of thinking has also affected how most think about programming and programming languages.  Relatively few brave souls engage in functional programming, as compared to those who engage in programming that is conceptually based on the von Neumann architecture. While today, many traditional programming languages are incorporating "functional" features that give some conveniences to the programmer, writing a program that is meant to be executed in a top-to-bottom way (i.e., procedurally) and that stores values in "variables" relies on the view that the computer executing the program has direct access to the place in memory where this variable is storing its data.  Since it is usually of no concern where in memory the computer stores this information, the programmer just assumes "on demand" access to random memory locations. And this is why the most powerful access model of memory is called "random access."  At some point when you take the time to learn more about the Turing Machine and the hoops a "program" must jump through to store and retrieve the data written to the tape, an appreciation for the direct access to memory that the von Neumann architecture will developed.  Not only does the von Neumann architecture actually facilitate programming languages and methods that assume direct access to memory anywhere and at anytime, but through these languages and methods it facilitates the kind of programatic thinking that most Humans are inclined to learn the most easily.  Some would argue that the von Neumann architecure and the langauges and programming methods it encourages are brutish and inelegant, but the simple fact is that it has provide the world with a vast array of technologies that might not have been practical otherwise.
+
+Another characteristic of the von Neumann architecture that makes it appealing, is that it is easy to manufacture computers that implement this kind of architecture. Consider that the very first commercially successful computer that was designed to be easily manufactured and "upgradable" was the IBM 360.  IBM pioneered the standardization of parts and computer "families." And while some might argue that their motivation was purely to sell as many computers as possible, the motivation of the engineers was probably just as strongly driven by the technical challenge of the project. (I recommend reading Fred Brook's, "Mythical Man Month" for insights into the effort to produce the 360 series).
+
+There are many other reasons that the von Neumann architecture persists, but it comes down to practicality - in design, manufacturing, and use (including programming). In the installment that I write discussing the programming requirements of the Boy Scout's Computer Merit Badge, I will discuss in more detail the various approaches (or "paradigms") used by programming languages and software developers - including more on "procedural" versus "functional" programming, where "object oriented" programming fits in, and will continue tying these issues back into the background I've provided here and in the other sections regarding what a computer really is. 
+
+I will not be fulfilling the last part of requirement 1, which is to list 4 uses of a computer. I believe one can do this on one's own.
+
+The next installment will be discussing requirement #2, which says:
+
+'nf
+Do the following:
+   1. Tell what a program is and how it is developed.
+   2. Give three examples of programming languages and what types 
+      of programming they are used for.
+   3. Describe a source program and an object program.
+'fi
+
+Until then, take care.

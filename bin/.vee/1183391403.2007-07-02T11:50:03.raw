@@ -1,0 +1,13 @@
+Mon Jul 2 11:50:03 EDT 2007
+
+contemplating new features for vee
+
+--
+
+Is it sad that I only use vee to talk about vee?  I need to do something about that :).
+
+Anyway, I was thinking about a couple of features for vee:
+* handle hyperlinks (URLs, email addies)
+* incorporate images
+
+I don't intend on making a mini-markup thing because someone can put in their own HTML.  The problem is that the tools that are used to format things (like fold) break long, continous strings like URLs.  Maybe I just need to learn how to use the tools better :). 

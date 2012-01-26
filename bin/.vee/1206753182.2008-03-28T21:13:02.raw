@@ -1,0 +1,26 @@
+Fri Mar 28 21:13:02 EDT 2008
+
+What I learned this week, 1
+
+--
+
+This might seem like a ridiculous thing, but I've decided to start a self indulgant series of posts called, "what I learned this day/week/month/etc".  It is no catalog of what I know because there will surely be things that I will forget, but I think it is a good exercise nonetheless.  It is also a good reason to post regularly. Ideally, it will be something I do at the end of each week unless I get inspired one fine day or feel like I learned nothing in a week's time.  So, with out further ado, here is my list:
+
+'nf
+<ul>
+<li>what a planar graph is and why I should care
+<li>how to set up CGI::IRC under apache2
+<li>that CPAN traffic being served from my mirror can be mistaken for my server launching buffer overflow attacks
+<li>how to use 'split' and 'cat' to safely break up a file in order to transfer it piece-meal using a thumbdrive of limited size
+<li>a little bit about Lisp and functional programming, but not nearly enough to do anything useful
+<li>that the hardware store sells nifty plugs that let you seal a pipe with no threads
+<li>how to run a hybrid openmp/mpi application on an IBM p5 575 cluster
+<li>that I am not as good in Perl as I thought
+<li>how to propagate "cast iron" plants
+<li>how to set the auto-notify option for project issues at googlecode
+<li>that I don't know much at all
+</ul>
+
+'fi
+
+There are things that I learn from everyone I meet.  Not just some, but everyone.  And it is not just limited to one thing - I often learn new things every day from people I see every day.  I hope to never forget these things, so this is another reason I want to catalog them.

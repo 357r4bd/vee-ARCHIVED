@@ -1,0 +1,76 @@
+Tue Nov 15 09:12:39 CST 2011
+
+[vee] rebuild index from .raw files
+
+--
+
+I accidentally deleted by HTML index of vee posts, so I took this as an opportunity to
+create the first utility I've for vee in a long time. I've been wanting to do index based
+stuff for a while, and this is a good start.
+
+The script is to be run at the same level as the .vee directory. It loops through an ordered list
+(newest to oldest) of the .raw files, extracts the title and date from the .raw header. It then
+converts the extracted date to the epoch for HTML index sorting purposes, and dumps out the 
+HTML index.
+
+Because some of my old posts had a different timezone than the server I am on currently, I had to 
+jump through some hoops to change the old TZ to the server's current TZ. I found that if there was
+a mismatch, then the date utility would fail.  If there is a slicker way to do this, then I am all
+ears.
+
+I did this using utilities available on FreeBSD 7.4, so this may not work out of the box on Linux. It
+uses the "-j" flag in date, which I believe deviates from the POSIX date util standard.
+
+Here's a listing of the script as of this writing, but I will be adding it to Github shortly, and that
+will be the definitive version.
+
+Enjoy!
+
+'nf
+<pre>
+
+#!/bin/sh
+
+#-- script to rebuild index based on .raw files in .vee/ created out of necessity, but
+#-- provides a good example of how to do some indexed based stuff and read the basic
+#-- formate in the .raw files
+
+GENDATE=`date`
+VEEDIR=./.vee
+HTMLEXT=html
+
+echo "&lt;!-- ;1000000000000000000000000; initial HTML --&gt;"
+echo "&lt;!-- ;100000000000000000000000; more HTML --&gt;"
+echo "&lt;!-- ;10000000000000000000000; new index regenerated on $GENDATE --&gt;"
+
+for f in `ls -1 $VEEDIR/*.raw | sort -t. -nr`; 
+do
+    # title is the 3rd line
+    TITLE=`head -n 3 $f | tail -n 1`
+
+    # full date string (not epoch) is the first line
+    DATE=`head -n 1 $f`
+
+    # deal with with timezone info in a brutish way (seems like a TZ mismatch in data input will cause error)
+    TZ_SYS=`date "+%Z"`
+    TZ_DATE=`echo $DATE | awk '{ print $5 }'`
+    DATE=`echo $DATE | sed -e "s/$TZ_DATE/$TZ_SYS/"`
+
+    # reformate date for indexing purposes (.raw files untouched)
+    FORMATTED_DATE=`date -j -f "%a %b %d %T %Z %Y" "$DATE" "+%Y-%m-%d"` 
+
+    # get epoch for purpose of adding reasonable post index numbers 
+    EPOCH=`date -j -f "%a %b %d %T %Z %Y" "$DATE" "+%s"` 
+
+    # extract base name of .raw file so we can link to html file of same base
+    FILENAME=$(basename $f)
+    BASENAME=${FILENAME%.*}
+    # output HTML index (can be modified to output in whatever format)
+    echo "&lt;!-- ;$EPOCH; --&gt;$FORMATTED_DATE &lt;a href=$VEEDIR/$BASENAME.$HTMLEXT&gt;$TITLE&lt;/a&gt;&ltbr/&gt"
+done
+
+echo "&lt;!-- ;2; closing --&gt;"
+echo '&lt;!-- ;1; closing --&gt;Powered by &lt;a href="http://www.0x743.com/vee"&gt;vee&lt;/a&gt;'
+echo "&lt;!-- ;0; closing --&gt;"
+</pre>
+'fi

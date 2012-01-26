@@ -1,0 +1,15 @@
+Thu Jul 19 23:32:43 EDT 2007
+
+checkers program can't lose?
+
+--
+
+This is the ultimate cop out - and something that should show once and for all that "AI" is an annoying misnomer.
+
+The recend announcement that:
+
+"the program no longer needs heuristics it has become a database of information that "knows" the best move to play in every situation of a game. If Chinook's opponent also plays perfectly the game would end in a draw. "
+
+In otherwords, it is a database all of the moves in checkers. Given any board state, the program can "search" to see what the best next move is.  This just shows me that AI is nothing more than playing games with the amount of knowledge you have - in other words, AI is simply about searching a lot of data.
+
+God knows how large the chess database is - and "GO"? You can forget it! 

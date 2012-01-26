@@ -1,0 +1,41 @@
+Wed Jan 6 12:55:54 EST 2010
+
+Configuring CPAN from the CPAN prompt
+
+--
+
+I have been using Perl for eons now, and just realized that I don't have to manually edit CPAN/Config.pm to do things like add urls.
+
+To add a fetch URL, for example:
+
+'nf
+  cpan[0]>o config urllist push "url_to_add"
+'fi
+
+Then commit the change:
+
+'nf
+  cpan[1]>o config commit
+'fi
+
+Done!
+
+For good measure, the list of CPAN mirror sites:
+
+'nf
+<a href=http://www.cpan.org/SITES.html>CPAN Mirror Listing</a>
+'fi
+
+To view all configurable options, type:
+
+'nf
+  cpan[2]>o conf
+'fi
+
+Also, I recently installed BioPerl on a production system, and the instructions also provide some insights into a few useful features of CPAN - about which I was unaware.
+
+'nf
+<a href=http://www.bioperl.org/wiki/Installing_Bioperl_for_Unix>CPAN instructions for BioPerl</a>
+'fi
+
+Enjoy!

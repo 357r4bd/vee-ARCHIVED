@@ -1,0 +1,17 @@
+Sun Jul 15 13:31:21 EDT 2007
+
+[vee] update page...
+
+--
+
+I updated the vee project page with links to the Googlecode repository and a word on an inability to specify lines that I wish to not break.
+
+For the line break issue, I think I might incorporate some simple "#nb" line prefix.  The idea would be to :
+
+1. grep out all "#nb" lines, and replace them in stream with some incrementing value - like #1, #2, etc.
+
+2. run the required formatting
+
+3. run a search and replace over the newly formatted text, replacing "#n" with the text following the respective "#nb". 
+
+I am pretty certain that this would allow me to specify line for which I wish to preserve as unbroken. 

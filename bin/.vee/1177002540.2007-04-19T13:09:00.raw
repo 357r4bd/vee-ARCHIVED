@@ -1,0 +1,15 @@
+Thu Apr 19 13:09:00 EDT 2007
+
+ragel update
+
+--
+
+I've been playing with Ragel, and while it is pretty cool, I am not sure it is the right tool for what I want to do.  And what I want to do is to simulate a graph of nodes operating under their own FSM.
+
+The following links to the most basic ragel code I could muster - it is a machine that accepts either "hello" or "bye" using C++.
+
+<a href="http://www.0x743.com/hellobye.rl">
+hellobye.rl
+</a>
+
+For the time being, I am going to implemented this synchronously and serially using Perl.  I know there has got to be a good way to simulate asynchronous, distributed protocols and algorithms - I just have not found it yet.  I have a feeling that I can leverage Perl FLaT in some way, but again I don't have the answer yet. 

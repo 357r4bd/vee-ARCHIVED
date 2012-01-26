@@ -1,0 +1,51 @@
+Tue Sep 22 11:18:02 EDT 2009
+
+The Computer Merit Badge: how I'd complete the requirements NOW; part 2
+
+--
+
+This installment is part 2 of my series, answering some of the questions in the Boy Scout's Computer Merit Badge as I would knowing what I know now.
+
+Requirement  1:  Give  a short history of computers. Describe the major parts of a computer system. Give  four  different  uses  of computers.
+
+A) Give a short history of computers (continued)
+
+In part 1 of answering this question, I discussed the fact that a computer device's power is tied directly to its ability to remember what it has seen before.  There are 3 main possibility:
+
+1) a device has no memory (finite automata)
+
+2) a device has a single "stack" of memory, able to access what is on the stack using only a series of 'push' and 'pop' operations
+
+3) a device that has random access to some memory (Turing Machines)
+
+So, let's look at the history of computing devices from the perspective of function (i.e., what the device does), rather than the technologies used to put these devices together. This is not an exact or complete chronology, but covers some major devices seen over the years.
+
+a) the Abacus - of course, how could I not start with this. It was a board with pegs and beads that allowed humans to count. Similar to any other counting device of the time, it had no real memory. It was a glorified clicker. So under what class would it fall? It can be modeled exactly as a finite automata - so it is in class 1.  The "state" of the device is defined by the positions of the beads. The positions of the beads contain all of the information one needs to determine the current count. The "input" consists of the reconfigurations required to increment the current count by 1.
+
+b) the Antikythera mechanism - this amazing device was found in 1901 at the bottom of the sea. It is an ancient Greek device estimated to be built around 150-100 BC. A lot more detail regarding its precision and construction can be viewed on Wikipedia, but it is sufficient to say that it is absolultely stunning that something this well designed was done so that long ago. It is the oldest analog "computer" known, and its sophistication clearly indicates that it is not a "first generation" device created by the Greeks. It alludes to some lost knowledge that we'll probably never recover from ancient tomes.  But I digress. So what does it do? Well, after a lot of detailed investigation and painstaking analysis, it was determined that it is used to calculate the positions of celestial objects, like the Sun and Moon. I will discuss, later, how Humans are really bad at discovering what unknown "machines" actually do.
+
+As complex and sophisticated as it is, I propose that it is still no more powerful than a device than can be modeled by a finite state automata. Why do I say this? Because the celestial patterns are predictable, and were clearly known to the creator of the device. The input for the device is the turning of the knobs. The state of the device consists of the positions of the gears and other moving devices internally. From each state, the turning of a knob provides the input needed to transistion to the next state.  Only the information encoded in the state itself is required to go to the next of many potential states, depending on the input provided by the knobs. Also note, the Antikythera mechanism contains no MEMORY for the storing of temporary values. And why would it? Its functionality did not require memory since the relations among the bodies were known, and thus encoded into the gears and their ratios (like a Swiss clock of the 18th Century!).
+
+c) Automatons - these were devices, probably first created by the people who created the Antikythera mechanism, that were designed to resemble the actions performed by animate objects. They were robots in the most basic sense, and were used by the ancients in much the same way that Disney uses its animatronic characters at its theme parks.  The ancient Automatons were also of class 1 computing devices.  They consisted of gears, levers, pullies, and other simple mechanical devices - BUT NO MEMORY. Why did it have no memory? They didn't need it in when "computing" their next motion or movement. The computation was built into the states implicitly.
+
+d) the Difference engine - according to Wikipedia, this device is, "an automatic, mechanical calculator designed to tabulate polynomial functions. Both logarithmic and trigonometric functions can be approximated by polynomials, so a difference engine can compute many useful sets of numbers." There's something very special about this.  These computations require MEMORY! So where does this machine fit in terms of the classes we've discussed? Well, the answer to this is a bit tricky, but here it goes.  It is more powerful that class #2 (push down automata), but is not a general purpose and programmable machine like the Turing Machine is meant to be. It does, however, represent a PROGRAM that can be (when written in a context sensitive language), be recognized and executed by a Turing Machine. The Difference engine therefore represents a mechanical program, or in otherwords, a special purpose (as opposed to general purpose) computer. The distinction is subtle, but the key to understanding this is to realize that a Turing Machine (general purpose) can be programmed to act as a special purpose computing machine. This is what programs really are - they are instructions needed by a general purpose to emulate the actions of a special purpose machine.  In otherwords, a general purpose machine could be programmed to act exactly (in function) as the Difference engine, but the difference engine (being a special purpose machine) is unable to be programmed to emulate the action of any other valid machine.
+
+It should be noted that, also according to Wikipedia, "an engineer in the Hessian army conceived the idea in a book published in 1786, but failed to find funding to progress this further."
+
+e) the Analytical engine - although never completed by Charles Babbage, this machine was intended to be a GENERAL PURPOSE MECHANICAL DEVICE! In otherwords, if this device had been built, he could have "programmed" to be functionally equivalent to his Difference engine.  The ramifications of a working Analytical engine would have been far reaching. In particular, it would have given Humans computational powers not to be seen for over 100 years. There are whole "alt history" book series premised on the success of this machine called, "cyber punk" and "steam punk." The point of the books is, what would have happened in the World and to Humanity had we developed computational powers a century before? It's an incredibly interesting thought experiment.
+
+Conclusion:
+
+It took 100 years after the failed completion of Babbage's Analytical engine before another device was created.  Starting in 1941, not very long after Church and Turing formalized their theories on computability, the Germans created a equivalently powerful machine called, the "Zuse Z3." Interestingly, modern computers did not follow on its design or methods for programming. It was programmed using a language called, "Plankalkul." During the remainder of the decade came other attempts, some not as computationally powerful as the Zuse Z3. Among them are the ones typically discussed when speaking of the history of computing devices.
+
+The deviced highlighed above were chose to make the point regarding the development of computational power. It is not close to an exhaustive or chronological list.  For example, textile looms were complex and sophisticated to be "programmed" as early as 1725. Still earlier, countless people and cultures were experimenting with various other machines such as calculators and clocks. 
+
+'nf
+<a href=http://en.wikipedia.org/wiki/History_of_computing_hardware>History of Computing Hardware</a> (Wikipedia)
+<a href=http://en.wikipedia.org/wiki/History_of_computing>History of Computing</a> (Wikipedia)
+<a href=http://en.wikipedia.org/wiki/Timeline_of_computing>Timeline of Computing</a> (Wikipedia)
+'fi
+
+This concludes this section on history of computers, but I do hope to write further on the history of computing devices with respect to computational power. In closing, do not forget that modern computers are not more powerful than computer designs from a long time ago. As illustrated with the Antikythera mechanism, there is no reason to believe that computing devices as powerful as Babbage's Analytical engine (and therefore modern computers) were not created by ancient people.  There's a lot of "modern" knowledge that we are fooled into thinking is ours alone, but people thousands of years ago were just as smart as we were.  And remember, power is all about the memory - no matter how it is implemented: gears, vacuum tubes, transistors, stacks, or not at all.
+
+Until the next installment, please stay tuned.
