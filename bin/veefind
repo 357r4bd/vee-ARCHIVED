@@ -1,7 +1,11 @@
 #!/bin/sh
 
-JUST_TITLE=0
-JUST_BODY=1
+JUST_TITLE=1
+JUST_BODY=0
+TITLE_AND_BODY=0
+TITLE_OR_BODY=0
+TITLE_XOR_BODY=0
+
 STRING='.'  # everything?
 
 while getopts 'AOXbs:t' option; do
@@ -24,16 +28,18 @@ while getopts 'AOXbs:t' option; do
        JUST_TITLE=0
        JUST_BODY=0
        ;;
-    b) JUST_TITLE=0
-       JUST_BODY=1
+    b) TITLE_AND_BODY=0
+       TITLE_OR_BODY=0
+       TITLE_XOR_BODY=0
        JUST_TITLE=0
-       JUST_BODY=0
+       JUST_BODY=1
        ;;
     s) STRING="${OPTARG}" 
        ;;
-    t) JUST_TITLE=1
-       JUST_BODY=0
-       JUST_TITLE=0
+    t) TITLE_AND_BODY=0
+       TITLE_OR_BODY=0
+       TITLE_XOR_BODY=0
+       JUST_TITLE=1
        JUST_BODY=0
        ;;
     esac
@@ -44,11 +50,18 @@ done
 }
 
  _body_grep() {
-   echo $1 | veecat -t | grep -c $STRING
+   echo $1 | veecat -b | grep -c $STRING
 }
 
 for f in `veels`; do
     if [ "${JUST_TITLE}" -gt 0 ]; then
-       _title_grep $f
+       if [ `_title_grep $f` -gt 0 ]; then
+         echo $f
+       fi
+    fi
+    if [ "${JUST_BODY}" -gt 0 ]; then
+       if [ `_body_grep $f` -gt 0 ]; then
+         echo $f
+       fi
     fi
 done
