@@ -1,5 +1,10 @@
 #!/bin/sh
 
+#
+# The idea behind this script is to use veels and veecat to provide
+# for searching for terms in post titles and bodies
+#
+
 JUST_TITLE=1
 JUST_BODY=0
 TITLE_AND_BODY=0

@@ -33,6 +33,26 @@
 OLD_IFS=$IFS
 IFS=
 
+ die_error()
+{ 
+  echo $1
+  exit 1
+}
+
+ die_cleanly()
+{ 
+  exit 0
+}
+
+ usage() 
+{
+    echo
+    echo 'man file coming, in the meantime, Use the Source, Luke.'
+    echo
+    echo '%veels [-dr [-a] [[-l][-L "ls opts"]]]' 
+    echo
+}
+
  get_title()
 {
     TITLE=`head -n 3 $1 | tail -n 1`

@@ -45,8 +45,11 @@ LSOPTS='-lat'
 
  usage() 
 {
-    echo "man file coming, in the meantime, Use the Source, Luke."
-    echo '    %veels [-dr [-a] [[-l][-L "ls opts"]]]' 
+    echo
+    echo 'man file coming, in the meantime, Use the Source, Luke.'
+    echo
+    echo '%veels [-dr [-a] [[-l][-L "ls opts"]]]' 
+    echo
 }
 
 while getopts 'ad:hlL:r' option; do
@@ -59,7 +62,6 @@ while getopts 'ad:hlL:r' option; do
          echo "${OPTARG}" is not a directory!
          die_cleanly
        fi
-       #echo `pwd`
        ;;
     l) USELS=1 #use ls with default opts
        ;;

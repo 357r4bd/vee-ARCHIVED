@@ -28,6 +28,41 @@ GENDATE=`date`
 VEEDIR=./.vee
 HTMLEXT=html
 
+ die_error()
+{ 
+  echo $1
+  exit 1
+}
+
+ die_cleanly()
+{ 
+  exit 0
+}
+
+ usage() 
+{
+    echo
+    echo 'man file coming, in the meantime, Use the Source, Luke.'
+    echo
+    echo '%vee-build-index [-d|h]'
+    echo
+}
+
+while getopts 'd:h' option; do
+    case "$option" in
+    d) if [ -d "${OPTARG}" ]; then
+         cd "${OPTARG}"
+       else
+         echo "${OPTARG}" is not a directory!
+         die_cleanly
+       fi
+       ;;
+    h) usage # some help page
+       die_cleanly
+       ;;
+    esac
+done
+
 if [ ! -d "$VEEDIR" ]; then
     echo "Can't find $VEEDIR!"
     exit;
