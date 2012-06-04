@@ -1,0 +1,169 @@
+.\" Process this file with
+.\" groff -man -Tascii foo.1
+.\"
+.TH vee 1 "June 2012" Vee "User Manuals"
+.SH NAME
+vee \- vee is a zero-conf, cli microblogging tool; does one thing, and does it well. 
+.SH SYNOPSIS
+.B vee [-b ] [-t 
+.I title
+.B ]  
+.B ...
+.SH DESCRIPTION
+.B vee
+is a command-line blog tool that is very portable across Unix systems. It provides an interactive as well as a batch interface to maintain a log of entries. Formatting is done using a module architecture that allows a high degree of customization. There are minimal flags and no set up is required.
+.SH OPTIONS
+.IP -b
+Puts 
+.B vee
+into 
+.I batch 
+mode, allowing it to accept 
+.I STDIN
+as the body of the post. This makes 
+.B vee
+useful for creating a web-accessible log index.
+.IP "-B file"         
+Define bottom template; default is ./vee-bottom.tpl       
+.IP -c
+.I [1-9\d*]
+Specifiy the number of characters 
+.I fold
+allows per line.
+.IP "-d publish_dir"
+Specify the directory
+.I .vee
+is in; defaults to the present working directory as known to 
+.I `pwd`
+.IP "-f format"
+Use defined format instead of the default, 
+.I groff
+; 
+.I groff
+, 
+.I fold
+, and 
+.I none 
+are supported out of the box.
+.IP -h
+prints help message, then quits.
+.IP "-i custom"
+specifies a custom index file to use. 
+.IP -I
+Forces the index file to be
+.I index.html
+.
+.IP -l
+Edit the lastest post's 
+.I .raw
+file directly. Republishes it using the 
+.B -r
+option.
+.IP "-L [1-9\d*]"
+Edit the Nth latest, relative to the last post. Last post's index number is 1.
+.IP "-m message"
+Specify the entry message at the commandline, avoids $EDITOR.  Ignored when used 
+with 
+.B -b
+(batch mode).
+.IP -n
+Lists all entries, newest first, then quits (deprecated in favor of the
+.I veels
+utility.
+.IP -o
+Lists all entries, oldest first, then quits (deprecated in favor of the
+.I veels
+utility.
+.IP -P
+Forever deletes all 
+.I .raw
+files and formatted files that are associated with all posts listed with
+.B -p
+.
+.IP -p
+Shows what 
+.I .raw
+files don't have an entry in $INDEX.
+.IP "-r [1-9\d*]"
+Reformats the Nth latests post.
+.IP -R 
+Reformats 
+.I all
+.I .raw
+files; will respect
+.B -c
+.
+.IP "-s summary"
+Places a summary below the title in the $INDEX.
+.IP "-t title"
+Specify the title at the commandline.
+.IP "-T file"
+Defines the top template, defaults to
+.I ./vee-top.tpl
+.
+.IP -v
+Prints version information, then quits.
+.IP -x filter
+Defines a filter if not using the default,
+.I ./vee-pre
+; filter must be executable (0755) by effective user.
+.SH FILES
+.I .veerc 
+.RS
+The primary configuration file. See
+.BR vee (5)
+for further details.
+.RE
+.I ./vee-bottom.tpl
+.RS
+The default bottom template file.
+.BR vee (5)
+for further details.
+.RE
+.I ./vee-top.tpl
+.RS
+The default top template file.
+.BR vee (5)
+for further details.
+.RE
+.I ./vee-pre
+.RS
+The default pre-filter.
+.BR vee (5)
+for further details.
+.RE
+.I ./index.html
+.RS
+The default index file.
+.BR vee (5)
+for further details.
+.RE
+.I ./.vee/
+.RS
+The storage directory for all .raw and formatted files.
+.RE
+.I *.raw
+.RS
+The raw source of all posts before being formatted by
+.I fold
+, etc.
+.BR vee (5)
+for further details.
+.RE
+.SH ENVIRONMENT
+.IP ./.veerc 
+If non-null the full pathname for an alternate system wide
+.IR ~/.veerc .
+Overridden by the
+.B -c
+option.
+.SH DIAGNOSTICS
+.SH BUGS
+Please report at 
+.I https://github.com/estrabd/vee/issues
+.SH AUTHOR
+B. Estrade <estrabd@gmail.com>
+.SH "SEE ALSO"
+.BR vee-rebuild (1)
+.BR veels (1)
+.BR veecat (1)
