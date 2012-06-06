@@ -620,7 +620,9 @@ get_title
 use_editor
 
 if [ -e ${DRAFT} ]; then
-  format_main "${SEC}.${TIME}.${FORMAT}" "${SEC}.${TIME}.raw" 
+  RAWFILE="$$.${SEC}.${TIME}.raw" # uses process id, $$, assuming there will
+                                  # not be duplicate process ids within 1 sec of each other
+  format_main "${SEC}.${TIME}.${FORMAT}" "$RAWFILE" 
   $UPDATE_INDEX 
   sort_index
   die_cleanly
