@@ -614,8 +614,8 @@ done
 read_config   # done after all options are read in, could look in -d before
               # opts are processed though so opts could override defaults
               # and config file .. yeah do that
-post_opts
 $CUSTOM_SETUP # can be defined in .veerc
+post_opts
 get_title 
 use_editor
 
