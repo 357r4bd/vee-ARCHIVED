@@ -1,34 +1,5 @@
 #!/bin/sh
 
-# USAGE:
-#     %veels | veecat [[-a][-tbd]]
-#         -b: output just the body text of the *.raw file
-#         -d: output just the date  " " 
-#         -t: output just the title " "
-# -a or -bdt: output entire *.raw file  (-bdt implies -a)
-
-# NOTE:
-#     NON-DESTRUCTIVE - does NOT modify or delete files;
-
-# SYNOPSIS: 
-#     A general purpose "cat" function that expects, as input, the path
-#     to a *.raw file; can be used as the target of veels when it's outputting
-#     *.raw file names; for example, the following will produce a list of all titles:
-#            % sh veels | sh veecat -t 
-
-# BUGS:
-#     Please report them to Github - https://github.com/estrabd/vee/issues
-
-# MORE INFO:
-#     http://www.0x743.com/.vee/1321454075.2011-11-16T08:34:35.html
-
-# CREDITS:
-#     B. Estrade, created on 21 Nov. 2011
-
-# LICENSE:
-#     DWTFYW
-
-
 # preserve new lines
 OLD_IFS=$IFS
 IFS=
@@ -46,11 +17,7 @@ IFS=
 
  usage() 
 {
-    echo
-    echo 'man file coming, in the meantime, Use the Source, Luke.'
-    echo
-    echo '%veels [-dr [-a] [[-l][-L "ls opts"]]]' 
-    echo
+	man veecat
 }
 
  get_title()

@@ -1,34 +1,11 @@
 #!/bin/sh
 
-# USAGE:
-#     %veels [-dr [-a] [[-l][-L "ls opts"]]] 
-
-# NOTE:
-#     NON-DESTRUCTIVE - does NOT modify or delete files;
-
-# SYNOPSIS: 
-#     A general purpose "ls" utility for vee .raw files, should be used as
-#     the basis for tools that require listing of vee files; missing functionality
-#     will be added to suite this role. 
-
-# BUGS:
-#     Please report them to Github - https://github.com/estrabd/vee/issues
-
-# MORE INFO:
-#     http://www.0x743.com/.vee/1321454075.2011-11-16T08:34:35.html
-
-# CREDITS:
-#     B. Estrade, created on 16 Nov. 2011
-
-# LICENSE:
-#     DWTFYW
-
 DIR=.vee
 
 SORT_NEW_FIRST='sort -t. -nr'
 SORT_OLD_FIRST='sort -t. -n'
 SORT="${SORT_NEW_FIRST}"
-SHOWALL=0
+STRIPEXT=0
 USELS=0
 LSOPTS='-lat'
 
@@ -45,17 +22,11 @@ LSOPTS='-lat'
 
  usage() 
 {
-    echo
-    echo 'man file coming, in the meantime, Use the Source, Luke.'
-    echo
-    echo '%veels [-dr [-a] [[-l][-L "ls opts"]]]' 
-    echo
+	man veels
 }
 
-while getopts 'ad:hlL:r' option; do
+while getopts 'd:hlL:rx' option; do
     case "$option" in
-    a) SHOWALL=1 # show filename, date, and title of post
-       ;;
     d) if [ -d "${OPTARG}" ]; then
          cd "${OPTARG}"
        else
@@ -69,6 +40,8 @@ while getopts 'ad:hlL:r' option; do
        LSOPTS="${OPTARG}"
        ;;
     r) SORT=$SORT_OLD_FIRST  # list in reverse post order
+       ;;
+    x) STRIPEXT=1 #strip .raw from output
        ;;
     h) usage # some help page
        die_cleanly
@@ -121,8 +94,8 @@ do
     if [ 1 -eq $USELS ]; then
         _ls "$f"
     else
-	    if [ 1 -eq $SHOWALL ]; then
-		echo "$f [$DATE] $TITLE"
+	    if [ 1 -eq $STRIPEXT ]; then
+                echo "${f%\.*}"
 	    else 
 		echo "$f"
 	    fi

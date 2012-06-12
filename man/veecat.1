@@ -5,39 +5,32 @@
 .SH NAME
 veecat \- veecat is utility for extracting the different sections of the $VEEDIR/.vee/*.raw files.
 .SH SYNOPSIS
-.B veels | veecat [-a] [-b] [-d] [-t]
+.B veels | veecat [[-a] [-bdt]]
 .B ...
 .SH DESCRIPTION
-.B veecat
-is a utility for use with the
-.B vee (1), 
-useful for creating post management scripts by allowing one a simple way to extract different parts of
-the $VEEDIR/*.raw files. Typically, it is used in conjunction with 
-.B veels (1)
- .
+.B veecat (1)
+is a special purpose "cat" function that expects, as input, the path
+to a *.raw 
+.B vee (5)
+file; it can be used as the target of veels when it's outputting
+*.raw file names; for example, the following will produce a list of all titles:
+
+	veels | veecat -t
 .SH OPTIONS
-.IP -a
-return the entire *.raw file.
-.IP -d
-return the date stamp (assumes default .raw date format) to STDOUT
-.IP -b
-return the body content of the .raw file to STDOUT
-.IP -t
-return the title of the .raw file to STDOUT
+.IP -b 
+output just the body text of the *.raw file
+.IP -d 
+output just the date  " " 
+.IP -t 
+output just the title " "
+.IP "-a | -bdt"
+output entire *.raw file  (-bdt implies -a)
 .SH FILES
-.I .veerc 
-.RS
-The primary configuration file. See
-.BR vee (5)
-for further details.
-.RE
+none
 .SH ENVIRONMENT
-.IP ./.veerc 
-If non-null the full pathname for an alternate system wide
-.IR ~/.veerc .
-Overridden by the
-.B -c
-option.
+is not affected by any external files and is meant to consume 
+only input such as that produced by
+.B veels (1)
 .SH DIAGNOSTICS
 .SH BUGS
 Please report at 
@@ -46,5 +39,37 @@ Please report at
 B. Estrade <estrabd@gmail.com>
 .SH "SEE ALSO"
 .BR vee (1)
+.BR vee (5)
 .BR veels (1)
 .BR vee-rebuild (1)
+.SH EXAMPLES
+Pipe output of 
+.B veels (1)
+into
+.B veecat (1)
+for listing all titles
+	
+	veels -d path/to/veedir | veecat -t
+
+Use veels as the basis for a loop in 
+.B sh (1)
+
+	for file in `veels`; do
+
+		TITLE=`echo $f | veecat -t`
+
+    		DATE=`echo $f | veecat -d`
+
+		echo $TITLE $DATE
+
+	done
+.SH HISTORY
+
+.B veecat (1)
+was introduced as a fundamental 
+.B vee (1)
+utility for the official 1.0 release and it is meant to serve
+as a building block for interesting and creative scripts that might
+be build to support 
+.B vee (1)
+blogs and installations.

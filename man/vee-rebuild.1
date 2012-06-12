@@ -3,34 +3,34 @@
 .\"
 .TH vee-rebuild 1 "June 2012" Vee "User Manuals"
 .SH NAME
-vee-rebuild \- vee-build is a utility for rebuilding vee's index.html based on the contents of the $VEEDIR/.vee/*.raw files.
+vee-rebuild \- a utility for rebuilding vee's index.html based on the contents of the $VEEDIR/.vee/*.raw files.
 .SH SYNOPSIS
-.B vee-rebuild -d
-.B ...
+.B vee-rebuild [-d $VEEDIR/] > path/to/newindex.html 
 .SH DESCRIPTION
-.B vee-rebuild
-is a utility for use with the
-.B vee (1), used for recreating an index.html based on the contents of the $VEEDIR/.vee/*.raw files.
+.B vee-reindex (1)
+script to rebuild index based on .raw files in $VEEDIR/.vee/ created out of necessity, but
+also provides a good idea of how one can use
+.B veels (1)
+and
+.B veecat (1)
+to create a useful script. That it outputs
+.I html
+is of no consequence to the example. If another output format is desired, this
+script can be used as a template or example.
 .SH OPTIONS
 .IP "-d publish_dir"
-Specify the directory
-.I .vee
-is in; defaults to the present working directory as known to 
+Specify the parent directory of
+.I ./.vee
+; defaults to the present working directory as known to 
 .I `pwd`
+like 
+.B vee (1)
 .SH FILES
-.I .veerc 
-.RS
-The primary configuration file. See
-.BR vee (5)
-for further details.
-.RE
+none
 .SH ENVIRONMENT
-.IP ./.veerc 
-If non-null the full pathname for an alternate system wide
-.IR ~/.veerc .
-Overridden by the
-.B -c
-option.
+is not affected by any external files and is meant to produce a new 
+.I html
+index file. 
 .SH DIAGNOSTICS
 .SH BUGS
 Please report at 
