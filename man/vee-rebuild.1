@@ -1,0 +1,43 @@
+.\" Process this file with
+.\" groff -man -Tascii foo.1
+.\"
+.TH vee-rebuild 1 "June 2012" Vee "User Manuals"
+.SH NAME
+vee-rebuild \- vee-build is a utility for rebuilding vee's index.html based on the contents of the $VEEDIR/.vee/*.raw files.
+.SH SYNOPSIS
+.B vee-rebuild -d
+.B ...
+.SH DESCRIPTION
+.B vee-rebuild
+is a utility for use with the
+.B vee (1), used for recreating an index.html based on the contents of the $VEEDIR/.vee/*.raw files.
+.SH OPTIONS
+.IP "-d publish_dir"
+Specify the directory
+.I .vee
+is in; defaults to the present working directory as known to 
+.I `pwd`
+.SH FILES
+.I .veerc 
+.RS
+The primary configuration file. See
+.BR vee (5)
+for further details.
+.RE
+.SH ENVIRONMENT
+.IP ./.veerc 
+If non-null the full pathname for an alternate system wide
+.IR ~/.veerc .
+Overridden by the
+.B -c
+option.
+.SH DIAGNOSTICS
+.SH BUGS
+Please report at 
+.I https://github.com/estrabd/vee/issues
+.SH AUTHOR
+B. Estrade <estrabd@gmail.com>
+.SH "SEE ALSO"
+.BR vee (1)
+.BR veels (1)
+.BR veecat (1)

@@ -1,0 +1,50 @@
+.\" Process this file with
+.\" groff -man -Tascii foo.1
+.\"
+.TH veecat 1 "June 2012" Vee "User Manuals"
+.SH NAME
+veecat \- veecat is utility for extracting the different sections of the $VEEDIR/.vee/*.raw files.
+.SH SYNOPSIS
+.B veels | veecat [-a] [-b] [-d] [-t]
+.B ...
+.SH DESCRIPTION
+.B veecat
+is a utility for use with the
+.B vee (1), 
+useful for creating post management scripts by allowing one a simple way to extract different parts of
+the $VEEDIR/*.raw files. Typically, it is used in conjunction with 
+.B veels (1)
+ .
+.SH OPTIONS
+.IP -a
+return the entire *.raw file.
+.IP -d
+return the date stamp (assumes default .raw date format) to STDOUT
+.IP -b
+return the body content of the .raw file to STDOUT
+.IP -t
+return the title of the .raw file to STDOUT
+.SH FILES
+.I .veerc 
+.RS
+The primary configuration file. See
+.BR vee (5)
+for further details.
+.RE
+.SH ENVIRONMENT
+.IP ./.veerc 
+If non-null the full pathname for an alternate system wide
+.IR ~/.veerc .
+Overridden by the
+.B -c
+option.
+.SH DIAGNOSTICS
+.SH BUGS
+Please report at 
+.I https://github.com/estrabd/vee/issues
+.SH AUTHOR
+B. Estrade <estrabd@gmail.com>
+.SH "SEE ALSO"
+.BR vee (1)
+.BR veels (1)
+.BR vee-rebuild (1)

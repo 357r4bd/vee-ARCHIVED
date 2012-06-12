@@ -1,0 +1,39 @@
+.\" Process this file with
+.\" groff -man -Tascii foo.1
+.\"
+.TH veels 1 "June 2012" Vee "User Manuals"
+.SH NAME
+veels \- veels is utility for easily listing $VEEDIR/*.raw files in various ways.
+.SH SYNOPSIS
+.B veels [-d] ... | veecat -t # list all titles of posts in the $VEEDIR/.vee directory.
+.SH DESCRIPTION
+.B veels
+is a utility for creating post management scripts. It lists to STDOUT
+all $VEEDIR/.vee/*.raw files in various ways. 
+.SH OPTIONS
+.IP -d
+Points to $VEEDIR, looking for $VEEDIR/.vee/*.raw files.
+.SH FILES
+.I .veerc 
+.RS
+The primary configuration file. See
+.BR vee (5)
+for further details.
+.RE
+.SH ENVIRONMENT
+.IP ./.veerc 
+If non-null the full pathname for an alternate system wide
+.IR ~/.veerc .
+Overridden by the
+.B -c
+option.
+.SH DIAGNOSTICS
+.SH BUGS
+Please report at 
+.I https://github.com/estrabd/vee/issues
+.SH AUTHOR
+B. Estrade <estrabd@gmail.com>
+.SH "SEE ALSO"
+.BR vee (1)
+.BR veecat (1)
+.BR vee-rebuild (1)
