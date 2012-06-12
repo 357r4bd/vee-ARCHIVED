@@ -1,3 +1,14 @@
-For now anything in here must be run with Perl's "prove" TAP 
-harnes; but I have aspirations of writing a Bourne shell compatible
-TAP harness in the spirit of vee and friends.
+The tests in this directory output TAP, so the best way
+to get some valid output is to use Perl's 'prove' program,
+for example:
+
+	$ prove .
+	./000-dummy.t .. ok    
+	All tests successful.
+	Files=1, Tests=15,  1 wallclock secs ( 0.05 usr  0.02 sys +  0.48 cusr  1.16 csys =  1.72 CPU)
+	Result: PASS
+
+The 'prove' program comes with Perl, so it's not really in line with the goal
+of vee to work on any base *nix system, but I don't want to 
+get into the business of building my own TAP harness or carrying 
+along 3rd party code.
