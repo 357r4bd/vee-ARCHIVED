@@ -18,10 +18,10 @@ show filename, data, and title of post
 Points to $VEEDIR, looking for $VEEDIR/.vee/*.raw files.
 .IP -l
 use 
-.B ls (1)
+.B ls(1)
 with default options
 .IP "-L ls_options"
-use ls (1) with custom options.
+use ls(1) with custom options.
 .IP -r 
 list posts in oldest to newest order
 .IP -x
@@ -29,18 +29,18 @@ strip file extenstion from file listing - useful for getting basename, which
 is shared as a basename with the formatted
 .I .html
 file 
-.B vee (1)
+.B vee(1)
 creates
 .IP -h
 invoke man page for 
-.B veels (1)
+.B veels(1)
 .SH FILES
 none
 .SH ENVIRONMENT
-.B veels (1)
+.B veels(1)
 is not affected by any external files and is meant to produce
 only output consumable by scripts such as
-.B veecat (1)
+.B veecat(1)
 .SH DIAGNOSTICS
 .SH BUGS
 Please report at 
@@ -48,10 +48,10 @@ Please report at
 .SH AUTHOR
 B. Estrade <estrabd@gmail.com>
 .SH "SEE ALSO"
-.BR vee (1)
-.BR vee (5)
-.BR veecat (1)
-.BR vee-rebuild (1)
+.BR vee(1)
+.BR vee(5)
+.BR veecat(1)
+.BR vee-rebuild(1)
 .SH EXAMPLES
 Output list of files that are contained in
 .I path/to/veedir/.vee
@@ -67,15 +67,15 @@ Output list of files, strip .raw extensions
 	veels -d path/to/veedir -x
 
 Pipe output of 
-.B veels (1)
+.B veels(1)
 into
-.B veecat (1)
+.B veecat(1)
 for listing all titles
 	
 	veels -d path/to/veedir | veecat -t
 
 Use veels as the basis for a loop in 
-.B sh (1)
+.B sh(1)
 
 	for file in `veels`; do
 
@@ -88,12 +88,12 @@ Use veels as the basis for a loop in
 	done
 .SH HISTORY
 
-.B veels (1)
+.B veels(1)
 was introduced as a fundamental 
-.B vee (1)
+.B vee(1)
 utility for the official 1.0 release and it is meant to serve
 as a building block for interesting and creative scripts that might
 be build to support 
-.B vee (1)
+.B vee(1)
 blogs and installations.
 

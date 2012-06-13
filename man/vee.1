@@ -103,39 +103,39 @@ Defines the top template, defaults to
 .
 .IP -v
 Prints version information, then quits.
-.IP -x filter
-Defines a filter if not using the default,
+.IP -x hook
+Defines a hook if not using the default,
 .I ./vee-pre
-; filter must be executable (0755) by effective user.
+; hook must be executable (0755) by effective user.
 .SH FILES
 .I .veerc 
 .RS
 The primary configuration file. See
-.BR vee (5)
+.BR vee(5)
 for further details.
 .RE
 .I ./vee-bottom.tpl
 .RS
 The default bottom template file.
-.BR vee (5)
+.BR vee(5)
 for further details.
 .RE
 .I ./vee-top.tpl
 .RS
 The default top template file.
-.BR vee (5)
+.BR vee(5)
 for further details.
 .RE
 .I ./vee-pre
 .RS
 The default pre-filter.
-.BR vee (5)
+.BR vee(5)
 for further details.
 .RE
 .I ./index.html
 .RS
 The default index file.
-.BR vee (5)
+.BR vee(5)
 for further details.
 .RE
 .I ./.vee/
@@ -147,7 +147,7 @@ The storage directory for all .raw and formatted files.
 The raw source of all posts before being formatted by
 .I fold
 , etc.
-.BR vee (5)
+.BR vee(5)
 for further details.
 .RE
 .SH ENVIRONMENT
@@ -164,6 +164,6 @@ Please report at
 .SH AUTHOR
 B. Estrade <estrabd@gmail.com>
 .SH "SEE ALSO"
-.BR vee-rebuild (1)
-.BR veels (1)
-.BR veecat (1)
+.BR vee-rebuild(1)
+.BR veels(1)
+.BR veecat(1)

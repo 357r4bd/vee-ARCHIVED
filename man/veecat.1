@@ -8,10 +8,10 @@ veecat \- veecat is utility for extracting the different sections of the $VEEDIR
 .B veels | veecat [[-a] [-bdt]]
 .B ...
 .SH DESCRIPTION
-.B veecat (1)
+.B veecat(1)
 is a special purpose "cat" function that expects, as input, the path
 to a *.raw 
-.B vee (5)
+.B vee(5)
 file; it can be used as the target of veels when it's outputting
 *.raw file names; for example, the following will produce a list of all titles:
 
@@ -30,7 +30,7 @@ none
 .SH ENVIRONMENT
 is not affected by any external files and is meant to consume 
 only input such as that produced by
-.B veels (1)
+.B veels(1)
 .SH DIAGNOSTICS
 .SH BUGS
 Please report at 
@@ -38,21 +38,21 @@ Please report at
 .SH AUTHOR
 B. Estrade <estrabd@gmail.com>
 .SH "SEE ALSO"
-.BR vee (1)
-.BR vee (5)
-.BR veels (1)
-.BR vee-rebuild (1)
+.BR vee(1)
+.BR vee(5)
+.BR veels(1)
+.BR vee-rebuild(1)
 .SH EXAMPLES
 Pipe output of 
-.B veels (1)
+.B veels(1)
 into
-.B veecat (1)
+.B veecat(1)
 for listing all titles
 	
 	veels -d path/to/veedir | veecat -t
 
 Use veels as the basis for a loop in 
-.B sh (1)
+.B sh(1)
 
 	for file in `veels`; do
 
@@ -65,11 +65,11 @@ Use veels as the basis for a loop in
 	done
 .SH HISTORY
 
-.B veecat (1)
+.B veecat(1)
 was introduced as a fundamental 
-.B vee (1)
+.B vee(1)
 utility for the official 1.0 release and it is meant to serve
 as a building block for interesting and creative scripts that might
 be build to support 
-.B vee (1)
+.B vee(1)
 blogs and installations.
