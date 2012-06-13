@@ -3,7 +3,6 @@
 INDEX=index.html
 FOOTERTXT="hijacked by .veerc"
 
-#PREFORMAT_FILTER=./vee-filter.pl
 #EDITOR=vi
 #MARGIN=64
 #FORMAT=html
@@ -18,7 +17,7 @@ FOOTERTXT="hijacked by .veerc"
 #HEADERTXT=  # text or `cat some.header.txt` 
 #TOP_TPL=./vee-top.tpl
 #BOT_TPL=./vee-bottom.tpl
-#PREFORMAT_FILTER=./vee-filter     # the filter is assumed to be executable, else it is ignored
+#PREFORMAT_HOOK=./my-pre-hook.sh   # the filter is assumed to be executable, else it is ignored
 #PUBLISHED=`date "+%m/%d/%Y"`      # date formated for index page entry
 #FORMAT_FUNC=format_with_groff
 #FORMAT_DISPATCHER=default_set_format_func

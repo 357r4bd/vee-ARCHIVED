@@ -23,7 +23,7 @@ HEADERTXT=  # text or `cat some.header.txt`
 FOOTERTXT="Powered by <a href=\"http://www.0x743.com/vee\">vee</a><br/>Copyright &copy; 2006-${YEAR}"  
 TOP_TPL=./vee-top.tpl
 BOT_TPL=./vee-bottom.tpl
-PREFORMAT_FILTER=./vee-filter     # the filter is assumed to be executable, else it is ignored
+PREFORMAT_HOOK=./my-pre-hook.sh # the hook is assumed to be executable, else it is ignored
 USE_EDITOR=1
 LISTENSTDIN=0
 SORT_NEWEST="sort -t. -nr"        # sorts all new to old 
@@ -60,7 +60,7 @@ CUSTOM_SETUP=default_setup
 #   added code to remove extraneous lines from groff
 # made sort options customizable
 # made publish date format customizable
-# initial implementation of pre format filter
+# initial implementation of pre format hook
 # externalized the use of custom formats
 # added ability to edit and reformat any post
 
@@ -162,7 +162,7 @@ CUSTOM_SETUP=default_setup
   echo "  -t  'title'       specify title at commandline and avoid annoying default prompt" 
   echo "  -T  file          define top template; default is ./vee-top.tpl             " 
   echo "  -v                version and exit                                          " 
-  echo "  -x  filter        defines filter if not using default "./vee-pre"; filter   "
+  echo "  -x  hook        defines hook if not using default "./vee-pre"; hook   "
   echo "                    must be executable, i.e., chmod 755 vee-pre               "
   echo "                                                                              " 
   echo "Examples:                                                                     "
@@ -274,19 +274,19 @@ CUSTOM_SETUP=default_setup
 }
 
 #
-# all filters must accepted STDIN and output via STDOUT
+# all hooks must accepted STDIN and output via STDOUT
 # default arguments include:
 #
  preformat()
-{ if [ -x "${PREFORMAT_FILTER}" ]; then
-    cat "${DRAFT}" | "${PREFORMAT_FILTER}" "${FORMAT_FUNC}" > "${DRAFT}.tmp" 
+{ if [ -x "${PREFORMAT_HOOK}" ]; then
+    cat "${DRAFT}" | "${PREFORMAT_HOOK}" "${FORMAT_FUNC}" > "${DRAFT}.tmp" 
     mv -f "${DRAFT}.tmp" "${DRAFT}" 
   fi 
 }
 
 # postformat()
-#{ if [ -x "${POSTFORMAT_FILTER}" ]; then
-#    cat "${FINAL}" | "${POSTFORMAT_FILTER}" > "${FINAL}.tmp" 
+#{ if [ -x "${POSTFORMAT_HOOK}" ]; then
+#    cat "${FINAL}" | "${POSTFORMAT_HOOK}" > "${FINAL}.tmp" 
 #    mv -f "${FINAL}.tmp" "${FINAL}" 
 #  fi 
 #}
@@ -490,7 +490,7 @@ while getopts 'f:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:' option; do
     h) usage
        die_cleanly
        ;;
-    x) PREFORMAT_FILTER="${OPTARG}"
+    x) PREFORMAT_HOOK="${OPTARG}"
        ;; 
     ?) #usage | less
        die_cleanly
