@@ -1,0 +1,158 @@
+=head1 NAME
+
+vee
+
+=head1 SYNOPSIS
+
+  vee [-b] [-t I<title>]
+
+=head1 DESCRIPTION
+
+C<vee> is a command-line blog tool that is very portable across Unix  sys-
+tems.  It provides an interactive as well as a batch interface to main-
+tain a log of entries. Formatting is done using a  module  architecture
+that allows a high degree of customization. There are minimal flags and
+no set up is required.
+
+=head1 COMMANDS
+
+=over 4
+
+=item -b
+
+clears the terminal screen when securerun is executed
+
+=item -b     
+
+Puts vee into batch mode, allowing it to  accept  STDIN  as  the
+body  of  the  post.  This  makes vee useful for creating a web-
+accessible log index.
+
+=item -B file
+
+Define bottom template; default is ./vee-bottom.tpl
+
+=item -c     [1-9*] 
+
+Specifiy the number of characters fold allows per line.
+
+=item -d publish_dir
+
+Specify the directory .vee is in; defaults to the present  work-
+ing directory as known to `pwd`
+
+=item -f format
+
+Use  defined format instead of the default, groff ; groff , fold
+, and none are supported out of the box.
+
+=item -h     
+
+prints help message, then quits.
+
+=item -i custom
+
+specifies a custom index file to use.
+
+=item -I     
+
+Forces the index file to be index.html
+
+=item -l     
+
+Edit the lastest post's .raw file directly. Republishes it using
+the -r option.
+
+=item -L [1-9*]
+
+Edit  the  Nth  latest,  relative  to the last post. Last post's
+index number is 1.
+
+=item -m message
+
+Specify the entry message at the  commandline,  avoids  $EDITOR.
+Ignored when used with -b (batch mode).
+
+=item -n     
+
+Lists all entries, newest first, then quits (deprecated in favor
+of the veels utility.
+
+=item -o     
+
+Lists all entries, oldest first, then quits (deprecated in favor
+of the veels utility.
+
+=item -P     
+
+Forever  deletes  all  .raw  files  and formatted files that are
+associated with all posts listed with -p
+
+=item -p     Shows what .raw files don't have an entry in $INDEX.
+
+=item -r [1-9*]
+
+Reformats the Nth latests post.
+
+=item -R     Reformats all .raw files; will respect -c
+
+=item -s summary
+
+Places a summary below the title in the $INDEX.
+
+=item -t title
+
+Specify the title at the commandline.
+
+=item -T file
+
+Defines the top template, defaults to ./vee-top.tpl
+
+=item -v     
+
+Prints version information, then quits.
+
+=item -x     
+
+Defines a hook if not using the default, ./vee-pre ;  hook  must
+be executable (0755) by effective user.
+
+=back
+
+=head1 FILES
+
+=over 4
+
+=item .veerc
+
+Primary configuration file, see I<veerc>(5).
+
+=item vee-top.tpl
+
+=item vee-bottom.tpl
+
+=item vee-pre
+
+=item vee.index
+
+=item .vee/*.raw
+
+=back
+
+=head1 ENVIRONMENT
+
+=head1 DIAGNOSTICS
+
+=head1 BUGS
+
+=head1 AUTHOR
+
+B. Estrade L<estrabd@gmail.com>
+
+=head1 SEE ALSO
+
+I<veels>(1) 
+I<veecat>(1) 
+I<vee-rebuild>(1) 
+I<veerc>(5) 
+I<veeindex>(5) 
