@@ -1,0 +1,41 @@
+=head1 NAME
+
+vee hooks
+
+=head1 SYNOPSIS
+
+vee hooks
+
+=head1 DESCRIPTION
+
+C<veels> is a 
+
+=head1 COMMANDS
+
+=over 4
+
+=item -x     
+
+=back
+
+=head1 FILES
+
+none
+
+=head1 ENVIRONMENT
+
+=head1 DIAGNOSTICS
+
+=head1 BUGS
+
+=head1 AUTHOR
+
+B. Estrade L<estrabd@gmail.com>
+
+=head1 SEE ALSO
+
+I<veels>(1) 
+I<veecat>(1) 
+I<vee-rebuild>(1) 
+I<veerc>(5) 
+I<veeindex>(5) 
