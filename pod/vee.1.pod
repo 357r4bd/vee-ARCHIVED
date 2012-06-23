@@ -4,15 +4,14 @@ vee
 
 =head1 SYNOPSIS
 
-  vee [-b] [-t I<title>]
+vee [-b] [-t title]
 
 =head1 DESCRIPTION
 
-C<vee> is a command-line blog tool that is very portable across Unix  sys-
-tems.  It provides an interactive as well as a batch interface to main-
-tain a log of entries. Formatting is done using a  module  architecture
-that allows a high degree of customization. There are minimal flags and
-no set up is required.
+C<vee> is a command-line blog tool that is very portable across Unix  systems.  
+It provides an interactive as well as a batch interface to maintain a log of entries. 
+Formatting is done using a  module  architecture that allows a high degree of customization. 
+There are minimal flags and no set up is required.
 
 =head1 COMMANDS
 
@@ -24,27 +23,26 @@ clears the terminal screen when securerun is executed
 
 =item -b     
 
-Puts vee into batch mode, allowing it to  accept  STDIN  as  the
-body  of  the  post.  This  makes vee useful for creating a web-
-accessible log index.
+Puts vee into batch mode, allowing it to  accept  I<STDIN>  as  the
+body of the post. This makes vee useful for creating a web-accessible log index.
 
 =item -B file
 
-Define bottom template; default is ./vee-bottom.tpl
+Define bottom template; default is I<./vee-bottom.tpl>
 
-=item -c     [1-9*] 
+=item -c [1-9*] 
 
 Specifiy the number of characters fold allows per line.
 
 =item -d publish_dir
 
-Specify the directory .vee is in; defaults to the present  work-
-ing directory as known to `pwd`
+Specify the directory .vee is in; defaults to the present working 
+directory as known to `pwd`
 
-=item -f format
+=item -f format [groff|fold|none]
 
-Use  defined format instead of the default, groff ; groff , fold
-, and none are supported out of the box.
+Use defined format instead of the default, groff; I<groff>(1), I<fold>(1), 
+and I<none> are supported out of the box.
 
 =item -h     
 
@@ -65,36 +63,38 @@ the -r option.
 
 =item -L [1-9*]
 
-Edit  the  Nth  latest,  relative  to the last post. Last post's
+Edit the Nth latest, relative to the last post. Last post's
 index number is 1.
 
 =item -m message
 
-Specify the entry message at the  commandline,  avoids  $EDITOR.
+Specify the entry message at the  commandline,  avoids $EDITOR.
 Ignored when used with -b (batch mode).
 
 =item -n     
 
 Lists all entries, newest first, then quits (deprecated in favor
-of the veels utility.
+of the I<veels> utility.
 
 =item -o     
 
 Lists all entries, oldest first, then quits (deprecated in favor
-of the veels utility.
+of the I<veels> utility.
 
 =item -P     
 
-Forever  deletes  all  .raw  files  and formatted files that are
-associated with all posts listed with -p
+Forever deletes all .raw files and formatted files that are
+associated with all posts listed with C<-p>
 
-=item -p     Shows what .raw files don't have an entry in $INDEX.
+=item -p 
+Shows what .raw files don't have an entry in $INDEX.
 
 =item -r [1-9*]
 
 Reformats the Nth latests post.
 
-=item -R     Reformats all .raw files; will respect -c
+=item -R
+Reformats all .raw files; will respect -c
 
 =item -s summary
 
