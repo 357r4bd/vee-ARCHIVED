@@ -1,19 +1,18 @@
+=pod
+
 =head1 NAME
 
 vee
 
-=head1 SYNOPSIS
+=head1 VERSION
 
-vee [-b] [-t title]
+=head1 USAGE 
 
-=head1 DESCRIPTION
+vee [-b] [-t "my first post"] [-m "whooo hoo" ]
 
-C<vee> is a command-line blog tool that is very portable across Unix  systems.  
-It provides an interactive as well as a batch interface to maintain a log of entries. 
-Formatting is done using a  module  architecture that allows a high degree of customization. 
-There are minimal flags and no set up is required.
+=head1 REQUIRED ARGUMENTS
 
-=head1 COMMANDS
+=head1 OPTIONS 
 
 =over 4
 
@@ -119,7 +118,16 @@ be executable (0755) by effective user.
 
 =back
 
-=head1 FILES
+=head1 DESCRIPTION
+
+C<vee> is a command-line blog tool that is very portable across Unix  systems.  
+It provides an interactive as well as a batch interface to maintain a log of entries. 
+Formatting is done using a  module  architecture that allows a high degree of customization. 
+There are minimal flags and no set up is required.
+
+=head1 DIAGNOSTICS
+
+=head1 CONFIGURATION AND ENVIRONMENT
 
 =over 4
 
@@ -139,15 +147,37 @@ Primary configuration file, see I<veerc>(5).
 
 =back
 
-=head1 ENVIRONMENT
+=head1 DEPENDENCIES
 
-=head1 DIAGNOSTICS
+=head1 INCOMPATIBILITIES
 
-=head1 BUGS
+=head1 BUGS AND LIMITATIONS
 
 =head1 AUTHOR
 
 B. Estrade L<estrabd@gmail.com>
+
+=head1 LICENSE AND COPYRIGHT
+
+=head1 EXAMPLES
+
+=head2 Basic using $EDITOR
+
+    $ vee -t "title of my post"
+
+=head2 Basic no $EDITOR
+
+    $ vee -t "title of my post" -m "this is the body of my message"
+
+=head2 Basic batch (no $EDITOR)
+
+    $ echo "this is the body of my message" | vee -b -t "title of my post"
+
+This is really useful if you want to log the output of cronjobs.
+
+=head1 FREQUENTLY ASKED QUESTIONS
+
+=head1 COMMON USAGE MISTAKES
 
 =head1 SEE ALSO
 
@@ -156,3 +186,5 @@ I<veecat>(1)
 I<vee-rebuild>(1) 
 I<veerc>(5) 
 I<veeindex>(5) 
+
+=cut
