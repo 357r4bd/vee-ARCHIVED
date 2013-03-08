@@ -3,7 +3,7 @@
 VEE="../bin/vee"
 VEELS="../bin/veels"
 VEECAT="../bin/veecat"
-REL_VERSION="0.9.9-zeta"
+REL_VERSION="1.00"
 VERSION=`$VEE -v 2>&1`
 VEEDIR="../tmp/vee-test-$$"
 
