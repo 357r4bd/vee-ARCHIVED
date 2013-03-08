@@ -1,5 +1,8 @@
 #!/bin/env perl
 
+use strict;
+use warnings;
+
 # toy filter that replaces AUBURN with an img tag
 
 my $FORMAT_FUNC = $ARGV[0]; # name of format function is passed in

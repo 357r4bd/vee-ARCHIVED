@@ -32,5 +32,3 @@ open(FILTER, "|$FILTERS");
   # send contents of qscript to filters
   print FILTER  $out;
 close(FILTER);
-
-1;

@@ -3,7 +3,7 @@
 # PLEASE SUBMIT BUGS AND REQUESTS AT:
 # 	https://github.com/estrabd/vee/issues
 
-VERSION=0.9.9-zeta
+VERSION=1.00
 
 if [ ! ${EDITOR} ]; then
   EDITOR=vi
@@ -23,7 +23,7 @@ HEADERTXT=  # text or `cat some.header.txt`
 FOOTERTXT="Powered by <a href=\"http://www.0x743.com/vee\">vee</a><br/>Copyright &copy; 2006-${YEAR}"  
 TOP_TPL=./vee-top.tpl
 BOT_TPL=./vee-bottom.tpl
-PREFORMAT_HOOK=./my-pre-hook.sh # the hook is assumed to be executable, else it is ignored
+PREFORMAT_HOOK=./vee-pre # the hook is assumed to be executable, else it is ignored
 USE_EDITOR=1
 LISTENSTDIN=0
 SORT_NEWEST="sort -t. -nr"        # sorts all new to old 
@@ -76,7 +76,6 @@ CUSTOM_SETUP=default_setup
 #
 # Contact (bugs, patches, suggestions)
 #  estrabd+vee 'at' gmail
-#  AIM: bz743
 # 
 # Instructions:
 #  1. put in directory accessible via PATH
@@ -103,7 +102,6 @@ CUSTOM_SETUP=default_setup
 #  arun   @ chat.taucher.net #bsd
 #  J65nko @ bsdforums.com
 
-# ideas:
  default_set_format_func()
 { case "$1" in
     default) FORMAT_FUNC=format_with_groff
@@ -162,7 +160,7 @@ CUSTOM_SETUP=default_setup
   echo "  -t  'title'       specify title at commandline and avoid annoying default prompt" 
   echo "  -T  file          define top template; default is ./vee-top.tpl             " 
   echo "  -v                version and exit                                          " 
-  echo "  -x  hook        defines hook if not using default "./vee-pre"; hook   "
+  echo "  -x  hook          defines hook if not using default "./vee-pre"; hook       "
   echo "                    must be executable, i.e., chmod 755 vee-pre               "
   echo "                                                                              " 
   echo "Examples:                                                                     "

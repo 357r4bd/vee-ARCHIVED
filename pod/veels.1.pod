@@ -1,41 +1,60 @@
 =head1 NAME
 
-veels
+    veels
 
 =head1 SYNOPSIS
 
-veecat
+    veels
 
-=head1 DESCRIPTION
-
-C<veels> is a 
-
-=head1 COMMANDS
+=head1 OPTIONS 
 
 =over 4
 
-=item -x     
+=item -d direcory
+
+Specify directory inwhich to locate the I<.vee> directory, which contains the
+I<*.raw> files.
+
+=item -l 
+
+Use I<ls> as found in PATH with default options
+
+=item -L I<ls options>
+
+Use I<ls> as found in PATH with provided options (must be valid I<ls> options)
+
+=item -r
+
+Sort oldest to newest
+
+=item -x
+
+Strip C<.raw> from file name; this is useful for also iterating over other
+files that might share a name with the I<*.raw> file (e.g., I<*.html>).
+
+=item -h
+
+Usage output
 
 =back
 
-=head1 FILES
+=head1 DESCRIPTION
 
-none
+C<veels> is a part of the I<vee> family of utilities that is useful for
+iterating over I<*.raw> files.
 
-=head1 ENVIRONMENT
+It is provided as a basic utility required to build tools to manage I<vee>
+posts.
 
-=head1 DIAGNOSTICS
+=head1 EXAMPLES
 
-=head1 BUGS
+The best example of all is to take a look at the I<vee-rebuild> tool.
+
+    for f in `veels`; 
+    do
+        # do stuff with $f
+    done
 
 =head1 AUTHOR
 
 B. Estrade L<estrabd@gmail.com>
-
-=head1 SEE ALSO
-
-I<veels>(1) 
-I<veecat>(1) 
-I<vee-rebuild>(1) 
-I<veerc>(5) 
-I<veeindex>(5) 

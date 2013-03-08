@@ -2,23 +2,25 @@
 
 =head1 NAME
 
-vee
+    vee
 
 =head1 VERSION
 
 =head1 USAGE 
 
-vee [-b] [-t "my first post"] [-m "whooo hoo" ]
+    vee -t "my post title" [-m "check this out f00 bar herp derp" ]
+
+=head2 Batch mode
+
+    cat some_file.txt | vee -b -t "my post title"
 
 =head1 REQUIRED ARGUMENTS
+
+It is recommend to use the I<-t> flag to set the title.
 
 =head1 OPTIONS 
 
 =over 4
-
-=item -b
-
-clears the terminal screen when securerun is executed
 
 =item -b     
 
@@ -47,7 +49,7 @@ and I<none> are supported out of the box.
 
 prints help message, then quits.
 
-=item -i custom
+=item -i I<custom.html>
 
 specifies a custom index file to use.
 
@@ -131,27 +133,75 @@ There are minimal flags and no set up is required.
 
 =over 4
 
-=item .veerc
+=item EDITOR
 
-Primary configuration file, see I<veerc>(5).
+If set in the environment, this is the editor that I<vee> will attempt to use.
+The default it I<vi> found in PATH.
 
-=item vee-top.tpl
+=item PREFORMAT_HOOK 
 
-=item vee-bottom.tpl
+If C<PREFORMAT_HOOK> is defined and points to an executable file that accepts
+STDIN and prints to STOUT. It is run immediately before the main formatting
+takes place.
 
-=item vee-pre
+This variable must be set directly in I<vee> or in I<.veerc>.
 
-=item vee.index
+=item POSTFORMAT_HOOK 
+
+B<NOTE: This hook is currently disabled.>
+
+If C<POSTFORMAT_HOOK> is defined and points to an executable file that accepts
+STDIN and prints to STOUT. It is run immediately before the main formatting
+takes place.
+
+This variable must be set directly in I<vee> or in I<.veerc>.
+
+=item I<.veerc>
+
+Primary configuration file, read after all options are read. Settins
+overridable via commandline options.  Use I<-d> to specify a directory in which
+to look for I<.veerc>. By default, it looks in `pwd`.
+
+=item I<vee-top.tpl>
+
+If this file exists, it is prepended to the post. Use the I<-T> flag to define
+a top template at runtime.
+
+=item I<vee-bottom.tpl>
+
+If this file exists, it is appended to the post. Use the I<-B> flag to define a
+top template at runtime.
+
+=item I<vee.index>
+
+The main index. It is kept properly sorted through the use of line numbers
+embedded inside of HTML comments. It may be customized, but each line must
+contain a number based on the ordering one wishes to maintain during the
+addition of a new post link. 
 
 =item .vee/*.raw
+
+These are the main record files of each post; they contain header information
+and the original unformatted text.
+
+The utilities I<veecat> is used to query these fields and I<veels> is used to
+iterate over them.
 
 =back
 
 =head1 DEPENDENCIES
 
+The idea is that I<vee> can deployed on any minimal Unix-like environment
+without the overhead of any additional 3rd-party software tools or libraries.
+
+Certainly these can enhance I<vee>, but the goal is to still have it useful and
+functional on bare systems.
+
 =head1 INCOMPATIBILITIES
 
 =head1 BUGS AND LIMITATIONS
+
+The I<sort> tool on OS X is funky and causes some weirdness in some cases.
 
 =head1 AUTHOR
 
@@ -159,32 +209,40 @@ B. Estrade L<estrabd@gmail.com>
 
 =head1 LICENSE AND COPYRIGHT
 
+This has been released under a variety of licenses, but the one that applies
+most directly is the C<Do What the F*** You Want>.
+
 =head1 EXAMPLES
 
-=head2 Basic using $EDITOR
+=head2 Basic using EDITOR
 
     $ vee -t "title of my post"
 
-=head2 Basic no $EDITOR
+=head2 Basic no EDITOR
+
+In this example, the message body is being specified at the commandline using
+I<-m>.
 
     $ vee -t "title of my post" -m "this is the body of my message"
 
-=head2 Basic batch (no $EDITOR)
+=head2 Basic batch (no EDITOR)
 
     $ echo "this is the body of my message" | vee -b -t "title of my post"
 
-This is really useful if you want to log the output of cronjobs.
-
-=head1 FREQUENTLY ASKED QUESTIONS
-
-=head1 COMMON USAGE MISTAKES
+This is really useful if you want to log the output of cronjobs or other batch
+processes.
 
 =head1 SEE ALSO
 
-I<veels>(1) 
-I<veecat>(1) 
-I<vee-rebuild>(1) 
-I<veerc>(5) 
-I<veeindex>(5) 
+I<veels>(1)  - used to iterate over I<*.raw> files
+
+I<veecat>(1)  - used to query specific parts of a I<*.raw> file
+
+I<vee-rebuild>(1)  - rebuilds the I<veeindex> based on the existing I<*.raw>
+files.
+
+I<veerc>(5) - the primary method of customizing the environment 
+
+I<veeindex>(5) - the HTML-based listing of posts
 
 =cut
