@@ -1,4 +1,6 @@
 Primary focus: 
  Develop some sample utilities (outside of ./vee) that allow for various post management tasks
 
- See ./bin/GOALS
+ * veels
+ * veecat
+ * vee-rebuild

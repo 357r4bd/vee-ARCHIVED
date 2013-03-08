@@ -1,0 +1,9 @@
+I use POD to create the documentation, then convert it to *roff using pod2man.
+
+To generate man pages:
+
+$ make
+
+To clean:
+
+$ make clean
