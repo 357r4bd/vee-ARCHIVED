@@ -26,19 +26,19 @@ BOT_TPL=./vee-bottom.tpl
 PREFORMAT_HOOK=./vee-pre # the hook is assumed to be executable, else it is ignored
 USE_EDITOR=1
 LISTENSTDIN=0
-SORT_NEWEST="sort -t. -nr"        # sorts all new to old 
-SORT_OLDEST="sort -t. -r"         # sorts all old to new
-PUBLISHED=`date "+%m/%d/%Y"`      # date formated for index page entry
+SORT_NEWEST="sort -t. -nr"         # sorts all new to old 
+SORT_OLDEST="sort -t. -r"          # sorts all old to new
+PUBLISHED=`date "+%m/%d/%Y"`       # date formated for index page entry
 OUTPUT_TOP=output_top
 OUTPUT_BOT=output_bottom
 
-# define custome formatting 
+# define custom formatting 
 FORMAT_FUNC=format_with_groff
 FORMAT_DISPATCHER=default_set_format_func       
 FORMAT_CUSTOM_DISPATCHER=custom_set_format_func
 
-# define custom functions file; see example in vee/sample-custom-format/   
-FORMAT_CUSTOM_DEFS=./vee-custom.sh  
+# define custom functions file; see example in # vee/sample-custom-format/vee-custom.sh
+FORMAT_CUSTOM_DEFS=./vee-custom.sh # path is relative to -d DIR, where .veerc resides
 UPDATE_INDEX=default_update_index
 CUSTOM_SETUP=default_setup   
 
