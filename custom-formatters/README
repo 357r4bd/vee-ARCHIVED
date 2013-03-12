@@ -1,0 +1,4 @@
+Using the 3rd party tool, 'pandoc', it's simple to have markdown to html
+support. Since a lot of stuff inside of bin/vee adds HTML for you, markdown
+being a useful source format is going require getting a lot of this stuff moved
+out.
