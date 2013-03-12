@@ -32,13 +32,12 @@ PUBLISHED=`date "+%m/%d/%Y"`       # date formated for index page entry
 OUTPUT_TOP=output_top
 OUTPUT_BOT=output_bottom
 
-# define custom formatting 
+# define custom formatting define custom functions file; see example in # vee/sample-custom-format/vee-custom.sh
 FORMAT_FUNC=format_with_groff
 FORMAT_DISPATCHER=default_set_format_func       
 FORMAT_CUSTOM_DISPATCHER=custom_set_format_func
-
-# define custom functions file; see example in # vee/sample-custom-format/vee-custom.sh
 FORMAT_CUSTOM_DEFS=./vee-custom.sh # path is relative to -d DIR, where .veerc resides
+
 UPDATE_INDEX=default_update_index
 CUSTOM_SETUP=default_setup   
 
@@ -105,12 +104,16 @@ CUSTOM_SETUP=default_setup
  default_set_format_func()
 { case "$1" in
     default) FORMAT_FUNC=format_with_groff
+             echo using $FORMAT_FUNC
              ;;
     groff)   FORMAT_FUNC=format_with_groff
+             echo using $FORMAT_FUNC
              ;;
     fold)    FORMAT_FUNC=format_with_fold
+             echo using $FORMAT_FUNC
              ;;
     none)    FORMAT_FUNC=with_no_formatting
+             echo using $FORMAT_FUNC
              ;;
              # if not a supplied format, see if it is in the custom format file, if it exists
     *)       if [ -e "${FORMAT_CUSTOM_DEFS}" ]; then
@@ -122,7 +125,6 @@ CUSTOM_SETUP=default_setup
                die_cleanly
              fi
   esac 
-  echo using $FORMAT_FUNC
 }
 
  usage()

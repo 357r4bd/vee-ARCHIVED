@@ -1,8 +1,0 @@
-Sat Jun 30 11:56:00 EDT 2007
-
-shell-less windows
-
---
-
-By accident, I discovered that deleting "explorer.exe" in windows only really kills the task bar and desktop icons.  I had cygwin installed, but I had to fire up the CMD shell to get to it. I originally did this because winbloze kept locking up - I guess because windows sucks. I have to say that working with wondows without the taskbar and desktop icons is not bad - not bad at all.
-
