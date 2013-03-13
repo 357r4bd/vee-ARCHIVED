@@ -26,6 +26,7 @@ BOT_TPL=./vee-bottom.tpl
 PREFORMAT_HOOK=./vee-pre # the hook is assumed to be executable, else it is ignored
 USE_EDITOR=1
 LISTENSTDIN=0
+SORT_INDEX="sort -t; -k 2 -nr"     # sorts index lines numerically based on the second field (; is the separator)
 SORT_NEWEST="sort -t. -nr"         # sorts all new to old 
 SORT_OLDEST="sort -t. -r"          # sorts all old to new
 PUBLISHED=`date "+%m/%d/%Y"`       # date formated for index page entry
@@ -574,11 +575,8 @@ done
 }
 
  sort_index()
-{ #echo sorting ${INDEX} ...
-  #sort -t";" +0f -1 +1nr ${INDEX} > .${INDEX}.$$.sorted
-  #${SORT_INDEX} 
-  sort -t';' +0f -1 +1nr ${INDEX} > .${INDEX}.$$.sorted
-  #echo rebuilding ${INDEX} 
+{
+  ${SORT_INDEX} ${INDEX} > .${INDEX}.$$.sorted
   mv .${INDEX}.$$.sorted ${INDEX} # "rebuild ${INDEX}
 }
 
