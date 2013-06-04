@@ -278,9 +278,11 @@ CUSTOM_SETUP=default_setup
 # default arguments include:
 #
  preformat()
-{ if [ -x "${PREFORMAT_HOOK}" ]; then
-    cat "${DRAFT}" | "${PREFORMAT_HOOK}" "${FORMAT_FUNC}" > "${DRAFT}.tmp" 
-    mv -f "${DRAFT}.tmp" "${DRAFT}" 
+{ if [ -e "${PREFORMAT_HOOK}" ]; then
+    if [ -x "${PREFORMAT_HOOK}" ]; then
+      cat "${DRAFT}" | "${PREFORMAT_HOOK}" "${FORMAT_FUNC}" > "${DRAFT}.tmp" 
+      mv -f "${DRAFT}.tmp" "${DRAFT}" 
+    fi
   fi 
 }
 
