@@ -55,14 +55,18 @@ do
 
     # deal with with timezone info in a brutish way (seems like a TZ mismatch in data input will cause error)
     TZ_SYS=`date "+%Z"`
-    TZ_DATE=`echo $DATE | awk '{ print $5 }'`
-    DATE=`echo $DATE | sed -e "s/$TZ_DATE/$TZ_SYS/"`
+    DOW=`echo $DATE | awk '{ print $1 }'`
+    MON=`echo $DATE | awk '{ print $2 }'`
+    DOM=`echo $DATE | awk '{ print $3 }'`
+    HMS=`echo $DATE | awk '{ print $4 }'`
+    TZN=`echo $DATE | awk '{ print $5 }'`
+     YR=`echo $DATE | awk '{ print $6 }'`
 
     # reformate date for indexing purposes (.raw files untouched)
-    FORMATTED_DATE=`date -j -f "%a %b %d %T %Z %Y" "$DATE" "+%m/%d/%Y"` 
+    FORMATTED_DATE=`date -d"$DATE" +%m/%d/%Y`
 
     # get epoch for purpose of adding reasonable post index numbers 
-    EPOCH=`date -j -f "%a %b %d %T %Z %Y" "$DATE" "+%s"` 
+    EPOCH=`date -d"$DATE" "+%s"` 
 
     # extract base name of .raw file so we can link to html file of same base
     FILENAME=$(basename $f)
