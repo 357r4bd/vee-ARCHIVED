@@ -6,7 +6,28 @@ however I am always interested in improving it in some basic way.
 
 It's available in a variety of package repositories, like pkgsrc and FreeBSD Ports.
 
-Enjoy it!
+Version: 0.9.9-zeta
+
+Incompatibilities:
+
+The goal of vee is that it should work on minimal systems using only original Bourne 
+shell (sh) and without having to install anything. I originally began this work on 
+FreeBSD, but it seems that sort behaves differently among FreeBSD, Linux, and 
+Mac - which is frustrating =D
+
+Project Status:
+
+This is one of those "forever" projects that met my needs very early on, and 
+I have revisited the code for only incremental improvements. I'd like to get to 
+1.0, but this would realy just mean a nice set of useful utilities (veels, veecat, 
+vee-rebuild) and associated documentation. Work towards this has been spotty, 
+but progress has been good. At some point, I'll have some time to wrap it up and 
+present version 1.0 - at which point it's likely I'll cease any work on it other 
+than bug fixes or applying patches from others.
+
+Project Home Page:
+
+	http://estrabd.github.io/vee/
 
 Bug reports:
 
@@ -14,13 +35,11 @@ Bug reports:
 
 Developer contact:
 
-estrabd at gmail dot commie
+estrabd at gmail dot com
 
 It's also on Freshmeat:
 
-	http://freshmeat.net/projects/vee-the-blog-tool
-
-Version: 0.9.9-zeta                                                           
+	http://freshmeat.net/projects/vee-the-blog-tool                                                        
                                                                               
 Usage:                                                                        
   See below.                                                                  
@@ -47,7 +66,7 @@ Options:
                     posts that are listed with -p;                            
   -r  [1-9\d*]      reformats the Nth latest post                             
   -R                reformats _all_ .vee/*.raw files; -c applies as well      
-  -s  summary     placed below title in INDEX                               
+  -s  summary       placed below title in INDEX                               
   -t  'title'       specify title at commandline and avoid annoying default prompt
   -T  file          define top template; default is ./vee-top.tpl             
   -v                version and exit                                          
