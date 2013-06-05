@@ -39,13 +39,46 @@
          <p/>Found a <a href="https://github.com/estrabd/vee/issues">BUG or have a feature REQUEST</a>?
          <br/>
          <br/>
-         <font color="darkgreen">Check out the latest release</font>:
-         <br/>
-         <table><tr><td bgcolor=white> <tt>svn export http://vee.googlecode.com/svn/tags/0.9.9-zeta vee-0.9.9-zeta</tt> </td></tr></table>
-         <br/>
-         <b>Note, now on Github!</b> Check out the <font color="maroon">bleeding edge</font>:
+         <a href=http://www.0x743.com/vee/vee-0.9.9-zeta.tgz><font color="darkgreen">Check out the latest release</font></a>
          <br/>
         </section>
+
+<b>All Options</b> 
+<font color="green">
+<pre>
+Usage:                                                                        
+  %vee [-c fold_column] [-t title] [-m message] [-b #toggle batchmode]        
+                                                                              
+Options:                                                                      
+  -b                batch mode; used when piping in msg via stdin             
+  -B  file          define bottom template; default is ./vee-bottom.tpl       
+  -c  [1-9\d*]      specify the number of characters 'fold' allows per line   
+                    this only applies when 'fold' (-f) is used              
+  -d  'publis_dir'  specify the directory .vee is in - defaults to PWD        
+  -f  'format'      use defined format instead of the default, groff;
+                    'groff', 'fold', and 'none' are supported out of the box
+  -h                prints this blurb                                         
+  -i  'custom.html' specify a custom index file over the default              
+  -I                force index file to be "index.html"                     
+  -l                edit latest post's *.raw; used with '-r' publishes changes;
+                    calls reformat automatically;                             
+  -L  [1-9\d*]      edit the Nth latest, relative to last post; lp starts at 1
+  -m  'message ...' specify entry message at commandline and avoid vi         
+  -n                lists all entries, newest first, then quits               
+  -o                lists all entries, oldest first, then quits               
+  -p                see what *raw files don't have an entry in the INDEX      
+  -P                forever deletes all *raw and formatted files associated with
+                    posts that are listed with -p;                            
+  -r  [1-9\d*]      reformats the Nth latest post                             
+  -R                reformats _all_ .vee/*.raw files; -c applies as well      
+  -s  summary       placed below title in INDEX                               
+  -t  'title'       specify title at commandline and avoid annoying default prompt
+  -T  file          define top template; default is ./vee-top.tpl             
+  -v                version and exit                                          
+  -x  filter        defines filter if not using default ./vee-pre; filter     
+                    must be executable, i.e., chmod 755 vee-pre 
+</b></font>
+</pre>
 
       <table><tr><td bgcolor=white> <tt>git clone git://github.com/estrabd/vee.git</tt> </td></tr></table>
       <br/>
@@ -114,42 +147,6 @@
       One may define their own set of custom format functions much more easily.  See <a href="http://www.0x743.com/.vee/1189648864.2007-09-12T22:01:04.html">this post</a> for more information.
       <br/>
       <br/>
-<b>All Options</b> 
-<font color="green">
-<pre>
-Usage:                                                                        
-  %vee [-c fold_column] [-t title] [-m message] [-b #toggle batchmode]        
-                                                                              
-Options:                                                                      
-  -b                batch mode; used when piping in msg via stdin             
-  -B  file          define bottom template; default is ./vee-bottom.tpl       
-  -c  [1-9\d*]      specify the number of characters 'fold' allows per line   
-                    this only applies when 'fold' (-f) is used              
-  -d  'publis_dir'  specify the directory .vee is in - defaults to PWD        
-  -f  'format'      use defined format instead of the default, groff;
-                    'groff', 'fold', and 'none' are supported out of the box
-  -h                prints this blurb                                         
-  -i  'custom.html' specify a custom index file over the default              
-  -I                force index file to be "index.html"                     
-  -l                edit latest post's *.raw; used with '-r' publishes changes;
-                    calls reformat automatically;                             
-  -L  [1-9\d*]      edit the Nth latest, relative to last post; lp starts at 1
-  -m  'message ...' specify entry message at commandline and avoid vi         
-  -n                lists all entries, newest first, then quits               
-  -o                lists all entries, oldest first, then quits               
-  -p                see what *raw files don't have an entry in the INDEX      
-  -P                forever deletes all *raw and formatted files associated with
-                    posts that are listed with -p;                            
-  -r  [1-9\d*]      reformats the Nth latest post                             
-  -R                reformats _all_ .vee/*.raw files; -c applies as well      
-  -s  summary       placed below title in INDEX                               
-  -t  'title'       specify title at commandline and avoid annoying default prompt
-  -T  file          define top template; default is ./vee-top.tpl             
-  -v                version and exit                                          
-  -x  filter        defines filter if not using default ./vee-pre; filter     
-                    must be executable, i.e., chmod 755 vee-pre 
-</b></font>
-</pre>
 </td>
 <!-- content -->
 </td>
