@@ -8,19 +8,23 @@ It's available in a variety of package repositories, like pkgsrc and FreeBSD Por
 
 Enjoy it!
 
+Version: 0.9.9-zeta   
+
+Project Home Page:
+
+	http://estrabd.github.io/vee/
+
 Bug reports:
 
 	https://github.com/estrabd/vee/issues
 
 Developer contact:
 
-estrabd at gmail dot commie
+estrabd at gmail dot com
 
 It's also on Freshmeat:
 
-	http://freshmeat.net/projects/vee-the-blog-tool
-
-Version: 0.9.9-zeta                                                           
+	http://freshmeat.net/projects/vee-the-blog-tool                                                        
                                                                               
 Usage:                                                                        
   See below.                                                                  
