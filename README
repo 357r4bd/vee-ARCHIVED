@@ -51,7 +51,7 @@ Options:
                     posts that are listed with -p;                            
   -r  [1-9\d*]      reformats the Nth latest post                             
   -R                reformats _all_ .vee/*.raw files; -c applies as well      
-  -s  summary     placed below title in INDEX                               
+  -s  summary       placed below title in INDEX                               
   -t  'title'       specify title at commandline and avoid annoying default prompt
   -T  file          define top template; default is ./vee-top.tpl             
   -v                version and exit                                          
