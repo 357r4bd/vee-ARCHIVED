@@ -8,15 +8,22 @@ It's available in a variety of package repositories, like pkgsrc and FreeBSD Por
 
 Version: 0.9.9-zeta
 
+Incompatibilities:
+
+The goal of vee is that it should work on minimal systems using only original Bourne 
+shell (sh) and without having to install anything. I originally began this work on 
+FreeBSD, but it seems that sort behaves differently among FreeBSD, Linux, and 
+Mac - which is frustrating =D
+
 Project Status:
 
 This is one of those "forever" projects that met my needs very early on, and 
 I have revisited the code for only incremental improvements. I'd like to get to 
-1.0, but thiswould realy just mean a nice set of useful utilities (veels, veecat, 
+1.0, but this would realy just mean a nice set of useful utilities (veels, veecat, 
 vee-rebuild) and associated documentation. Work towards this has been spotty, 
 but progress has been good. At some point, I'll have some time to wrap it up and 
 present version 1.0 - at which point it's likely I'll cease any work on it other 
-than bug fixes or applying patchesfrom others.
+than bug fixes or applying patches from others.
 
 Project Home Page:
 
