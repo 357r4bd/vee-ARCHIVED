@@ -1,0 +1,23 @@
+read_post()
+{
+	file="${1##*/}"
+	epoch="${file#*.}"; epoch="${epoch%%.*}"
+	dir="${1%/*}"
+	base="${1#$DIR/*}"; base="${base%.*}"
+	date="${base##*.}"; date="${date:0:10}"
+	month="${date:5:2}"; day="${date:8}"; year="${date:0:4}"
+	raw="$(find $dir -name "*$epoch.*raw")"
+	title="$(sed -n '3p' $raw)"
+	html="$(find $dir -name "*$epoch.*html")"
+}
+
+add_post()
+{
+	printf "<!--;$epoch; -->$month/$day/$year<a href="$html"> $title</a>\n"
+}
+
+if [ "$#" -eq 1 ]
+then
+	read_post "$1"
+	add_post
+fi
