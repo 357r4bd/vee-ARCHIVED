@@ -278,9 +278,11 @@ CUSTOM_SETUP=default_setup
 # default arguments include:
 #
  preformat()
-{ if [ -x "${PREFORMAT_HOOK}" ]; then
-    cat "${DRAFT}" | "${PREFORMAT_HOOK}" "${FORMAT_FUNC}" > "${DRAFT}.tmp" 
-    mv -f "${DRAFT}.tmp" "${DRAFT}" 
+{ if [ -e "${PREFORMAT_HOOK}" ]; then
+    if [ -x "${PREFORMAT_HOOK}" ]; then
+      cat "${DRAFT}" | "${PREFORMAT_HOOK}" "${FORMAT_FUNC}" > "${DRAFT}.tmp" 
+      mv -f "${DRAFT}.tmp" "${DRAFT}" 
+    fi
   fi 
 }
 
@@ -574,11 +576,9 @@ done
 }
 
  sort_index()
-{ #echo sorting ${INDEX} ...
-  #sort -t";" +0f -1 +1nr ${INDEX} > .${INDEX}.$$.sorted
-  #${SORT_INDEX} 
+{
+  # would like to figure out how to put this sort command into a variable, but thusfar not so successful
   sort -t';' +0f -1 +1nr ${INDEX} > .${INDEX}.$$.sorted
-  #echo rebuilding ${INDEX} 
   mv .${INDEX}.$$.sorted ${INDEX} # "rebuild ${INDEX}
 }
 
