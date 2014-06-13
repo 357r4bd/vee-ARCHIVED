@@ -294,7 +294,9 @@ CUSTOM_SETUP=default_setup
 #}
 
  format_main()
-{ FINAL=${DIR}/${1}
+{
+
+  FINAL=${DIR}/${1}
   FINALNAME=${1}
   RAW=${DIR}/${2}
   RAWNAME=${2}
@@ -317,26 +319,17 @@ CUSTOM_SETUP=default_setup
 }
 
  reformat_singleton()
-{  if [ -e "${DIR}/${1}.raw" ]; then
-     #echo "Reformatting message: \"${1}\""
-     cat "${DIR}/${1}.raw" > "${DRAFT}"
-     format_main "${1}.${FORMAT}" "${1}.raw"
-   fi
+{
+   cat "$DIR/${1}.raw" > "${DRAFT}"
+   format_main "${1#*.}.${FORMAT}" "${1}.raw"
 }
 
  reformat_all()
- { FILES=$(ls -c ${DIR}/*.raw | ${SORT_OLDEST})
-   for RAW in $FILES; do
-     # From: Randall R Schulz <rrschulz at cris dot com>
-     FULLNAME="${RAW}"
-     DIR="${FULLNAME%/*}"
-     FILE="${FULLNAME##*/}"
-     MAXBASE="${FILE%.*}"
-     MINBASE="${FILE%%.*}"
-     MAXSUF="${FILE#*.}"
-     MINSUF="${FILE##*.}"
-     reformat_singleton "${MAXBASE}"
-   done
+{
+  find "${DIR}" -name "*.raw" -exec sh -c 'sh add_post reformat $1' _ {} \; |
+  while IFS= read -r post; do
+    reformat_singleton "$post"
+  done
 }
 
 rebuild_index()
@@ -369,31 +362,20 @@ list_oldest_first()
 	find "${DIR}" -name "*${1}*.raw" ;
 }
 
- purge_entries()
-{ LEVEL=$1 
-  COUNT=0
+purge_entries()
+{
+  LEVEL=$1
   if [ ! -e "${INDEX}" ]; then
     echo "Can't find index, \"${INDEX}\""
     die_cleanly
   fi
-  FILES=$(newest_first)
-  for FILE in ${FILES}; do
-     FULLNAME="${FILE}"
-     DIR="${FULLNAME%/*}"
-     FILE="${FULLNAME##*/}"
-     MAXBASE="${FILE%.*}"
-	 ENTRY=$(grep "$MAXBASE" $INDEX)
-     if [ -z "${ENTRY}" ]; then
-	   COUNT=$(expr $COUNT + 1)
-       if [ $LEVEL -eq 1 ]; then
-         echo "$DIR/$FILE (not really purged, use -P for realz)"
-       elif [ $LEVEL -eq 2 ]; then
-         echo "$DIR/$MAXBASE[.raw,$FORMAT] (purged for realz)"
-         rm -f $DIR/$MAXBASE*
-       fi
-     fi
-  done
-  echo removed $COUNT entrie\(s\)...
+  if [ "$LEVEL" -eq 1 ]; then
+    echo "Entries not in $INDEX (remove with -P):"
+	find "${DIR}" -name "*.html" -exec sh -c 'sh add_post plist $1' _ {} \;
+  elif [ "$LEVEL" -eq 2 ]; then
+    echo "Entries not in $INDEX have been deleted:"
+    find "${DIR}" -name "*.html" -exec sh -c 'sh add_post prm $1' _ {} \;
+  fi
 }
 
  die_cleanly()
@@ -427,7 +409,7 @@ while getopts 'f:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:' option; do
 	   $(pwd)
        ;;
     r) POST2REFORMAT="${OPTARG}"
-       ;;
+	   ;;
     R) REFORMATALL=1
        ;;
     b) LISTENSTDIN=1 
@@ -497,8 +479,7 @@ done
   fi
 
   if [ ${POST2REFORMAT} -ge 1 ]; then
-	echo "POST2EDIT $POST2EDIT"
-	LATEST=$(find "${DIR}" -name "*.raw" -exec sh -c 'sh add_post path $1' _ {} \; | tail -r | head -n ${POST2REFORMAT} | tail -n 1)
+	LATEST=$(find "${DIR}" -name "*.raw" -exec sh -c 'sh add_post reformat $1' _ {} \; | tail -r | head -n ${POST2REFORMAT} | tail -n 1)
 	reformat_singleton "${LATEST}"
     die_cleanly
   fi
