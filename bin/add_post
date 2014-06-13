@@ -1,0 +1,57 @@
+INDEX=vee.html
+read_post()
+{
+	file="${1##*/}"
+	epoch="${file%%.*}"
+	dir="${1%/*}"
+	base="${1#$dir/*}"; base="${base%.*}"
+	date="${base##*.}"; date="${date:0:10}"
+	month="${date:5:2}"; day="${date:8}"; year="${date:0:4}"
+	raw="$(find $dir -name "*$epoch.*raw")"
+	title="$(sed -n '3p' $raw)"
+	html="$(find $dir -name "*$epoch.*html")"
+}
+
+html()
+{
+	printf "<!--;$epoch; -->$month/$day/$year<a href="$html"> $title</a>\n"
+}
+
+list()
+{
+	printf "$base :: $title\n"
+}
+
+path()
+{
+	printf "$raw\n"
+}
+
+plist()
+{
+	exists=$(grep "$epoch" "$INDEX") 
+	if [ -z "$exists" ]
+	then
+		printf "$raw -> $html\n"
+	fi
+}
+
+prm()
+{
+	exists=$(grep "$epoch" "$INDEX")
+	if [ -z "$exists" ]
+	then
+		printf "$raw -> $html\n"
+		rm "$raw" "$html"
+	fi
+}
+
+reformat()
+{
+	raw=${raw##*/}
+	printf "${raw%.*}\n"
+}
+
+read_post "$2"
+$1
+
