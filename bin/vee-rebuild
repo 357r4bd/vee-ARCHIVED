@@ -1,6 +1,6 @@
 #!/bin/sh
 
-GENDATE=`date`
+GENDATE=$(date)
 VEEDIR=./.vee
 HTMLEXT=html
 
@@ -45,28 +45,28 @@ echo "<!-- ;100000000000000000000000; more HTML -->"
 echo "<!-- ;10000000000000000000000; new index regenerated on $GENDATE -->"
 echo "<!-- ;1000000000000000000000; pre tag --><pre>"
 
-for f in `veels`; 
+for f in $(veels); 
 do
     # title is the 3rd line
-    TITLE=`echo $f | veecat -t`
+	TITLE=$(echo $f | veecat -t)
 
     # full date string (not epoch) is the first line
-    DATE=`echo $f | veecat -d`
+	DATE=$(echo $f | veecat -d)
 
     # deal with with timezone info in a brutish way (seems like a TZ mismatch in data input will cause error)
-    TZ_SYS=`date "+%Z"`
-    DOW=`echo $DATE | awk '{ print $1 }'`
-    MON=`echo $DATE | awk '{ print $2 }'`
-    DOM=`echo $DATE | awk '{ print $3 }'`
-    HMS=`echo $DATE | awk '{ print $4 }'`
-    TZN=`echo $DATE | awk '{ print $5 }'`
-     YR=`echo $DATE | awk '{ print $6 }'`
+	TZ_SYS=$(date "+%Z")
+	DOW=$(echo $DATE | awk '{ print $1 }')
+	MON=$(echo $DATE | awk '{ print $2 }')
+	DOM=$(echo $DATE | awk '{ print $3 }')
+	HMS=$(echo $DATE | awk '{ print $4 }')
+	TZN=$(echo $DATE | awk '{ print $5 }')
+	YR=$(echo $DATE | awk '{ print $6 }')
 
     # reformate date for indexing purposes (.raw files untouched)
-    FORMATTED_DATE=`date -d"$DATE" +%m/%d/%Y`
+	FORMATTED_DATE=$(date -d"$DATE" +%m/%d/%Y)
 
     # get epoch for purpose of adding reasonable post index numbers 
-    EPOCH=`date -d"$DATE" "+%s"` 
+	EPOCH=$(date -d"$DATE" "+%s") 
 
     # extract base name of .raw file so we can link to html file of same base
     FILENAME=$(basename $f)
