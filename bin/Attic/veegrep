@@ -32,16 +32,16 @@ done
 
  get_title()
 {
-    TITLE=`head -n 3 $1 | tail -n 1`
+	TITLE=$(head -n 3 $1 | tail -n 1)
     echo $TITLE
 }
 
  get_body()
 {
-    # figure out how many lones file is for `tail` command
-    LC=`wc -l $1 | awk '{print $1}'`
+	# figure out how many lones file is for $(tail) command
+	LC=$(wc -l $1 | awk '{print $1}')
     BC=$(($LC-6))
-    echo `cat $1 | tail -n $BC`
+	cat $1 | tail -n $BC
     
 }
 
