@@ -13,13 +13,13 @@ FORMAT=html
 INDEX=vee.html
 DIR=.vee
 DRAFT=${DIR}/.vee.tmp.$$
-DATE=`date`
-YEAR=`date "+%Y"`
-TIME=`date "+%Y-%m-%dT%H:%M:%S"`
-SEC=`date "+%s"`
+DATE=$(date)
+YEAR=$(date "+%Y")
+TIME=$(date "+%Y-%m-%dT%H:%M:%S")
+SEC=$(date "+%s")
 TITLE=
 DEFAULT_TITLE="Entry #${SEC}";
-HEADERTXT=  # text or `cat some.header.txt` 
+HEADERTXT=  # text or $(cat some.header.txt)
 FOOTERTXT="Powered by <a href=\"http://www.0x743.com/vee\">vee</a><br/>Copyright &copy; 2006-${YEAR}"  
 TOP_TPL=./vee-top.tpl
 BOT_TPL=./vee-bottom.tpl
@@ -28,7 +28,7 @@ USE_EDITOR=1
 LISTENSTDIN=0
 SORT_NEWEST="sort -t. -nr"         # sorts all new to old 
 SORT_OLDEST="sort -t. -r"          # sorts all old to new
-PUBLISHED=`date "+%m/%d/%Y"`       # date formated for index page entry
+PUBLISHED=$(date "+%m/%d/%Y")       # date formated for index page entry
 OUTPUT_TOP=output_top
 OUTPUT_BOT=output_bottom
 
@@ -209,7 +209,7 @@ CUSTOM_SETUP=default_setup
   echo "3. Patches are welcome; the goal is not more feature bloat, but a nicer       "
   echo "   way of dealing with standard in, etc would be welcomed.                    " 
   echo "                                                                              " 
-  echo `disclaimer` 
+  disclaimer 
   exit 1
 }
 
@@ -217,7 +217,7 @@ CUSTOM_SETUP=default_setup
  default_update_index() 
 { echo "<!-- ;${SEC}; -->${PUBLISHED}:<a href=\"${DIR}/${SEC}.${TIME}.${FORMAT}\"> ${TITLE}</a>" >> ${INDEX}
   if [ -n "${SUMMARY}" ]; then
-    SEC=`expr $SEC - 1`
+	SEC=$(expr $SEC - 1)
     echo "<!-- ;${SEC}; -->${SUMMARY}" >> ${INDEX}
   fi
 }
@@ -325,7 +325,7 @@ CUSTOM_SETUP=default_setup
 }
 
  reformat_all()
-{ FILES=`ls -c ${DIR}/*.raw | ${SORT_OLDEST}`
+{ FILES=$(ls -c ${DIR}/*.raw | ${SORT_OLDEST})
    for RAW in $FILES; do
      # From: Randall R Schulz <rrschulz at cris dot com>
      FULLNAME="${RAW}"
@@ -340,44 +340,44 @@ CUSTOM_SETUP=default_setup
 }
 
  newest_first() 
-{ FILES=`ls -c ${DIR}/*.raw | ${SORT_NEWEST}`
+{ FILES=$(ls -c ${DIR}/*.raw | ${SORT_NEWEST})
   echo ${FILES}
 }
 
  list_newest_first()
-{ FILES=`newest_first`
+{ FILES=$(newest_first)
   COUNT=1
   for FILE in ${FILES}; do
      FULLNAME="${FILE}"
      DIR="${FULLNAME%/*}"
      FILE="${FULLNAME##*/}"
      MAXBASE="${FILE%.*}"
-     TITLE=`head -n 3 ${DIR}/${FILE} | tail -n 1` 
+	 TITLE=$(head -n 3 ${DIR}/${FILE} | tail -n 1) 
      printf "%7d)  " $COUNT
      echo ${MAXBASE} ::  ${TITLE}
-     COUNT=`expr $COUNT + 1`
+	 COUNT=$(expr $COUNT + 1)
   done
 }
 
  oldest_first()
-{ FILES=`ls -c ${DIR}/*.raw | ${SORT_OLDEST}`
+{ FILES=$(ls -c ${DIR}/*.raw | ${SORT_OLDEST})
   echo ${FILES}
 }
 
  list_oldest_first()
-{ FILES=`oldest_first`
+{ FILES=$(oldest_first)
   for FILE in ${FILES}; do
      FULLNAME="${FILE}"
      DIR="${FULLNAME%/*}"
      FILE="${FULLNAME##*/}"
      MAXBASE="${FILE%.*}"
-     TITLE=`head -n 3 ${DIR}/${FILE} | tail -n 1` 
+	 TITLE=$(head -n 3 ${DIR}/${FILE} | tail -n 1) 
      echo ${MAXBASE} ::  ${TITLE}
   done
 }
 
  get_path2post()
-{ FILES=`ls -c ${DIR}/*.raw | ${SORT_NEWEST}`
+{ FILES=$(ls -c ${DIR}/*.raw | ${SORT_NEWEST})
   GOAL=${1}
   COUNT=1
   for FILE in ${FILES}; do
@@ -389,7 +389,7 @@ CUSTOM_SETUP=default_setup
      echo ${MAXBASE}
      break
     fi
-    COUNT=`expr ${COUNT} + 1`
+	COUNT=$(expr ${COUNT} + 1)
   done
 }
 
@@ -400,15 +400,15 @@ CUSTOM_SETUP=default_setup
     echo "Can't find index, \"${INDEX}\""
     die_cleanly
   fi
-  FILES=`newest_first`
+  FILES=$(newest_first)
   for FILE in ${FILES}; do
      FULLNAME="${FILE}"
      DIR="${FULLNAME%/*}"
      FILE="${FULLNAME##*/}"
      MAXBASE="${FILE%.*}"
-     ENTRY=`grep "$MAXBASE" $INDEX`
+	 ENTRY=$(grep "$MAXBASE" $INDEX)
      if [ -z "${ENTRY}" ]; then
-       COUNT=`expr $COUNT + 1`
+	   COUNT=$(expr $COUNT + 1)
        if [ $LEVEL -eq 1 ]; then
          echo "$DIR/$FILE (not really purged, use -P for realz)"
        elif [ $LEVEL -eq 2 ]; then
@@ -448,7 +448,6 @@ while getopts 'f:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:' option; do
          echo "${OPTARG}" is not a directory!
          die_cleanly
        fi
-       echo `pwd`
        ;;
     r) POST2REFORMAT="${OPTARG}"
        ;;
@@ -515,13 +514,13 @@ done
   fi 
 
   if [ ${POST2EDIT} -ge 1 ]; then
-    LATEST=`get_path2post ${POST2EDIT}`
+	LATEST=$(get_path2post ${POST2EDIT})
     ${EDITOR} ${DIR}/${LATEST}.raw
     POST2REFORMAT="${POST2EDIT}"
   fi
 
   if [ ${POST2REFORMAT} -ge 1 ]; then
-    LATEST=`get_path2post ${POST2REFORMAT}`
+	LATEST=$(get_path2post ${POST2REFORMAT})
     reformat_singleton "${LATEST}"
     die_cleanly
   fi

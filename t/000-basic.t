@@ -4,7 +4,7 @@ VEE="../bin/vee"
 VEELS="../bin/veels"
 VEECAT="../bin/veecat"
 REL_VERSION="1.00"
-VERSION=`$VEE -v 2>&1`
+VERSION=$($VEE -v 2>&1)
 VEEDIR="../tmp/vee-test-$$"
 
 TEST_COUNT=1
@@ -27,8 +27,9 @@ mkdir -p "$VEEDIR/$DIR_COUNT"
 TITLE="test post"
 MESSAGE="The world says, hello."
 
-VEE_FIRST_RUN=`$VEE -d "$VEEDIR/$DIR_COUNT" -t "$TITLE" -m "$MESSAGE"`
-RAW=`$VEELS -d "$VEEDIR/$DIR_COUNT"`
+VEE_FIRST_RUN=$($VEE -d "$VEEDIR/$DIR_COUNT" -t "$TITLE" -m "$MESSAGE")
+
+RAW=$($VEELS -d "$VEEDIR/$DIR_COUNT")
 RAW="$VEEDIR/$DIR_COUNT/$RAW"
 
 TEST_COUNT=$(($TEST_COUNT+1))
@@ -41,7 +42,7 @@ fi
 
 TEST_COUNT=$(($TEST_COUNT+1))
 
-TITLE_CHECK=`echo $RAW | $VEECAT -t`
+TITLE_CHECK=$(echo $RAW | $VEECAT -t)
 if [ "$TITLE_CHECK" == "$TITLE" ]; then
 	echo ok $TEST_COUNT - title check in initial post
 else
@@ -54,11 +55,11 @@ for i in 1 2 3 4 5; do
 
 	TITLE="test post $i"
 	MESSAGE="The world says, hello. $i"
-	VEE_NEXT_RUN=`$VEE -d "$VEEDIR/$DIR_COUNT" -t "$TITLE" -m "$MESSAGE"`
-	POST_COUNT=`$VEELS -d "$VEEDIR/$DIR_COUNT" | wc -l` # should be 1 + $i
-	RAW=`$VEELS -d "$VEEDIR/$DIR_COUNT" | head -n 1` # first is latest post
+	VEE_NEXT_RUN=$($VEE -d "$VEEDIR/$DIR_COUNT" -t "$TITLE" -m "$MESSAGE")
+	POST_COUNT=$($VEELS -d "$VEEDIR/$DIR_COUNT" | wc -l) # should be 1 + $i
+	RAW=$($VEELS -d "$VEEDIR/$DIR_COUNT" | head -n 1) # first is latest post
 
-	TITLE_CHECK=`echo $VEEDIR/$DIR_COUNT/$RAW | $VEECAT -t`
+	TITLE_CHECK=$(echo $VEEDIR/$DIR_COUNT/$RAW | $VEECAT -t)
 	if [ "$TITLE_CHECK" == "$TITLE" ]; then
 		echo ok $TEST_COUNT - title check in subsequent post: $TITLE_CHECK
 	else
@@ -70,8 +71,8 @@ done
 DIR_COUNT=$((DIR_COUNT+1))
 mkdir -p "$VEEDIR/$DIR_COUNT"
 
-VEE_BATCH_RUN=`echo $MESSAGE | $VEE -b -d "$VEEDIR/$DIR_COUNT" -t "$TITLE"`
-RAW=`$VEELS -d "$VEEDIR/$DIR_COUNT"`
+VEE_BATCH_RUN=$(echo $MESSAGE | $VEE -b -d "$VEEDIR/$DIR_COUNT" -t "$TITLE")
+RAW=$($VEELS -d "$VEEDIR/$DIR_COUNT")
 RAW="$VEEDIR/$DIR_COUNT/$RAW"
 
 TEST_COUNT=$(($TEST_COUNT+1))
@@ -84,7 +85,7 @@ fi
 
 TEST_COUNT=$(($TEST_COUNT+1))
 
-TITLE_CHECK=`echo $RAW | $VEECAT -t`
+TITLE_CHECK=$(echo $RAW | $VEECAT -t)
 if [ "$TITLE_CHECK" == "$TITLE" ]; then
 	echo ok $TEST_COUNT - title check in initial post
 else
@@ -97,11 +98,11 @@ for i in 1 2 3 4 5; do
 
 	TITLE="test post $i"
 	MESSAGE="The world says, hello. $i"
-	VEE_NEXT_RUN=`echo $MESSAGE | $VEE -b -d "$VEEDIR/$DIR_COUNT" -t "$TITLE"`
-	POST_COUNT=`$VEELS -d "$VEEDIR/$DIR_COUNT" | wc -l` # should be 1 + $i
-	RAW=`$VEELS -d "$VEEDIR/$DIR_COUNT" | head -n 1` # first is latest post
+	VEE_NEXT_RUN=$(echo $MESSAGE | $VEE -b -d "$VEEDIR/$DIR_COUNT" -t "$TITLE")
+	POST_COUNT=$($VEELS -d "$VEEDIR/$DIR_COUNT" | wc -l) # should be 1 + $i
+	RAW=$($VEELS -d "$VEEDIR/$DIR_COUNT" | head -n 1) # first is latest post
 
-	TITLE_CHECK=`echo $VEEDIR/$DIR_COUNT/$RAW | $VEECAT -t`
+	TITLE_CHECK=$(echo $VEEDIR/$DIR_COUNT/$RAW | $VEECAT -t)
 	if [ "$TITLE_CHECK" == "$TITLE" ]; then
 		echo ok $TEST_COUNT - title check in subsequent post: $TITLE_CHECK
 	else
