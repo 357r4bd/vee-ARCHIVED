@@ -26,7 +26,7 @@ LSOPTS='-lat'
 }
 
 while getopts 'd:hlL:rx' option; do
-    case "$option" in
+    case $option in
     d) if [ -d "${OPTARG}" ]; then
          cd "${OPTARG}"
        else
@@ -57,24 +57,24 @@ done
 
  get_sorted()
 {
-    ls -1 ${DIR}/*.raw | $SORT
+    ls -1 "${DIR}"/*.raw | $SORT
 }
 
  get_title()
 {
-	TITLE=$(head -n 3 $1 | tail -n 1)
-    echo $TITLE
+	TITLE=$(head -n 3 "$1" | tail -n 1)
+    echo "$TITLE"
 }
 
  get_date()
 {
-	DATE=$(head -n 1 $1)
-    echo $DATE
+	DATE=$(head -n 1 "$1")
+    echo "$DATE"
 }
 
  _ls ()
 {
-   ls ${LSOPTS} $1
+   ls "${LSOPTS}" "$1"
 }
 
 #-- main program body
