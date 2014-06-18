@@ -6,7 +6,7 @@ IFS=
 
  die_error()
 { 
-  echo $1
+  echo "$1"
   exit 1
 }
 
@@ -22,39 +22,39 @@ IFS=
 
  get_title()
 {
-	TITLE=$(head -n 3 $1 | tail -n 1)
-    echo $TITLE
+	TITLE=$(head -n 3 "$1" | tail -n 1)
+    echo "$TITLE"
 }
 
  get_date()
 {
-	DATE=$(head -n 1 $1)
-    echo $DATE
+	DATE=$(head -n 1 "$1")
+    echo "$DATE"
 }
 
  get_header()
 {
     # get line one through line 5, the entire header w/o separator
-	echo $(cat $1 | head -n 5)
+	echo $(cat "$1" | head -n 5)
 }
 
  get_body()
 {
 	# figure out how many lones file is for $(tail) command
-	LC=$(wc -l $1 | awk '{print $1}')
+	LC=$(wc -l "$1" | awk '{print "$1"}')
     BC=$(($LC-6))
-	$(cat $1 | tail -n $BC)
+	$(cat "$1" | tail -n "$BC")
     
 }
 
  get_all() 
 {
-	cat $1
+	cat "$1"
 }
 
  die_error()
 { 
-  echo $1
+  echo "$1"
   exit 1
 }
 
@@ -69,7 +69,7 @@ SHOWDATE=0
 SHOWALL=0
 
 while getopts 'abdt' option; do
-    case "$option" in
+    case $option in
        a) SHOWALL=1
           ;;
        b) SHOWBODY=1

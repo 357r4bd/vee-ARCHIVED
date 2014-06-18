@@ -5,14 +5,14 @@
 
 VERSION=1.00
 
-if [ ! ${EDITOR} ]; then
+if [ ! "${EDITOR}" ]; then
   EDITOR=vi
 fi
 MARGIN=64
 FORMAT=html
 INDEX=vee.html
 DIR=.vee
-DRAFT=${DIR}/.vee.tmp.$$
+DRAFT="${DIR}/.vee.tmp.$$"
 DATE=$(date)
 YEAR=$(date "+%Y")
 TIME=$(date "+%Y-%m-%dT%H:%M:%S")
@@ -217,37 +217,37 @@ CUSTOM_SETUP=default_setup
  default_update_index() 
 { echo "<!-- ;${SEC}; -->${PUBLISHED}:<a href=\"${DIR}/${SEC}.${TIME}.${FORMAT}\"> ${TITLE}</a>" >> ${INDEX}
   if [ -n "${SUMMARY}" ]; then
-	SEC=$(expr $SEC - 1)
-    echo "<!-- ;${SEC}; -->${SUMMARY}" >> ${INDEX}
+	SEC=$(expr "$SEC" - 1)
+    echo "<!-- ;${SEC}; -->${SUMMARY}" >> "${INDEX}"
   fi
 }
 
  output_top()
-{ echo ${HEADERTXT} > ${FINAL}
+{ echo "${HEADERTXT}" > "${FINAL}"
   if [ -e "${TOP_TPL}" ]; then
-     cat "${TOP_TPL}" >> ${FINAL}
-     echo "<pre>"   >> ${FINAL}
+     cat "${TOP_TPL}" >> "${FINAL}"
+     echo "<pre>"   >> "${FINAL}"
    else
-     echo "<!-- <?xml version=\"1.0\" encoding=\"UTF-8\" ?> --><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\">"  >> ${FINAL}
-     echo "<meta http-equiv=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">" >> ${FINAL}
-     echo "<head><title>${TITLE} - ${DATE}</title></head>"  >> ${FINAL}
-     echo "<body>"  >> ${FINAL}
-     echo "<pre>"   >> ${FINAL}
-     echo "<a href=\"../${INDEX}\">[index]</a><a href=\"./${RAWNAME}\">[raw]</a><a href=\"../\">[main]</a>" >> ${FINAL}
+     echo "<!-- <?xml version=\"1.0\" encoding=\"UTF-8\" ?> --><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\">"  >> "${FINAL}"
+     echo "<meta http-equiv=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">" >> "${FINAL}"
+     echo "<head><title>${TITLE} - ${DATE}</title></head>"  >> "${FINAL}"
+     echo "<body>"  >> "${FINAL}"
+     echo "<pre>"   >> "${FINAL}"
+     echo "<a href=\"../${INDEX}\">[index]</a><a href=\"./${RAWNAME}\">[raw]</a><a href=\"../\">[main]</a>" >> "${FINAL}"
    fi
-   echo           >> ${FINAL}
+   echo           >> "${FINAL}"
 }
 
  output_bottom()
-{ echo          >> ${FINAL}
-  echo --       >> ${FINAL}
-  echo ${FOOTERTXT} >> ${FINAL}
+{ echo          >> "${FINAL}"
+  echo --       >> "${FINAL}"
+  echo "${FOOTERTXT}" >> "${FINAL}"
   if [ -e "${BOT_TPL}" ]; then
-    cat "${BOT_TPL}" >> ${FINAL}
+    cat "${BOT_TPL}" >> "${FINAL}"
   else
-    echo "</pre>" >>  ${FINAL}
-    echo "</body>" >>  ${FINAL}
-    echo "</html>" >>  ${FINAL}
+    echo "</pre>" >>  "${FINAL}"
+    echo "</body>" >>  "${FINAL}"
+    echo "</html>" >>  "${FINAL}"
   fi
 } 
 
@@ -255,19 +255,19 @@ CUSTOM_SETUP=default_setup
 
  format_with_groff()
 { #sed 1liner from http://sed.sourceforge.net/sed1line.txt
-  groff -man -Tascii ${RAW} >> bla.raw
-  sed '/^$/N;/\n$/D' bla.raw >> ${FINAL}
+  groff -man -Tascii "${RAW}" >> bla.raw
+  sed '/^$/N;/\n$/D' bla.raw >> "${FINAL}"
   rm bla.raw
-#  groff -man -Tascii ${RAW} >> ${FINAL}
+#  groff -man -Tascii "${RAW}" >> "${FINAL}"
 }
 
  with_no_formatting()
-{ cat ${RAW} >> ${FINAL}
+{ cat "${RAW}" >> "${FINAL}"
 } 
 
  format_with_fold()
-{ if [ 0 -lt "${MARGIN}" ]; then
-    fold -s -w ${MARGIN} ${RAW} >> ${FINAL}
+{ if [ 0 -lt ${MARGIN} ]; then
+    fold -s -w ${MARGIN} "${RAW}" >> "${FINAL}"
   else
     with_no_formatting 
   fi
@@ -301,14 +301,14 @@ CUSTOM_SETUP=default_setup
   preformat
   # save raw form before formatting if it doesn't exist
   # which is the case when reformatting all
-  if [ ! -e ${RAW} ]; then
-    echo ${DATE}   > ${RAW}     # in RAW, line 1 is date
-    echo          >> ${RAW}
-    echo ${TITLE} >> ${RAW}     # in RAW, line 2 is title
-    echo          >> ${RAW}
-    echo "--"     >> ${RAW}
-    echo          >> ${RAW}     # this blank line is important
-    cat ${DRAFT}  >> ${RAW}
+  if [ ! -e "${RAW}" ]; then
+    echo "${DATE}"   > "${RAW}"     # in RAW, line 1 is date
+    echo          >> "${RAW}"
+    echo "${TITLE}" >> "${RAW}"     # in RAW, line 2 is title
+    echo          >> "${RAW}"
+    echo "--"     >> "${RAW}"
+    echo          >> "${RAW}"     # this blank line is important
+    cat "${DRAFT}"  >> "${RAW}"
   fi
   ${OUTPUT_TOP} 
   ${FORMAT_FUNC} 
@@ -325,71 +325,71 @@ CUSTOM_SETUP=default_setup
 }
 
  reformat_all()
-{ FILES=$(ls -c ${DIR}/*.raw | ${SORT_OLDEST})
-   for RAW in $FILES; do
+{ FILES=$(ls -c "${DIR}"/*.raw | "${SORT_OLDEST}")
+   for RAW in "$FILES"; do
      # From: Randall R Schulz <rrschulz at cris dot com>
      FULLNAME="${RAW}"
-     DIR="${FULLNAME%/*}"
-     FILE="${FULLNAME##*/}"
-     MAXBASE="${FILE%.*}"
-     MINBASE="${FILE%%.*}"
-     MAXSUF="${FILE#*.}"
-     MINSUF="${FILE##*.}"
+     DIR=${FULLNAME%/*}
+     FILE=${FULLNAME##*/}
+     MAXBASE=${FILE%.*}
+     MINBASE=${FILE%%.*}
+     MAXSUF=${FILE#*.}
+     MINSUF=${FILE##*.}
      reformat_singleton "${MAXBASE}"
    done
 }
 
  newest_first() 
-{ FILES=$(ls -c ${DIR}/*.raw | ${SORT_NEWEST})
-  echo ${FILES}
+{ FILES=$(ls -c "${DIR}"/*.raw | "${SORT_NEWEST}")
+  echo "${FILES}"
 }
 
  list_newest_first()
 { FILES=$(newest_first)
   COUNT=1
-  for FILE in ${FILES}; do
-     FULLNAME="${FILE}"
-     DIR="${FULLNAME%/*}"
-     FILE="${FULLNAME##*/}"
-     MAXBASE="${FILE%.*}"
-	 TITLE=$(head -n 3 ${DIR}/${FILE} | tail -n 1) 
-     printf "%7d)  " $COUNT
-     echo ${MAXBASE} ::  ${TITLE}
+  for FILE in "${FILES}"; do
+     FULLNAME=${FILE}
+     DIR=${FULLNAME%/*}
+     FILE=${FULLNAME##*/}
+     MAXBASE=${FILE%.*}
+	 TITLE=$(head -n 3 "${DIR}/${FILE}" | tail -n 1) 
+     printf "%7d)  " "$COUNT"
+     echo "${MAXBASE} ::  ${TITLE}"
 	 COUNT=$(expr $COUNT + 1)
   done
 }
 
  oldest_first()
-{ FILES=$(ls -c ${DIR}/*.raw | ${SORT_OLDEST})
-  echo ${FILES}
+{ FILES=$(ls -c "${DIR}"/*.raw | "${SORT_OLDEST}")
+  echo "${FILES}"
 }
 
  list_oldest_first()
 { FILES=$(oldest_first)
-  for FILE in ${FILES}; do
-     FULLNAME="${FILE}"
-     DIR="${FULLNAME%/*}"
-     FILE="${FULLNAME##*/}"
-     MAXBASE="${FILE%.*}"
-	 TITLE=$(head -n 3 ${DIR}/${FILE} | tail -n 1) 
-     echo ${MAXBASE} ::  ${TITLE}
+  for FILE in "${FILES}"; do
+     FULLNAME=${FILE}
+     DIR=${FULLNAME%/*}
+     FILE=${FULLNAME##*/}
+     MAXBASE=${FILE%.*}
+	 TITLE=$(head -n 3 "${DIR}/${FILE}" | tail -n 1) 
+     echo "${MAXBASE} ::  ${TITLE}"
   done
 }
 
  get_path2post()
-{ FILES=$(ls -c ${DIR}/*.raw | ${SORT_NEWEST})
+{ FILES=$(ls -c "${DIR}"/*.raw | "${SORT_NEWEST}")
   GOAL=${1}
   COUNT=1
-  for FILE in ${FILES}; do
-     FULLNAME="${FILE}"
-     DIR="${FULLNAME%/*}"
-     FILE="${FULLNAME##*/}"
-     MAXBASE="${FILE%.*}"
-    if [ ${COUNT} -eq ${GOAL} ]; then
-     echo ${MAXBASE}
+  for FILE in "${FILES}"; do
+     FULLNAME=${FILE}
+     DIR=${FULLNAME%/*}
+     FILE=${FULLNAME##*/}
+     MAXBASE=${FILE%.*}
+    if [ "${COUNT}" -eq "${GOAL}" ]; then
+     echo "${MAXBASE}"
      break
     fi
-	COUNT=$(expr ${COUNT} + 1)
+	COUNT=$(expr "${COUNT}" + 1)
   done
 }
 
@@ -401,28 +401,28 @@ CUSTOM_SETUP=default_setup
     die_cleanly
   fi
   FILES=$(newest_first)
-  for FILE in ${FILES}; do
-     FULLNAME="${FILE}"
-     DIR="${FULLNAME%/*}"
-     FILE="${FULLNAME##*/}"
-     MAXBASE="${FILE%.*}"
-	 ENTRY=$(grep "$MAXBASE" $INDEX)
+  for FILE in "${FILES}"; do
+     FULLNAME=${FILE}
+     DIR=${FULLNAME%/*}
+     FILE=${FULLNAME##*/}
+     MAXBASE=${FILE%.*}
+	 ENTRY=$(grep "$MAXBASE" "$INDEX")
      if [ -z "${ENTRY}" ]; then
-	   COUNT=$(expr $COUNT + 1)
-       if [ $LEVEL -eq 1 ]; then
+	   COUNT=$(expr "$COUNT" + 1)
+       if [ "$LEVEL" -eq 1 ]; then
          echo "$DIR/$FILE (not really purged, use -P for realz)"
-       elif [ $LEVEL -eq 2 ]; then
+       elif [ "$LEVEL" -eq 2 ]; then
          echo "$DIR/$MAXBASE[.raw,$FORMAT] (purged for realz)"
-         rm -f $DIR/$MAXBASE*
+         rm -f "$DIR/$MAXBASE"*
        fi
      fi
   done
-  echo removed $COUNT entrie\(s\)...
+  echo "removed $COUNT entrie(s)..."
 }
 
  die_cleanly()
-{ if [ -e ${DRAFT} ]; then
-    rm -f ${DRAFT}
+{ if [ -e "${DRAFT}" ]; then
+    rm -f "${DRAFT}"
   fi
   exit 0
 }
@@ -437,8 +437,8 @@ SET_DEFAULT_FORMAT_FUNC=
 
 # get opts ! stdin append to anything passed in by -m 
 while getopts 'f:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:' option; do
-    case "$option" in
-    i) INDEX="${OPTARG}"  # specify INDEX to $OPTARG
+    case $option in
+    i) INDEX=${OPTARG}  # specify INDEX to $OPTARG
        ;;
     I) INDEX="index.html" # force INDEX to index.html
        ;;
@@ -450,24 +450,24 @@ while getopts 'f:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:' option; do
        fi
 	   $(pwd)
        ;;
-    r) POST2REFORMAT="${OPTARG}"
+    r) POST2REFORMAT=${OPTARG}
        ;;
     R) REFORMATALL=1
        ;;
     b) LISTENSTDIN=1 
        USE_EDITOR=0
        ;;
-    B) BOT_TPL="${OPTARG}"
+    B) BOT_TPL=${OPTARG}
        ;;
-    f) SET_DEFAULT_FORMAT_FUNC="${OPTARG}"
+    f) SET_DEFAULT_FORMAT_FUNC=${OPTARG}
        ;;
-    c) MARGIN="${OPTARG}" # this option is about to be deprecated
+    c) MARGIN=${OPTARG} # this option is about to be deprecated
        ;;
     l) POST2EDIT=1
        ;;
-    L) POST2EDIT="${OPTARG}"
+    L) POST2EDIT=${OPTARG}
        ;;
-    m) MESSAGE="${OPTARG}" 
+    m) MESSAGE=${OPTARG} 
        USE_EDITOR=0
        ;;
     n) list_newest_first
@@ -476,11 +476,11 @@ while getopts 'f:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:' option; do
     o) list_oldest_first
        die_cleanly 
        ;; 
-    s) SUMMARY="${OPTARG}"
+    s) SUMMARY=${OPTARG}
        ;; 
-    t) TITLE="${OPTARG}"
+    t) TITLE=${OPTARG}
        ;;
-    T) TOP_TPL="${OPTARG}"
+    T) TOP_TPL=${OPTARG}
        ;;
     v) echo $VERSION
        die_cleanly
@@ -492,7 +492,7 @@ while getopts 'f:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:' option; do
     h) usage
        die_cleanly
        ;;
-    x) PREFORMAT_HOOK="${OPTARG}"
+    x) PREFORMAT_HOOK=${OPTARG}
        ;; 
     ?) #usage | less
        die_cleanly
@@ -506,35 +506,35 @@ done
   fi
 
   if [ -n "${SET_DEFAULT_FORMAT_FUNC}" ]; then 
-    ${FORMAT_DISPATCHER} "${OPTARG}"  # default is set_format_func
+    "${FORMAT_DISPATCHER}" "${OPTARG}"  # default is set_format_func
   fi
 
-  if [ ${PURGELEVEL} -ge 1 ]; then
+  if [ "${PURGELEVEL}" -ge 1 ]; then
     purge_entries "${PURGELEVEL}"
     die_cleanly
   fi 
 
-  if [ ${POST2EDIT} -ge 1 ]; then
-	LATEST=$(get_path2post ${POST2EDIT})
-    ${EDITOR} ${DIR}/${LATEST}.raw
-    POST2REFORMAT="${POST2EDIT}"
+  if [ "${POST2EDIT}" -ge 1 ]; then
+	LATEST=$(get_path2post "${POST2EDIT}")
+    ${EDITOR} "${DIR}/${LATEST}.raw"
+    POST2REFORMAT=${POST2EDIT}
   fi
 
-  if [ ${POST2REFORMAT} -ge 1 ]; then
-	LATEST=$(get_path2post ${POST2REFORMAT})
+  if [ "${POST2REFORMAT}" -ge 1 ]; then
+	LATEST=$(get_path2post "${POST2REFORMAT}")
     reformat_singleton "${LATEST}"
     die_cleanly
   fi
 
   # if "-R", or reformat all, is set 
-  if [ ${REFORMATALL} -eq 1 ]; then
+  if [ "${REFORMATALL}" -eq 1 ]; then
     # future may yield seperate "rebuild reindex" functionality 
     reformat_all
     die_cleanly
   fi
 
   # blocks vee -l (without the -r) from going on 
-  if [ ${POST2EDIT} -ge 1 ]; then
+  if [ "${POST2EDIT}" -ge 1 ]; then
     die_cleanly
   fi
 
@@ -548,7 +548,7 @@ done
     IFS="" # ensures that leading spaces are retained
     while read -r IN <&0 ; do # break after 1 sec of no stdin
       echo "${IN}"            # echo's stdin back out so user can see 
-      echo "${IN}" >> ${DRAFT} 
+      echo "${IN}" >> "${DRAFT}" 
       LISTENSTDIN=1
       USE_EDITOR=0
     done
@@ -557,20 +557,20 @@ done
 
 # generates INDEX file if none exists
  default_setup()
-{ mkdir -p ${DIR} || echo ${DIR} exists...
-  if [ ! -e ${INDEX} ]; then
+{ mkdir -p "${DIR}" || echo "${DIR}" exists...
+  if [ ! -e "${INDEX}" ]; then
     echo
     echo "...creating ${INDEX}"
-    echo "<!-- ;10000000000000000000000000; open pre tag --><!-- <?xml version=\"1.0\" encoding=\"UTF-8\" ?> --><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>my vee index</title><meta http-equiv=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\"></head><body><pre>" >> ${INDEX}
+    echo "<!-- ;10000000000000000000000000; open pre tag --><!-- <?xml version=\"1.0\" encoding=\"UTF-8\" ?> --><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>my vee index</title><meta http-equiv=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\"></head><body><pre>" >> "${INDEX}"
    # header stuff
-    echo "<!-- ;100000000000000000000000; fixed content -->" >> ${INDEX}
-    echo "<!-- ;10000000000000000000000;  fixed content -->" >> ${INDEX}
-    echo "<!-- ;1000000000000000000000;   fixed content -->" >> ${INDEX}
+    echo "<!-- ;100000000000000000000000; fixed content -->" >> "${INDEX}"
+    echo "<!-- ;10000000000000000000000;  fixed content -->" >> "${INDEX}"
+    echo "<!-- ;1000000000000000000000;   fixed content -->" >> "${INDEX}"
    # footer stuff
-    echo "<!-- ;3; fixed content -->" >> ${INDEX}
-    echo "<!-- ;2; fixed content -->" >> ${INDEX}
-    echo "<!-- ;1; fixed content -->Powered by <a href=\"http://www.0x743.com/vee\">vee</a>" >> ${INDEX}
-    echo "<!-- ;0; closing pre tag --></pre></body></html>" >> ${INDEX}
+    echo "<!-- ;3; fixed content -->" >> "${INDEX}"
+    echo "<!-- ;2; fixed content -->" >> "${INDEX}"
+    echo "<!-- ;1; fixed content -->Powered by <a href=\"http://www.0x743.com/vee\">vee</a>" >> "${INDEX}"
+    echo "<!-- ;0; closing pre tag --></pre></body></html>" >> "${INDEX}"
     echo
   fi
 }
@@ -578,15 +578,15 @@ done
  sort_index()
 {
   # would like to figure out how to put this sort command into a variable, but thusfar not so successful
-  sort -t';' +0f -1 +1nr ${INDEX} > .${INDEX}.$$.sorted
-  mv .${INDEX}.$$.sorted ${INDEX} # "rebuild ${INDEX}
+  sort -t';' +0f -1 +1nr "${INDEX}" > ".${INDEX}.$$.sorted"
+  mv ".${INDEX}.$$.sorted" "${INDEX}" # "rebuild ${INDEX}
 }
 
  use_editor()
 { if [ ${USE_EDITOR} -eq 1 ]; then 
     OK=0
-    ${EDITOR} ${DRAFT} && OK=1
-    if [ $OK -ne 1 ]; then
+    ${EDITOR} "${DRAFT}" && OK=1
+    if [ "$OK" -ne 1 ]; then
       echo there has been a problem with your editor session
       exit
     fi
@@ -614,19 +614,19 @@ done
 read_config   # done after all options are read in, could look in -d before
               # opts are processed though so opts could override defaults
               # and config file .. yeah do that
-$CUSTOM_SETUP # can be defined in .veerc
+"$CUSTOM_SETUP" # can be defined in .veerc
 post_opts
 get_title 
 use_editor
 
-if [ -e ${DRAFT} ]; then
+if [ -e "${DRAFT}" ]; then
   RAWFILE="$$.${SEC}.${TIME}.raw" # uses process id, $$, assuming there will
                                   # not be duplicate process ids within 1 sec of each other
   format_main "${SEC}.${TIME}.${FORMAT}" "$RAWFILE" 
-  $UPDATE_INDEX 
+  "$UPDATE_INDEX" 
   sort_index
   die_cleanly
 else
-  echo Error! ${DRAFT} not found
+  echo Error! "${DRAFT}" not found
 fi
 
