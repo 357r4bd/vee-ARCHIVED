@@ -4,7 +4,7 @@ VEE="../bin/vee"
 VEELS="../bin/veels"
 VEECAT="../bin/veecat"
 REL_VERSION="1.00"
-VERSION=`$VEE -v 2>&1`
+VERSION=$($VEE -v 2>&1)
 VEEDIR="../tmp/vee-test-$$"
 
 TEST_COUNT=1
@@ -27,8 +27,9 @@ mkdir -p "$VEEDIR/$DIR_COUNT"
 TITLE="test post"
 MESSAGE="The world says, hello."
 
-VEE_FIRST_RUN=`$VEE -d "$VEEDIR/$DIR_COUNT" -t "$TITLE" -m "$MESSAGE"`
-RAW=`$VEELS -d "$VEEDIR/$DIR_COUNT"`
+VEE_FIRST_RUN=$($VEE -d "$VEEDIR/$DIR_COUNT" -t "$TITLE" -m "$MESSAGE")
+
+RAW=$($VEELS -d "$VEEDIR/$DIR_COUNT")
 RAW="$VEEDIR/$DIR_COUNT/$RAW"
 
 TEST_COUNT=$(($TEST_COUNT+1))

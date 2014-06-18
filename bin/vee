@@ -448,7 +448,6 @@ while getopts 'f:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:' option; do
          echo "${OPTARG}" is not a directory!
          die_cleanly
        fi
-	   $(pwd)
        ;;
     r) POST2REFORMAT="${OPTARG}"
        ;;
