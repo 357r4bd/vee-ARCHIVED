@@ -88,19 +88,19 @@ fi
 
 while read -r IN <&0 ; do 
   # make sure file exists, else just ignore line (more Unix-y this way)
-  if [ -e "${IN}" ]; then
+  if [ -e "$IN" ]; then
       # assumes file is a proper *.raw , else GIGO
       if [ $SHOWALL -eq 1 ]; then
-			echo $(get_all "${IN}")
+			echo $(get_all "$IN")
       else
           if [ $SHOWTITLE -eq 1 ]; then
-			echo $(get_title "${IN}")
+			echo $(get_title "$IN")
           fi
           if [ $SHOWDATE -eq 1 ]; then
-			echo $(get_date "${IN}")
+			echo $(get_date "$IN")
           fi 
           if [ $SHOWBODY -eq 1 ]; then
-			echo $(get_body "${IN}")
+			echo $(get_body "$IN")
           fi
       fi
   fi

@@ -22,10 +22,10 @@ HTMLEXT=html
 
 while getopts 'd:h' option; do
     case $option in
-    d) if [ -d "${OPTARG}" ]; then
-         cd "${OPTARG}"
+    d) if [ -d "$OPTARG" ]; then
+         cd "$OPTARG"
        else
-         echo "${OPTARG}" is not a directory!
+         echo "$OPTARG" is not a directory!
          die_cleanly
        fi
        ;;
