@@ -1,37 +1,49 @@
-vee is a zero-conf, command line microblogging tool that I created because I
-hated having to set up web-based blogging software every so often.  It became
-popular for some reason, and now it's used in some for by many people - mostly in
-silence.  It does everything I want it to do, hence the lack of feature creep; 
-however I am always interested in improving it in some basic way.
+vee is a zero-conf, command line microblogging tool that I created
+because I hated having to set up web-based blogging software every so
+often. It became popular for some reason, and now it's used in some
+for by many people - mostly in silence. It does everything I want it
+to do, hence the lack of feature creep; however I am always interested
+in improving it in some basic way.
 
-It's available in a variety of package repositories, like pkgsrc and FreeBSD Ports.
+It's available in a variety of package repositories, like pkgsrc and
+FreeBSD Ports.
+
+Latest Release Version:
 
 Version: 0.9.9-zeta
 
+Portability Goals:
+
+0. no external dependencies other than Bourne Shell and traditional 
+   Unix userland tools (no need to install non-optional utils)
+1. any *nix platform that supports Bourne Shell (sh)
+2. any shell that claims to be Bourne compliant
+
 Incompatibilities:
 
-The goal of vee is that it should work on minimal systems using only original Bourne 
-shell (sh) and without having to install anything. I originally began this work on 
-FreeBSD, but it seems that sort behaves differently among FreeBSD, Linux, and 
-Mac - which is frustrating =D
+The goal of vee is that it should work on minimal systems using only
+original Bourne shell (sh) and without having to install anything. I
+originally began this work on FreeBSD, but it seems that sort behaves
+differently among FreeBSD, Linux, and Mac - which is frustrating =D
 
 Project Status:
 
-This is one of those "forever" projects that met my needs very early on, and 
-I have revisited the code for only incremental improvements. I'd like to get to 
-1.0, but this would realy just mean a nice set of useful utilities (veels, veecat, 
-vee-rebuild) and associated documentation. Work towards this has been spotty, 
-but progress has been good. At some point, I'll have some time to wrap it up and 
-present version 1.0 - at which point it's likely I'll cease any work on it other 
-than bug fixes or applying patches from others.
+This is one of those "forever" projects that met my needs very early
+on, and I have revisited the code for only incremental improvements.
+I'd like to get to 1.0, but this would realy just mean a nice set
+of useful utilities (veels, veecat, vee-rebuild) and associated
+documentation. Work towards this has been spotty, but progress has
+been good. At some point, I'll have some time to wrap it up and
+present version 1.0 - at which point it's likely I'll cease any work
+on it other than bug fixes or applying patches from others.
 
 Project Home Page:
 
-	http://estrabd.github.io/vee/
+ http://estrabd.github.io/vee/
 
 Bug reports:
 
-	https://github.com/estrabd/vee/issues
+ https://github.com/estrabd/vee/issues
 
 Developer contact:
 
@@ -39,36 +51,28 @@ estrabd at gmail dot com
 
 It's also on Freshmeat:
 
-	http://freshmeat.net/projects/vee-the-blog-tool                                                        
-                                                                              
-Usage:                                                                        
-  See below.                                                                  
-                                                                              
-Options:                                                                      
-  -b                batch mode; used when piping in msg via stdin             
-  -B  file          define bottom template; default is ./vee-bottom.tpl       
-  -c  [1-9\d*]      specify the number of characters 'fold' allows per line   
-                    this only applies when 'fold' (-f) is used                
-  -d  'publis_dir'  specify the directory .vee is in - defaults to PWD        
-  -f  'format'      use defined format instead of the default, groff;         
-                    'groff', 'fold', and 'none' are supported out of the box  
-  -h                prints this blurb                                         
-  -i  'custom.html' specify a custom index file over the default              
-  -I                force index file to be "index.html"                     
-  -l                edit latest post's *.raw; used with '-r' publishes changes;
-                    calls reformat automatically;                             
-  -L  [1-9\d*]      edit the Nth latest, relative to last post; lp starts at 1
-  -m  'message ...' specify entry message at commandline and avoid vi         
-  -n                lists all entries, newest first, then quits               
-  -o                lists all entries, oldest first, then quits               
-  -p                see what *raw files don't have an entry in the INDEX      
-  -P                forever deletes all *raw and formatted files associated with
-                    posts that are listed with -p;                            
-  -r  [1-9\d*]      reformats the Nth latest post                             
-  -R                reformats _all_ .vee/*.raw files; -c applies as well      
-  -s  summary       placed below title in INDEX                               
-  -t  'title'       specify title at commandline and avoid annoying default prompt
-  -T  file          define top template; default is ./vee-top.tpl             
-  -v                version and exit                                          
-  -x  filter        defines filter if not using default ./vee-pre; filter   
-                    must be executable, i.e., chmod 755 vee-pre
+ http://freshmeat.net/projects/vee-the-blog-tool
+
+Usage: See below.
+
+Options: -b batch mode; used when piping in msg via stdin -B file
+define bottom template; default is ./vee-bottom.tpl -c [1-9\d*]
+specify the number of characters 'fold' allows per line this only
+applies when 'fold' (-f) is used -d 'publis_dir' specify the directory
+.vee is in - defaults to PWD -f 'format' use defined format instead of
+the default, groff; 'groff', 'fold', and 'none' are supported out of
+the box -h prints this blurb -i 'custom.html' specify a custom index
+file over the default -I force index file to be "index.html" -l edit
+latest post's *.raw; used with '-r' publishes changes; calls reformat
+automatically; -L [1-9\d*] edit the Nth latest, relative to last post;
+lp starts at 1 -m 'message ...' specify entry message at commandline
+and avoid vi -n lists all entries, newest first, then quits -o lists
+all entries, oldest first, then quits -p see what *raw files don't
+have an entry in the INDEX -P forever deletes all *raw and formatted
+files associated with posts that are listed with -p; -r [1-9\d*]
+reformats the Nth latest post -R reformats _all_ .vee/*.raw files;
+-c applies as well -s summary placed below title in INDEX -t 'title'
+specify title at commandline and avoid annoying default prompt -T file
+define top template; default is ./vee-top.tpl -v version and exit -x
+filter defines filter if not using default ./vee-pre; filter must be
+executable, i.e., chmod 755 vee-pre
