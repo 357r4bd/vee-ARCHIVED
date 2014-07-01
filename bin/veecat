@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # preserve new lines
-OLD_IFS=$IFS
+old_ifs=$IFS
 IFS=
 
  die_error()
@@ -22,14 +22,14 @@ IFS=
 
  get_title()
 {
-	TITLE=$(head -n 3 "$1" | tail -n 1)
-    echo "$TITLE"
+	title=$(head -n 3 "$1" | tail -n 1)
+    echo "$title"
 }
 
  get_date()
 {
-	DATE=$(head -n 1 "$1")
-    echo "$DATE"
+	date=$(head -n 1 "$1")
+    echo "$date"
 }
 
  get_header()
@@ -41,9 +41,9 @@ IFS=
  get_body()
 {
 	# figure out how many lones file is for $(tail) command
-	LC=$(wc -l "$1" | awk '{print "$1"}')
-    BC=$(($LC-6))
-	$(cat "$1" | tail -n "$BC")
+	lc=$(wc -l "$1" | awk '{print "$1"}')
+    bc=$(($lc-6))
+	$(cat "$1" | tail -n "$bc")
     
 }
 
@@ -63,43 +63,43 @@ IFS=
   exit 0
 }
 
-SHOWBODY=0
-SHOWTITLE=0
-SHOWDATE=0
-SHOWALL=0
+showbody=0
+showtitle=0
+showdate=0
+showall=0
 
 while getopts 'abdt' option; do
     case $option in
-       a) SHOWALL=1
+       a) showall=1
           ;;
-       b) SHOWBODY=1
+       b) showbody=1
           ;; 
-       d) SHOWDATE=1
+       d) showdate=1
           ;; 
-       t) SHOWTITLE=1
+       t) showtitle=1
           ;; 
     esac
 done
 
 # if -tdb detected, do the right thing and do a SHOWALL (i.e., -tbd == -a )
-if [ $SHOWTITLE -eq 1 ] && [ $SHOWDATE -eq 1 ] && [ $SHOWBODY -eq 1 ]; then
-    SHOWALL=1
+if [ $showtitle -eq 1 ] && [ $showdate -eq 1 ] && [ $showbody -eq 1 ]; then
+    showall=1
 fi
 
 while read -r IN <&0 ; do 
   # make sure file exists, else just ignore line (more Unix-y this way)
   if [ -e "$IN" ]; then
       # assumes file is a proper *.raw , else GIGO
-      if [ $SHOWALL -eq 1 ]; then
+      if [ $showall -eq 1 ]; then
 			echo $(get_all "$IN")
       else
-          if [ $SHOWTITLE -eq 1 ]; then
+          if [ $showtitle -eq 1 ]; then
 			echo $(get_title "$IN")
           fi
-          if [ $SHOWDATE -eq 1 ]; then
+          if [ $showdate -eq 1 ]; then
 			echo $(get_date "$IN")
           fi 
-          if [ $SHOWBODY -eq 1 ]; then
+          if [ $Showbody -eq 1 ]; then
 			echo $(get_body "$IN")
           fi
       fi

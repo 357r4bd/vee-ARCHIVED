@@ -1,13 +1,13 @@
 #!/bin/sh
 
-DIR=.vee
+dir=.vee
 
-SORT_NEW_FIRST='sort -t. -nr'
-SORT_OLD_FIRST='sort -t. -n'
-SORT="$SORT_NEW_FIRST"
-STRIPEXT=0
-USELS=0
-LSOPTS='-lat'
+sort_new_first='sort -t. -nr'
+sort_old_first='sort -t. -n'
+sort="$sort_new_first"
+stripext=0
+usels=0
+lsopts='-lat'
 
  die_error()
 { 
@@ -27,21 +27,21 @@ LSOPTS='-lat'
 
 while getopts 'd:hlL:rx' option; do
     case $option in
-    d) if [ -d "$OPTARG" ]; then
-         cd "$OPTARG"
+    d) if [ -d "$optarg" ]; then
+         cd "$optarg"
        else
-         echo "$OPTARG" is not a directory!
+         echo "$optarg" is not a directory!
          die_cleanly
        fi
        ;;
-    l) USELS=1 #use ls with default opts
+    l) usels=1 #use ls with default opts
        ;;
-    L) USELS=1 #use ls with custom opts
-       LSOPTS="$OPTARG"
+    l) usels=1 #use ls with custom opts
+       lsopts="$optarg"
        ;;
-    r) SORT=$SORT_OLD_FIRST  # list in reverse post order
+    r) sort=$sort_old_first  # list in reverse post order
        ;;
-    x) STRIPEXT=1 #strip .raw from output
+    x) stripext=1 #strip .raw from output
        ;;
     h) usage # some help page
        die_cleanly
@@ -57,24 +57,24 @@ done
 
  get_sorted()
 {
-    ls -1 "$DIR"/*.raw | $SORT
+    ls -1 "$dir"/*.raw | $sort
 }
 
  get_title()
 {
-	TITLE=$(head -n 3 "$1" | tail -n 1)
-    echo "$TITLE"
+	title=$(head -n 3 "$1" | tail -n 1)
+    echo "$title"
 }
 
  get_date()
 {
-	DATE=$(head -n 1 "$1")
-    echo "$DATE"
+	date=$(head -n 1 "$1")
+    echo "$date"
 }
 
  _ls ()
 {
-   ls "$LSOPTS" "$1"
+   ls "$lsopts" "$1"
 }
 
 #-- main program body
@@ -91,10 +91,10 @@ do
     # full date string (not epoch) is the first line
 	DATE=$(get_date "$f")
 
-    if [ 1 -eq $USELS ]; then
+    if [ 1 -eq $usels ]; then
         _ls "$f"
     else
-	    if [ 1 -eq $STRIPEXT ]; then
+	    if [ 1 -eq $stripext ]; then
                 echo "${f%\.*}"
 	    else 
 		echo "$f"
