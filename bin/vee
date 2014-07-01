@@ -102,7 +102,7 @@ CUSTOM_SETUP=default_setup
 #  J65nko @ bsdforums.com
 
  default_set_format_func()
-{ case "$1" in
+{ case $1 in
     default) FORMAT_FUNC=format_with_groff
              echo using $FORMAT_FUNC
              ;;
