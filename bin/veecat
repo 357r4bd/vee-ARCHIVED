@@ -86,21 +86,21 @@ if [ $SHOWTITLE -eq 1 ] && [ $SHOWDATE -eq 1 ] && [ $SHOWBODY -eq 1 ]; then
     SHOWALL=1
 fi
 
-while read -r IN <&0 ; do 
+while read -r <&0 ; do 
   # make sure file exists, else just ignore line (more Unix-y this way)
-  if [ -e "$IN" ]; then
+  if [ -e "$REPLY" ]; then
       # assumes file is a proper *.raw , else GIGO
       if [ $SHOWALL -eq 1 ]; then
-			echo $(get_all "$IN")
+			echo $(get_all "$REPLY")
       else
           if [ $SHOWTITLE -eq 1 ]; then
-			echo $(get_title "$IN")
+			echo $(get_title "$REPLY")
           fi
           if [ $SHOWDATE -eq 1 ]; then
-			echo $(get_date "$IN")
+			echo $(get_date "$REPLY")
           fi 
           if [ $SHOWBODY -eq 1 ]; then
-			echo $(get_body "$IN")
+			echo $(get_body "$REPLY")
           fi
       fi
   fi
