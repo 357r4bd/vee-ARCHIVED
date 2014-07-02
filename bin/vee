@@ -545,9 +545,9 @@ done
 
   if [ $LISTENSTDIN -eq 1 ]; then
     IFS="" # ensures that leading spaces are retained
-    while read -r <&0 ; do # break after 1 sec of no stdin
-      echo "$REPLY"            # echo's stdin back out so user can see 
-      echo "$REPLY" >> "$DRAFT" 
+    while read -r IN <&0 ; do # break after 1 sec of no stdin
+      echo "$IN"            # echo's stdin back out so user can see 
+      echo "$IN" >> "$DRAFT" 
       LISTENSTDIN=1
       USE_EDITOR=0
     done
