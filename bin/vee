@@ -8,6 +8,7 @@ VERSION=1.00
 if [ ! "$EDITOR" ]; then
   EDITOR=vi
 fi
+
 MARGIN=64
 FORMAT=html
 INDEX=vee.html
@@ -26,11 +27,27 @@ BOT_TPL=./vee-bottom.tpl
 PREFORMAT_HOOK=./vee-pre # the hook is assumed to be executable, else it is ignored
 USE_EDITOR=1
 LISTENSTDIN=0
-SORT_NEWEST="sort -t. -nr"         # sorts all new to old 
-SORT_OLDEST="sort -t. -r"          # sorts all old to new
+SORT_NEWEST="sort -t. -nr" # sorts all new to old 
+SORT_OLDEST="sort -t. -n"  # sorts all old to new
 PUBLISHED=$(date "+%m/%d/%Y")       # date formated for index page entry
 OUTPUT_TOP=output_top
 OUTPUT_BOT=output_bottom
+
+ guess_arch()
+{ case $(uname) in
+  Linux)   ARCH='linux'
+     ;;
+  FreeBSD) ARCH='freebsd'
+     ;;
+  Darwin)  ARCH='macosx'
+     ;;
+  *)       ARCH='unknown'
+     ;;
+  esac
+}
+
+ARCH='unknown'
+guess_arch
 
 # define custom formatting define custom functions file; see example in # vee/sample-custom-format/vee-custom.sh
 FORMAT_FUNC=format_with_groff
@@ -102,7 +119,7 @@ CUSTOM_SETUP=default_setup
 #  J65nko @ bsdforums.com
 
  default_set_format_func()
-{ case "$1" in
+{ case $1 in
     default) FORMAT_FUNC=format_with_groff
              echo using $FORMAT_FUNC
              ;;
@@ -131,7 +148,7 @@ CUSTOM_SETUP=default_setup
 { echo "                                                                              " 
   echo " vee - the Zero-conf, commandline blog tool thingy                            "
   echo "                                                                              "
-  echo "Version: $VERSION                                                           "
+  echo "Version: $VERSION                                                             "
   echo "                                                                              "
   echo "Usage:                                                                        "
   echo "  See below.                                                                  " 
@@ -190,8 +207,8 @@ CUSTOM_SETUP=default_setup
   echo "To delete a post forever:                                                     " 
   echo "1) delete the entry in the INDEX                                              " 
   echo "2) purge the entry:                                                           "
-  echo "  %vee -p    # make sure it is the one you want to purge                       "
-  echo "  %vee -P    # purge it!                                                       "
+  echo "  %vee -p    # make sure it is the one you want to purge                      "
+  echo "  %vee -P    # purge it!                                                      "
   echo "                                                                              " 
   echo " brings up the latest entry as a vi sessions; when changes are save,          " 
   echo " all messages are reformatted                                                 " 
@@ -294,7 +311,7 @@ CUSTOM_SETUP=default_setup
 #}
 
  format_main()
-{ FINAL=$DIR/$1}
+{ FINAL=$DIR/$1
   FINALNAME=$1
   RAW=$DIR/$2
   RAWNAME=$2
@@ -325,7 +342,7 @@ CUSTOM_SETUP=default_setup
 }
 
  reformat_all()
-{ FILES=$(ls -c "$DIR"/*.raw | "$SORT_OLDEST")
+{ FILES=$(find "$DIR" -maxdepth 1 -name "*.raw" | "$SORT_OLDEST")
    for RAW in "$FILES"; do
      # From: Randall R Schulz <rrschulz at cris dot com>
      FULLNAME="$RAW"
@@ -340,7 +357,7 @@ CUSTOM_SETUP=default_setup
 }
 
  newest_first() 
-{ FILES=$(ls -c "$DIR"/*.raw | "$SORT_NEWEST")
+{ FILES=$(find "$DIR" -maxdepth 1 -name "*.raw" | "$SORT_NEWEST")
   echo "$FILES"
 }
 
@@ -360,7 +377,7 @@ CUSTOM_SETUP=default_setup
 }
 
  oldest_first()
-{ FILES=$(ls -c "$DIR"/*.raw | "$SORT_OLDEST")
+{ FILES=$(find "$DIR" -maxdepth 1 -name "*.raw" | "$SORT_OLDEST")
   echo "$FILES"
 }
 
@@ -377,7 +394,7 @@ CUSTOM_SETUP=default_setup
 }
 
  get_path2post()
-{ FILES=$(ls -c "$DIR"/*.raw | "$SORT_NEWEST")
+{ FILES=$(find "$DIR" -maxdepth 1 -name "*.raw" | "$SORT_NEWEST")
   GOAL=$1
   COUNT=1
   for FILE in "$FILES"; do
@@ -520,7 +537,7 @@ done
   fi
 
   if [ "$POST2REFORMAT" -ge 1 ]; then
-	LATEST=$(get_path2post "$POST2REFORMAT")
+    LATEST=$(get_path2post "$POST2REFORMAT")
     reformat_singleton "$LATEST"
     die_cleanly
   fi
@@ -574,13 +591,6 @@ done
   fi
 }
 
- sort_index()
-{
-  # would like to figure out how to put this sort command into a variable, but thusfar not so successful
-  sort -t';' +0f -1 +1nr "$INDEX" > ".$INDEX.$$.sorted"
-  mv ".$INDEX.$$.sorted" "$INDEX" # "rebuild $INDEX
-}
-
  use_editor()
 { if [ $USE_EDITOR -eq 1 ]; then 
     OK=0
@@ -607,6 +617,23 @@ done
     . ./.veerc
   fi
 } 
+
+# this case statement may be overkill if "sort -t';' -nr -k2,2" works across platforms
+ sort_index()
+{ case $ARCH in
+  linux)   sort -t';' +0f -1 +1nr "$INDEX" > ".$INDEX.$$.sorted"
+     ;;
+  freebsd) sort -t';' +0f -1 +1nr "$INDEX" > ".$INDEX.$$.sorted"
+     ;;
+  macosx)  # -k2,2 sorts by second field as delimted by -t';' - this may actually work 
+           # for all platforms 
+           sort -t';' -nr -k2,2 "$INDEX" > ".$INDEX.$$.sorted"
+     ;;
+  *)       sort -t';' +0f -1 +1nr "$INDEX" > ".$INDEX.$$.sorted"
+     ;;
+  esac
+  mv ".$INDEX.$$.sorted" "$INDEX" # "rebuild $INDEX
+}
 
 #-- main program body
 
