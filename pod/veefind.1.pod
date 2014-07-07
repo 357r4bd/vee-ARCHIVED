@@ -1,0 +1,57 @@
+=head1 NAME
+
+    veefind
+
+=head1 SYNOPSIS
+
+    veefind
+
+=head1 OPTIONS 
+
+=over 4
+
+=item -d direcory
+
+Specify directory inwhich to locate the I<.vee> directory, which contains the
+I<*.raw> files.
+
+=item -M <maxdepth>
+
+Set the integer that is passed to maxdepth in the underlying find command. Setting
+this value to 0 will do the expected thing, which is to make find report nothing.
+
+=item -r
+
+Sort oldest to newest
+
+=item -x
+
+Strip C<.raw> from file name; this is useful for also iterating over other
+files that might share a name with the I<*.raw> file (e.g., I<*.html>).
+
+=item -h
+
+Usage output
+
+=back
+
+=head1 DESCRIPTION
+
+C<veefind> is a part of the I<vee> family of utilities that is useful for
+iterating over I<*.raw> files.
+
+It is provided as a basic utility required to build toofind to manage I<vee>
+posts.
+
+=head1 EXAMPLES
+
+The best example of all is to take a look at the I<vee-rebuild> tool.
+
+    for f in `veefind`; 
+    do
+        # do stuff with $f
+    done
+
+=head1 AUTHOR
+
+B. Estrade L<estrabd@gmail.com>

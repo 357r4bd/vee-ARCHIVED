@@ -3,6 +3,9 @@ all: vee veels veecat vee-reindex veerc vee-hooks
 vee:
 	pod2man vee.1.pod > vee.1
 
+veefind:
+	pod2man veefind.1.pod > veefind.1
+
 veels:
 	pod2man veels.1.pod > veels.1
 

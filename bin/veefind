@@ -1,0 +1,96 @@
+#!/bin/sh
+
+DIR=.vee
+FIND=`which find`
+
+SORT_NEW_FIRST='sort -t. -nr'
+SORT_OLD_FIRST='sort -t. -n'
+SORT="$SORT_NEW_FIRST"
+STRIPEXT=0
+USEFIND=0
+FINDOPTS=
+MAXDEPTH=1
+
+ die_error()
+{ 
+  echo "$1"
+  exit 1
+}
+
+ die_cleanly()
+{ 
+  exit 0
+}
+
+ usage() 
+{
+  man veefind
+}
+
+while getopts 'd:hF:M:rx' option; do
+    case $option in
+    d) if [ -d "$OPTARG" ]; then
+         cd "$OPTARG"
+       else
+         echo "$OPTARG" is not a directory!
+         die_cleanly
+       fi
+       ;;
+    F) USEFIND=1 #use find with custom opts
+       FINDOPTS="$OPTARG"
+       ;;
+    M) MAXDEPTH="$OPTARG"
+       ;;
+    r) SORT=$SORT_OLD_FIRST  # list in reverse post order
+       ;;
+    x) STRIPEXT=1 #strip .raw from output
+       ;;
+    h) usage # some help page
+       die_cleanly
+       ;;
+    esac
+done
+
+ read_config()
+{ if [ -e ./.veerc ]; then
+    . ./.veerc
+  fi
+} 
+
+ get_sorted()
+{
+    $FIND $DIR -maxdepth $MAXDEPTH -name "*.raw" | $SORT
+}
+
+ get_title()
+{
+    TITLE=$(head -n 3 "$1" | tail -n 1)
+    echo "$TITLE"
+}
+
+ get_date()
+{
+    DATE=$(head -n 1 "$1")
+    echo "$DATE"
+}
+
+#-- main program body
+
+#-- read config, $(pwd)/.veerc (happens after "-d" so it's consistent
+#--      with how bin/vee does it)
+read_config   
+
+for f in $(get_sorted); 
+do
+    # title is the 3rd line
+    TITLE=$(get_title "$f")
+
+    # full date string (not epoch) is the first line
+    DATE=$(get_date "$f")
+
+    if [ 1 -eq $STRIPEXT ]; then
+      echo "${f%\.*}"
+    else 
+      echo "$f"
+    fi
+done
