@@ -39,14 +39,11 @@ guess_arch
 # Details regarding non-portable date conversion https://github.com/estrabd/vee/issues/27 
  format_date()
 { case $ARCH in
-  linux)   TSP2FORMATTED=$(date -j -f "%a %b %e %H:%M:%S %Z %Y" "$1" +%m/%d/%Y)
- #          TSP2EPOCH=$(date -j -f "%a %b %e %H:%M:%S %Z %Y" "$1" +%s)
+  linux)   TSP2FORMATTED=$(date --date "$1" +%m/%d/%Y)
      ;;
   freebsd) TSP2FORMATTED=$(date -j -f "%a %b %e %H:%M:%S %Z %Y" "$1" +%m/%d/%Y)
- #          TSP2EPOCH=$(date -j -f "%a %b %e %H:%M:%S %Z %Y" "$1" +%s)
      ;;
   macosx)  TSP2FORMATTED=$(date -j -f "%a %b %e %H:%M:%S %Z %Y" "$1" +%m/%d/%Y)
- #          TSP2EPOCH=$(date -j -f "%a %b %e %H:%M:%S %Z %Y" "$1" +%s)
      ;;
   *) # nothing   
      ;;
@@ -56,7 +53,7 @@ guess_arch
 
  format_epoch()
 { case $ARCH in
-  linux)   TSP2EPOCH=$(date -j -f "%a %b %e %H:%M:%S %Z %Y" "$1" +%s)
+  linux)   TSP2EPOCH=$(date --date "$1" +%s)
      ;;
   freebsd) TSP2EPOCH=$(date -j -f "%a %b %e %H:%M:%S %Z %Y" "$1" +%s)
      ;;
