@@ -20,11 +20,22 @@ IN=./001-sort.dat
 ARCH='unknown'
 guess_arch
 
-linux="sort -t';' +0f -1 +1nr"
-freebsd="sort -t';' +0f -1 +1nr"
-macosx="sort -t';' -nr -k2,2"
+SORT="sort -t; +0f -1 +1nr"
 
-cat $IN | sort -t';' +0f -1 +1nr > /tmp/$$.sorted
+case $ARCH in
+ linux)   SORT="sort -t; +0f -1 +1nr"
+    ;;
+ freebsd) SORT="sort -t; +0f -1 +1nr"
+    ;;
+ macosx)  # -k2,2 sorts by second field as delimted by -t';' - this may actually work 
+          # for all platforms 
+          SORT="sort -t; -nr -k2,2"
+    ;;
+ *)       SORT="sort -t; +0f -1 +1nr"
+    ;;
+esac
+
+cat $IN | $SORT > /tmp/$$.sorted
 
 c=1
 
