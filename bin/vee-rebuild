@@ -37,23 +37,35 @@ ARCH='unknown'
 guess_arch
 
 # Details regarding non-portable date conversion https://github.com/estrabd/vee/issues/27 
-TSP2FORMATTED=
-TSP2EPOCH=
- set_date_converters()
+ format_date()
 { case $ARCH in
-  linux)   TSP2FORMATTED='date -j -f "%a %b %e %H:%M:%S %Z %Y" "$DATE" +%m/%d/%Y'
-           TSP2EPOCH='date -j -f "%a %b %e %H:%M:%S %Z %Y" "$DATE" +%s'
+  linux)   TSP2FORMATTED=$(date -j -f "%a %b %e %H:%M:%S %Z %Y" "$1" +%m/%d/%Y)
+ #          TSP2EPOCH=$(date -j -f "%a %b %e %H:%M:%S %Z %Y" "$1" +%s)
      ;;
-  freebsd) TSP2FORMATTED='date -j -f "%a %b %e %H:%M:%S %Z %Y" "$DATE" +%m/%d/%Y'
-           TSP2EPOCH='date -j -f "%a %b %e %H:%M:%S %Z %Y" "$DATE" +%s'
+  freebsd) TSP2FORMATTED=$(date -j -f "%a %b %e %H:%M:%S %Z %Y" "$1" +%m/%d/%Y)
+ #          TSP2EPOCH=$(date -j -f "%a %b %e %H:%M:%S %Z %Y" "$1" +%s)
      ;;
-  macosx)  TSP2FORMATTED='date -j -f "%a %b %e %H:%M:%S %Z %Y" "$DATE" +%m/%d/%Y'
-           TSP2EPOCH='date -j -f "%a %b %e %H:%M:%S %Z %Y" "$DATE" +%s'
+  macosx)  TSP2FORMATTED=$(date -j -f "%a %b %e %H:%M:%S %Z %Y" "$1" +%m/%d/%Y)
+ #          TSP2EPOCH=$(date -j -f "%a %b %e %H:%M:%S %Z %Y" "$1" +%s)
      ;;
   *) # nothing   
      ;;
   esac
-  mv ".$INDEX.$$.sorted" "$INDEX" # "rebuild $INDEX
+  echo $TSP2FORMATTED
+}
+
+ format_epoch()
+{ case $ARCH in
+  linux)   TSP2EPOCH=$(date -j -f "%a %b %e %H:%M:%S %Z %Y" "$1" +%s)
+     ;;
+  freebsd) TSP2EPOCH=$(date -j -f "%a %b %e %H:%M:%S %Z %Y" "$1" +%s)
+     ;;
+  macosx)  TSP2EPOCH=$(date -j -f "%a %b %e %H:%M:%S %Z %Y" "$1" +%s)
+     ;;
+  *) # nothing   
+     ;;
+  esac
+  echo $TSP2EPOCH
 }
 
 while getopts 'd:h' option; do
@@ -100,11 +112,11 @@ do
 
     # reformate date for indexing purposes (.raw files untouched)
     #FORMATTED_DATE=$(date -j -f "%a %b %e %H:%M:%S %Z %Y" "$DATE" +%m/%d/%Y)
-    FORMATTED_DATE=$($TS2FORMATTED)
+    FORMATTED_DATE=$(format_date "$DATE")
 
     # get epoch for purpose of adding reasonable post index numbers 
     #EPOCH=$(date -j -f "%a %b %e %H:%M:%S %Z %Y" "$DATE" +%s)
-    EPOCH=$($TS2EPOCH)
+    EPOCH=$(format_epoch "$DATE")
 
     # extract base name of .raw file so we can link to html file of same base
     FILENAME=$(basename "$f")
