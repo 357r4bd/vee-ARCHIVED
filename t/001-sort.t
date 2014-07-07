@@ -1,4 +1,4 @@
-#/bin/sh
+#!/bin/sh
 
 # Test for Issue 4
 
@@ -24,6 +24,40 @@ linux="sort -t';' +0f -1 +1nr"
 freebsd="sort -t';' +0f -1 +1nr"
 macosx="sort -t';' -nr -k2,2"
 
-cat $IN | sort -t';' +0f -1 +1nr
+cat $IN | sort -t';' +0f -1 +1nr > /tmp/$$.sorted
 
-cat $IN | sort -t';' -nr -k2,2
+c=1
+
+if [ "$ARCH" != 'macosx' ]; then
+  top=$(cat /tmp/$$.sorted | head -n 1 | awk '{print $6}') 
+  bot=$(cat /tmp/$$.sorted | tail -n 1 | awk '{print $6}') 
+  if [ "$top" == "top" ]; then
+    echo "ok $c - top line sorted where expected (old sort style)"
+  fi
+  c=$(($c+1))
+  if [ "$bot" == "bottom" ]; then
+    echo "ok $c - bottom line sorted where expected (old sort style)"
+  fi
+  rm /tmp/$$.sorted
+else
+  echo ok $c - skipping old style sort on MacOSX
+fi
+
+cat $IN | sort -t';' -nr -k2,2 > /tmp/$$.sorted
+
+top=$(cat /tmp/$$.sorted | head -n 1 | awk '{print $6}') 
+bot=$(cat /tmp/$$.sorted | tail -n 1 | awk '{print $6}') 
+
+c=$(($c+1))
+if [ "$top" == "top" ]; then
+  echo "ok $c - top line sorted where expected (sort using -k2,2)"
+fi
+ 
+c=$(($c+1))
+if [ "$bot" == "bottom" ]; then
+  echo "ok $c - bottom line sorted where expected (sort using -k2,2)"
+fi
+
+rm /tmp/$$.sorted
+
+echo 1..$c
