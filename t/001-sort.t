@@ -35,17 +35,20 @@ case $ARCH in
     ;;
 esac
 
+c=0
+
 cat $IN | $SORT > /tmp/$$.sorted
 
-c=1
-
 if [ "$ARCH" != 'macosx' ]; then
+
+  c=$(($c+1))
   top=$(cat /tmp/$$.sorted | head -n 1 | awk '{print $6}') 
-  bot=$(cat /tmp/$$.sorted | tail -n 1 | awk '{print $6}') 
   if [ "$top" == "top" ]; then
     echo "ok $c - top line sorted where expected (old sort style)"
   fi
+
   c=$(($c+1))
+  bot=$(cat /tmp/$$.sorted | tail -n 1 | awk '{print $6}') 
   if [ "$bot" == "bottom" ]; then
     echo "ok $c - bottom line sorted where expected (old sort style)"
   fi
@@ -54,17 +57,18 @@ else
   echo ok $c - skipping old style sort on MacOSX
 fi
 
+# this section also tests new style sort options on all $ARCH
+
 cat $IN | sort -t';' -nr -k2,2 > /tmp/$$.sorted
 
-top=$(cat /tmp/$$.sorted | head -n 1 | awk '{print $6}') 
-bot=$(cat /tmp/$$.sorted | tail -n 1 | awk '{print $6}') 
-
 c=$(($c+1))
+top=$(cat /tmp/$$.sorted | head -n 1 | awk '{print $6}') 
 if [ "$top" == "top" ]; then
   echo "ok $c - top line sorted where expected (sort using -k2,2)"
 fi
  
 c=$(($c+1))
+bot=$(cat /tmp/$$.sorted | tail -n 1 | awk '{print $6}') 
 if [ "$bot" == "bottom" ]; then
   echo "ok $c - bottom line sorted where expected (sort using -k2,2)"
 fi
