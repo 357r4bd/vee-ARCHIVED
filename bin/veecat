@@ -17,39 +17,39 @@ IFS=
 
  usage() 
 {
-	man veecat
+  man veecat
 }
 
  get_title()
 {
-	TITLE=$(head -n 3 "$1" | tail -n 1)
-    echo "$TITLE"
+  TITLE=$(head -n 3 "$1" | tail -n 1)
+  echo "$TITLE"
 }
 
  get_date()
 {
-	DATE=$(head -n 1 "$1")
-    echo "$DATE"
+  DATE=$(head -n 1 "$1")
+  echo "$DATE"
 }
 
  get_header()
 {
-    # get line one through line 5, the entire header w/o separator
-	echo $(cat "$1" | head -n 5)
+  # get line one through line 5, the entire header w/o separator
+  echo $(cat "$1" | head -n 5)
 }
 
  get_body()
 {
-	# figure out how many lones file is for $(tail) command
-	LC=$(wc -l "$1" | awk '{print "$1"}')
-    BC=$(($LC-6))
-	$(cat "$1" | tail -n "$BC")
+  # figure out how many lones file is for $(tail) command
+  LC=$(wc -l "$1" | awk '{print "$1"}')
+  BC=$(($LC-6))
+  $(cat "$1" | tail -n "$BC")
     
 }
 
  get_all() 
 {
-	cat "$1"
+  cat "$1"
 }
 
  die_error()
@@ -91,16 +91,16 @@ while read -r IN <&0 ; do
   if [ -e "$IN" ]; then
       # assumes file is a proper *.raw , else GIGO
       if [ $SHOWALL -eq 1 ]; then
-			echo $(get_all "$IN")
+                        echo $(get_all "$IN")
       else
           if [ $SHOWTITLE -eq 1 ]; then
-			echo $(get_title "$IN")
+                        echo $(get_title "$IN")
           fi
           if [ $SHOWDATE -eq 1 ]; then
-			echo $(get_date "$IN")
+                        echo $(get_date "$IN")
           fi 
           if [ $SHOWBODY -eq 1 ]; then
-			echo $(get_body "$IN")
+                        echo $(get_body "$IN")
           fi
       fi
   fi
