@@ -1,0 +1,10 @@
+Work in progress, don't use! Derp...
+
+To build the latest downloadable .shar file,
+
+	make all
+
+The resulting .shar file will install vee locally using a command
+similar to,
+
+	curl https://path/too/vee/install-vee.shar | sh 
