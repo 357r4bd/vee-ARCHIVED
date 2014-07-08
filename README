@@ -1,9 +1,9 @@
-vee is a zero-conf, command line microblogging tool that I created
-because I hated having to set up web-based blogging software every so
-often. It became popular for some reason, and now it's used in some
-for by many people - mostly in silence. It does everything I want it
-to do, hence the lack of feature creep; however I am always interested
-in improving it in some basic way.
+vee is a highly portable, zero configuration (but configurable), cli 
+microblogging tool that I created because I hated having to set up 
+web-based blogging software every so often. It became popular for some 
+reason, and now it's used in some for by many people - mostly in silence. 
+It does everything I want it to do, hence the lack of feature creep; 
+however I am always interested in improving it in some basic way.
 
 It's available in a variety of package repositories, like pkgsrc and
 FreeBSD Ports.
