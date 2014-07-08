@@ -1,9 +1,9 @@
-vee is a zero-conf, command line microblogging tool that I created
-because I hated having to set up web-based blogging software every so
-often. It became popular for some reason, and now it's used in some
-for by many people - mostly in silence. It does everything I want it
-to do, hence the lack of feature creep; however I am always interested
-in improving it in some basic way.
+vee is a highly portable, zero configuration (but configurable), cli 
+microblogging tool that I created because I hated having to set up 
+web-based blogging software every so often. It became popular for some 
+reason, and now it's used in some for by many people - mostly in silence. 
+It does everything I want it to do, hence the lack of feature creep; 
+however I am always interested in improving it in some basic way.
 
 It's available in a variety of package repositories, like pkgsrc and
 FreeBSD Ports.
@@ -17,14 +17,17 @@ Portability Goals:
 0. no external dependencies other than Bourne Shell and traditional 
    Unix userland tools (no need to install non-optional utils)
 1. any *nix platform that supports Bourne Shell (sh)
-2. any shell that claims to be Bourne compliant
+2. it "just works" out of the box
+3. new versions won't require "upgrading"
 
 Incompatibilities:
 
 The goal of vee is that it should work on minimal systems using only
 original Bourne shell (sh) and without having to install anything. I
-originally began this work on FreeBSD, but it seems that sort behaves
-differently among FreeBSD, Linux, and Mac - which is frustrating =D
+originally began this work on FreeBSD, but it seems that a couple of
+utilities seem to not be the most portable in their usage. In particular,
+`date` and `sort` have caused some headaches, but alas they have been
+tamed.
 
 Project Status:
 
@@ -51,7 +54,7 @@ estrabd at gmail dot com
 
 It's also on Freshmeat:
 
- http://freshmeat.net/projects/vee-the-blog-tool
+ R.I.P. Freshmeat :(
 
 Usage: See below.                                                     
 
