@@ -1,3 +1,7 @@
+=head1 DEPRECATED
+
+This utility is being deprecated before it even makes it into a release.
+
 =head1 NAME
 
     veels
