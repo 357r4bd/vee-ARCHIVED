@@ -31,6 +31,12 @@ tamed.
 
 Project Status:
 
+Update - recently I have had some interest and time in addressing some
+issues that have been plaguing MacOS (i.e., sort), all platforms (date),
+and have a couple of goals to make vee easy to install locally to try out.
+Also included is an attempt to understand the utf8 issues that have been
+reported. My goal is to have a 1.0 release very soon.
+
 This is one of those "forever" projects that met my needs very early
 on, and I have revisited the code for only incremental improvements.
 I'd like to get to 1.0, but this would realy just mean a nice set
