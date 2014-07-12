@@ -1,0 +1,1974 @@
+# This is a shell archive.  Save it in a file, remove anything before
+# this line, and then unpack it by entering "sh file".  Note, it may
+# create directories; files and directories will be owned by you and
+# have default permissions.
+#
+# This archive contains:
+#
+#	./bin
+#	./man
+#	./bin/vee
+#	./bin/veecat
+#	./bin/veefind
+#	./man/vee-reindex.1
+#	./man/vee.1
+#	./man/veecat.1
+#	./man/veels.1
+#	./man/veerc.5
+#	.veeprofile
+#
+echo c - ./bin
+mkdir -p ./bin > /dev/null 2>&1
+echo c - ./man
+mkdir -p ./man > /dev/null 2>&1
+echo x - ./bin/vee
+sed 's/^X//' >./bin/vee << 'e7a83801293654bbf807ad7c5e9cca6a'
+X#!/bin/sh
+X
+X# PLEASE SUBMIT BUGS AND REQUESTS AT:
+X# 	https://github.com/estrabd/vee/issues
+X
+XVERSION=1.00
+X
+Xif [ ! "$EDITOR" ]; then
+X  EDITOR=vi
+Xfi
+X
+XMARGIN=64
+XFORMAT=html
+XINDEX=vee.html
+XDIR=.vee
+XDRAFT="$DIR/.vee.tmp.$$"
+XDATE=$(date)
+XYEAR=$(date "+%Y")
+XTIME=$(date "+%Y-%m-%dT%H:%M:%S")
+XSEC=$(date "+%s")
+XTITLE=
+XDEFAULT_TITLE="Entry #$SEC";
+XHEADERTXT=  # text or $(cat some.header.txt)
+XFOOTERTXT="Powered by <a href=\"http://www.0x743.com/vee\">vee</a><br/>Copyright &copy; 2006-$YEAR"  
+XTOP_TPL=./vee-top.tpl
+XBOT_TPL=./vee-bottom.tpl
+XPREFORMAT_HOOK=./vee-pre # the hook is assumed to be executable, else it is ignored
+XUSE_EDITOR=1
+XLISTENSTDIN=0
+XSORT_NEWEST="sort -t. -nr" # sorts all new to old 
+XSORT_OLDEST="sort -t. -n"  # sorts all old to new
+XPUBLISHED=$(date "+%m/%d/%Y")       # date formated for index page entry
+XOUTPUT_TOP=output_top
+XOUTPUT_BOT=output_bottom
+X
+X guess_arch()
+X{ case $(uname) in
+X  Linux)   ARCH='linux'
+X     ;;
+X  FreeBSD) ARCH='freebsd'
+X     ;;
+X  Darwin)  ARCH='macosx'
+X     ;;
+X  *)       ARCH='unknown'
+X     ;;
+X  esac
+X}
+X
+XARCH='unknown'
+Xguess_arch
+X
+X# define custom formatting define custom functions file; see example in # vee/sample-custom-format/vee-custom.sh
+XFORMAT_FUNC=format_with_groff
+XFORMAT_DISPATCHER=default_set_format_func       
+XFORMAT_CUSTOM_DISPATCHER=custom_set_format_func
+XFORMAT_CUSTOM_DEFS=./vee-custom.sh # path is relative to -d DIR, where .veerc resides
+X
+XUPDATE_INDEX=default_update_index
+XCUSTOM_SETUP=default_setup   
+X
+X#
+X# vee is a zero configuration, commandline blog tool that
+X# requires NO installation other than dropping the vee 
+X# script into your ~/bin, or someother directory in your PATH
+X#
+X# vee accepts input when in batch mode (-b), so it is well 
+X# suited for use in batch situations, such as in a cronjob 
+X#
+X
+X# System utilities required via PATH:
+X# cat cd date env find fold grep groff head ls pwd sort tail which
+X
+X# change log
+X# Applied patch from efbeha@gmail.com: 
+X#   added code to keep words whole when using fold
+X#   added code to remove extraneous lines from groff
+X# made sort options customizable
+X# made publish date format customizable
+X# initial implementation of pre format hook
+X# externalized the use of custom formats
+X# added ability to edit and reformat any post
+X
+X disclaimer()
+X{ echo "Copyright (c) 2007 /me" 
+X  echo "Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:"
+X  echo "The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software."
+X  echo "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+X}
+X
+X#
+X# vee - the minimal, zero configuration command line blog thingy
+X#
+X# Contact (bugs, patches, suggestions)
+X#  estrabd+vee 'at' gmail
+X# 
+X# Instructions:
+X#  1. put in directory accessible via PATH
+X#  2. go to a web visible directory and type 'vee'
+X#  3. put in your title and write your post in vi
+X#  4. tell your mom to visit: http://..../yourdir/vee.html
+X#
+X# Tips:
+X#
+X# 1 You can force the index to be index.html using "-I", or 
+X#   you can specify the index with "-i somefile.html". But,
+X#   if you do this, you'll have to specify this for all other
+X#   commands, otherwise vee defaults to vee.html 
+X#
+X# 2 vee respects your EDITOR environmental variable 
+X#
+X# 3 What you do with vee.html or the formatting is up to you :)
+X#
+X
+X# CREDITS
+X#  Francois Saint-Jacques (fsaintjacques@networkdump.com) supplied 2nd patch ever :) 
+X#  efbeha (efbeha@gmail.com) - supplied first patch ever :)
+X#  Oliver @ forums.bsdnexus.com
+X#  arun   @ chat.taucher.net #bsd
+X#  J65nko @ bsdforums.com
+X
+X default_set_format_func()
+X{ case $1 in
+X    default) FORMAT_FUNC=format_with_groff
+X             echo using $FORMAT_FUNC
+X             ;;
+X    groff)   FORMAT_FUNC=format_with_groff
+X             echo using $FORMAT_FUNC
+X             ;;
+X    fold)    FORMAT_FUNC=format_with_fold
+X             echo using $FORMAT_FUNC
+X             ;;
+X    none)    FORMAT_FUNC=with_no_formatting
+X             echo using $FORMAT_FUNC
+X             ;;
+X             # if not a supplied format, see if it is in the custom format file, if it exists
+X    *)       if [ -e "$FORMAT_CUSTOM_DEFS" ]; then
+X               # call dispatch function that is defined in
+X               # the custom format file, pass on format nickname
+X               $FORMAT_CUSTOM_DISPATCHER "$1"
+X             else
+X               echo "bad format type" 
+X               die_cleanly
+X             fi
+X  esac 
+X}
+X
+X usage()
+X{ echo "                                                                              " 
+X  echo " vee - the Zero-conf, commandline blog tool thingy                            "
+X  echo "                                                                              "
+X  echo "Version: $VERSION                                                             "
+X  echo "                                                                              "
+X  echo "Usage:                                                                        "
+X  echo "  See below.                                                                  " 
+X  echo "                                                                              " 
+X  echo "Options:                                                                      " 
+X  echo "  -b                batch mode; used when piping in msg via stdin             " 
+X  echo "  -B  file          define bottom template; default is ./vee-bottom.tpl       " 
+X  echo "  -c  [1-9\d*]      specify the number of characters 'fold' allows per line   " 
+X  echo "                    this only applies when 'fold' (-f) is used                " 
+X  echo "  -d  'publis_dir'  specify the directory .vee is in - defaults to PWD        " 
+X  echo "  -f  'format'      use defined format instead of the default, groff;         "
+X  echo "                    'groff', 'fold', and 'none' are supported out of the box  "
+X  echo "  -h                prints this blurb                                         " 
+X  echo "  -i  'custom.html' specify a custom index file over the default              "
+X  echo "  -I                force index file to be \"index.html\"                     "
+X  echo "  -l                edit latest post's *.raw; used with '-r' publishes changes;"
+X  echo "                    calls reformat automatically;                             " 
+X  echo "  -L  [1-9\d*]      edit the Nth latest, relative to last post; lp starts at 1"
+X  echo "  -m  'message ...' specify entry message at commandline and avoid vi         " 
+X  echo "  -n                lists all entries, newest first, then quits               "
+X  echo "  -o                lists all entries, oldest first, then quits               " 
+X  echo "  -p                see what *raw files don't have an entry in the INDEX      "
+X  echo "  -P                forever deletes all *raw and formatted files associated with"
+X  echo "                    posts that are listed with -p;                            "
+X  echo "  -r  [1-9\d*]      reformats the Nth latest post                             "
+X  echo "  -R                reformats _all_ .vee/*.raw files; -c applies as well      "
+X  echo "  -s  "summary"     placed below title in INDEX                               "
+X  echo "  -t  'title'       specify title at commandline and avoid annoying default prompt" 
+X  echo "  -T  file          define top template; default is ./vee-top.tpl             " 
+X  echo "  -v                version and exit                                          " 
+X  echo "  -x  hook          defines hook if not using default "./vee-pre"; hook       "
+X  echo "                    must be executable, i.e., chmod 755 vee-pre               "
+X  echo "                                                                              " 
+X  echo "Examples:                                                                     "
+X  echo "                                                                              " 
+X  echo "%vee                                                                          " 
+X  echo "                                                                              " 
+X  echo " user will be prompted for title and presented with vi                        "
+X  echo "                                                                              " 
+X  echo " if no default dir/files are found, they will be created                      "
+X  echo "                                                                              " 
+X  echo "%vee -t \"this is the title\"                                                 "
+X  echo "                                                                              " 
+X  echo " user will just be presented with a vi session;                               "
+X  echo "                                                                              " 
+X  echo "%cat text.txt | vee -b -t \"my title\" -m \"text to go before stdin\"         " 
+X  echo "                                                                              " 
+X  echo " publishes contents of text.txt with provided title; -m's msg will be         " 
+X  echo " shown above the cat'd text                                                   " 
+X  echo "                                                                              " 
+X  echo "%vee -l       # edit and reformat the latest post                             " 
+X  echo "%vee -L 5     # allows one to edit and reformats the fifth latest post        " 
+X  echo "%vee -r 8     # reformats the 8th latest post                                 " 
+X  echo "%vee -R       # reformats ALL posts that have *.raw files                     " 
+X  echo "                                                                              " 
+X  echo "To delete a post forever:                                                     " 
+X  echo "1) delete the entry in the INDEX                                              " 
+X  echo "2) purge the entry:                                                           "
+X  echo "  %vee -p    # make sure it is the one you want to purge                      "
+X  echo "  %vee -P    # purge it!                                                      "
+X  echo "                                                                              " 
+X  echo " brings up the latest entry as a vi sessions; when changes are save,          " 
+X  echo " all messages are reformatted                                                 " 
+X  echo "                                                                              " 
+X  echo "Notes:                                                                        "
+X  echo "                                                                              " 
+X  echo "1. Batch mode looks for piped input via STDIN; if none after a short time,    "
+X  echo "   message creation fails UNLESS something was passed in via '-m' as well.    " 
+X  echo "   If nothing was passed in via '-t' for the title, some default is used;     "
+X  echo "   This is set at the top of the script as 'DEFAULT_TITLE'.                   "
+X  echo "                                                                              " 
+X  echo "2. Interactive mode (default) prompts for a title if no '-t' is provided.     "
+X  echo "   Such is the case even if '-m' is used.  If '-m' is not used in this        "
+X  echo "                                                                              " 
+X  echo "3. Patches are welcome; the goal is not more feature bloat, but a nicer       "
+X  echo "   way of dealing with standard in, etc would be welcomed.                    " 
+X  echo "                                                                              " 
+X  disclaimer 
+X  exit 1
+X}
+X
+X# formats post link on index page
+X default_update_index() 
+X{ echo "<!-- ;$SEC; -->$PUBLISHED:<a href=\"$DIR/$SEC.$TIME.$FORMAT\"> $TITLE</a>" >> $INDEX
+X  if [ -n "$SUMMARY" ]; then
+X	SEC=$(expr "$SEC" - 1)
+X    echo "<!-- ;$SEC; -->$SUMMARY" >> "$INDEX"
+X  fi
+X}
+X
+X output_top()
+X{ echo "$HEADERTXT" > "$FINAL"
+X  if [ -e "$TOP_TPL" ]; then
+X     cat "$TOP_TPL" >> "$FINAL"
+X     echo "<pre>"   >> "$FINAL"
+X   else
+X     echo "<!-- <?xml version=\"1.0\" encoding=\"UTF-8\" ?> --><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\">"  >> "$FINAL"
+X     echo "<meta http-equiv=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">" >> "$FINAL"
+X     echo "<head><title>$TITLE - $DATE</title></head>"  >> "$FINAL"
+X     echo "<body>"  >> "$FINAL"
+X     echo "<pre>"   >> "$FINAL"
+X     echo "<a href=\"../$INDEX\">[index]</a><a href=\"./$RAWNAME\">[raw]</a><a href=\"../\">[main]</a>" >> "$FINAL"
+X   fi
+X   echo           >> "$FINAL"
+X}
+X
+X output_bottom()
+X{ echo          >> "$FINAL"
+X  echo --       >> "$FINAL"
+X  echo "$FOOTERTXT" >> "$FINAL"
+X  if [ -e "$BOT_TPL" ]; then
+X    cat "$BOT_TPL" >> "$FINAL"
+X  else
+X    echo "</pre>" >>  "$FINAL"
+X    echo "</body>" >>  "$FINAL"
+X    echo "</html>" >>  "$FINAL"
+X  fi
+X} 
+X
+X# begin formatting funcs
+X
+X format_with_groff()
+X{ #sed 1liner from http://sed.sourceforge.net/sed1line.txt
+X  groff -man -Tascii "$RAW" >> bla.raw
+X  sed '/^$/N;/\n$/D' bla.raw >> "$FINAL"
+X  rm bla.raw
+X#  groff -man -Tascii "$RAW" >> "$FINAL"
+X}
+X
+X with_no_formatting()
+X{ cat "$RAW" >> "$FINAL"
+X} 
+X
+X format_with_fold()
+X{ if [ 0 -lt $MARGIN ]; then
+X    fold -s -w $MARGIN "$RAW" >> "$FINAL"
+X  else
+X    with_no_formatting 
+X  fi
+X}
+X
+X#
+X# all hooks must accepted STDIN and output via STDOUT
+X# default arguments include:
+X#
+X preformat()
+X{ if [ -e "$PREFORMAT_HOOK" ]; then
+X    if [ -x "$PREFORMAT_HOOK" ]; then
+X      cat "$DRAFT" | "$PREFORMAT_HOOK" "$FORMAT_FUNC" > "$DRAFT.tmp" 
+X      mv -f "$DRAFT.tmp" "$DRAFT" 
+X    fi
+X  fi 
+X}
+X
+X# postformat()
+X#{ if [ -x "$POSTFORMAT_HOOK" ]; then
+X#    cat "$FINAL" | "$POSTFORMAT_HOOK" > "$FINAL.tmp" 
+X#    mv -f "$FINAL.tmp" "$FINAL" 
+X#  fi 
+X#}
+X
+X format_main()
+X{ FINAL=$DIR/$1
+X  FINALNAME=$1
+X  RAW=$DIR/$2
+X  RAWNAME=$2
+X  preformat
+X  # save raw form before formatting if it doesn't exist
+X  # which is the case when reformatting all
+X  if [ ! -e "$RAW" ]; then
+X    echo "$DATE"   > "$RAW"     # in RAW, line 1 is date
+X    echo          >> "$RAW"
+X    echo "$TITLE" >> "$RAW"     # in RAW, line 2 is title
+X    echo          >> "$RAW"
+X    echo "--"     >> "$RAW"
+X    echo          >> "$RAW"     # this blank line is important
+X    cat "$DRAFT"  >> "$RAW"
+X  fi
+X  $OUTPUT_TOP 
+X  $FORMAT_FUNC 
+X  $OUTPUT_BOT 
+X  #postformat # not sure about this one yet
+X}
+X
+X reformat_singleton()
+X{  if [ -e "$DIR/$1.raw" ]; then
+X     #echo "Reformatting message: \"$1\""
+X     cat "$DIR/$1.raw" > "$DRAFT"
+X     format_main "$1.$FORMAT" "$1.raw"
+X   fi
+X}
+X
+X reformat_all()
+X{ FILES=$(find "$DIR" -maxdepth 1 -name "*.raw" | "$SORT_OLDEST")
+X   for RAW in "$FILES"; do
+X     # From: Randall R Schulz <rrschulz at cris dot com>
+X     FULLNAME="$RAW"
+X     DIR=${FULLNAME%/*}
+X     FILE=${FULLNAME##*/}
+X     MAXBASE=${FILE%.*}
+X     MINBASE=${FILE%%.*}
+X     MAXSUF=${FILE#*.}
+X     MINSUF=${FILE##*.}
+X     reformat_singleton "$MAXBASE"
+X   done
+X}
+X
+X newest_first() 
+X{ FILES=$(find "$DIR" -maxdepth 1 -name "*.raw" | "$SORT_NEWEST")
+X  echo "$FILES"
+X}
+X
+X list_newest_first()
+X{ FILES=$(newest_first)
+X  COUNT=1
+X  for FILE in "$FILES"; do
+X     FULLNAME=$FILE
+X     DIR=${FULLNAME%/*}
+X     FILE=${FULLNAME##*/}
+X     MAXBASE=${FILE%.*}
+X	 TITLE=$(head -n 3 "$DIR/$FILE" | tail -n 1) 
+X     printf "%7d)  " "$COUNT"
+X     echo "$MAXBASE ::  $TITLE"
+X	 COUNT=$(expr $COUNT + 1)
+X  done
+X}
+X
+X oldest_first()
+X{ FILES=$(find "$DIR" -maxdepth 1 -name "*.raw" | "$SORT_OLDEST")
+X  echo "$FILES"
+X}
+X
+X list_oldest_first()
+X{ FILES=$(oldest_first)
+X  for FILE in "$FILES"; do
+X     FULLNAME=$FILE
+X     DIR=${FULLNAME%/*}
+X     FILE=${FULLNAME##*/}
+X     MAXBASE=${FILE%.*}
+X	 TITLE=$(head -n 3 "$DIR/$FILE" | tail -n 1) 
+X     echo "$MAXBASE ::  $TITLE"
+X  done
+X}
+X
+X get_path2post()
+X{ FILES=$(find "$DIR" -maxdepth 1 -name "*.raw" | "$SORT_NEWEST")
+X  GOAL=$1
+X  COUNT=1
+X  for FILE in "$FILES"; do
+X     FULLNAME=$FILE
+X     DIR=${FULLNAME%/*}
+X     FILE=${FULLNAME##*/}
+X     MAXBASE=${FILE%.*}
+X    if [ "$COUNT" -eq "$GOAL" ]; then
+X     echo "$MAXBASE"
+X     break
+X    fi
+X	COUNT=$(expr "$COUNT" + 1)
+X  done
+X}
+X
+X purge_entries()
+X{ LEVEL=$1 
+X  COUNT=0
+X  if [ ! -e "$INDEX" ]; then
+X    echo "Can't find index, \"$INDEX\""
+X    die_cleanly
+X  fi
+X  FILES=$(newest_first)
+X  for FILE in "$FILES"; do
+X     FULLNAME=$FILE
+X     DIR=${FULLNAME%/*}
+X     FILE=${FULLNAME##*/}
+X     MAXBASE=${FILE%.*}
+X	 ENTRY=$(grep "$MAXBASE" "$INDEX")
+X     if [ -z "$ENTRY" ]; then
+X	   COUNT=$(expr "$COUNT" + 1)
+X       if [ "$LEVEL" -eq 1 ]; then
+X         echo "$DIR/$FILE (not really purged, use -P for realz)"
+X       elif [ "$LEVEL" -eq 2 ]; then
+X         echo "$DIR/$MAXBASE[.raw,$FORMAT] (purged for realz)"
+X         rm -f "$DIR/$MAXBASE"*
+X       fi
+X     fi
+X  done
+X  echo "removed $COUNT entrie(s)..."
+X}
+X
+X die_cleanly()
+X{ if [ -e "$DRAFT" ]; then
+X    rm -f "$DRAFT"
+X  fi
+X  exit 0
+X}
+X
+XPOST2REFORMAT=0
+XREFORMATALL=0
+XPURGELEVEL=0
+XPOST2EDIT=0
+XSUMMARY=
+XMESSAGE=
+XSET_DEFAULT_FORMAT_FUNC=
+X
+X# get opts ! stdin append to anything passed in by -m 
+Xwhile getopts 'f:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:' option; do
+X    case $option in
+X    i) INDEX=$OPTARG  # specify INDEX to $OPTARG
+X       ;;
+X    I) INDEX="index.html" # force INDEX to index.html
+X       ;;
+X    d) if [ -d "$OPTARG" ]; then
+X         cd "$OPTARG"
+X       else
+X         echo "$OPTARG" is not a directory!
+X         die_cleanly
+X       fi
+X       ;;
+X    r) POST2REFORMAT=$OPTARG
+X       ;;
+X    R) REFORMATALL=1
+X       ;;
+X    b) LISTENSTDIN=1 
+X       USE_EDITOR=0
+X       ;;
+X    B) BOT_TPL=$OPTARG
+X       ;;
+X    f) SET_DEFAULT_FORMAT_FUNC=$OPTARG
+X       ;;
+X    c) MARGIN=$OPTARG # this option is about to be deprecated
+X       ;;
+X    l) POST2EDIT=1
+X       ;;
+X    L) POST2EDIT=$OPTARG
+X       ;;
+X    m) MESSAGE=$OPTARG 
+X       USE_EDITOR=0
+X       ;;
+X    n) list_newest_first
+X       die_cleanly 
+X       ;;
+X    o) list_oldest_first
+X       die_cleanly 
+X       ;; 
+X    s) SUMMARY=$OPTARG
+X       ;; 
+X    t) TITLE=$OPTARG
+X       ;;
+X    T) TOP_TPL=$OPTARG
+X       ;;
+X    v) echo $VERSION
+X       die_cleanly
+X       ;;
+X    p) PURGELEVEL=1
+X       ;; 
+X    P) PURGELEVEL=2 
+X       ;; 
+X    h) usage
+X       die_cleanly
+X       ;;
+X    x) PREFORMAT_HOOK=$OPTARG
+X       ;; 
+X    ?) #usage | less
+X       die_cleanly
+X       ;;
+X    esac
+Xdone
+X
+X post_opts() 
+X{ if [ -e "$FORMAT_CUSTOM_DEFS" ]; then
+X    . "$FORMAT_CUSTOM_DEFS"
+X  fi
+X
+X  if [ -n "$SET_DEFAULT_FORMAT_FUNC" ]; then 
+X    "$FORMAT_DISPATCHER" "$OPTARG"  # default is set_format_func
+X  fi
+X
+X  if [ "$PURGELEVEL" -ge 1 ]; then
+X    purge_entries "$PURGELEVEL"
+X    die_cleanly
+X  fi 
+X
+X  if [ "$POST2EDIT" -ge 1 ]; then
+X	LATEST=$(get_path2post "$POST2EDIT")
+X    $EDITOR "$DIR/$LATEST.raw"
+X    POST2REFORMAT=$POST2EDIT
+X  fi
+X
+X  if [ "$POST2REFORMAT" -ge 1 ]; then
+X    LATEST=$(get_path2post "$POST2REFORMAT")
+X    reformat_singleton "$LATEST"
+X    die_cleanly
+X  fi
+X
+X  # if "-R", or reformat all, is set 
+X  if [ "$REFORMATALL" -eq 1 ]; then
+X    # future may yield seperate "rebuild reindex" functionality 
+X    reformat_all
+X    die_cleanly
+X  fi
+X
+X  # blocks vee -l (without the -r) from going on 
+X  if [ "$POST2EDIT" -ge 1 ]; then
+X    die_cleanly
+X  fi
+X
+X  # Batch message creation: -m and stdin
+X  # handles -m
+X  if [ -n "$MESSAGE" ]; then
+X    echo "$MESSAGE" >> "$DRAFT"
+X  fi
+X
+X  if [ $LISTENSTDIN -eq 1 ]; then
+X    IFS="" # ensures that leading spaces are retained
+X    while read -r IN <&0 ; do # break after 1 sec of no stdin
+X      echo "$IN"            # echo's stdin back out so user can see 
+X      echo "$IN" >> "$DRAFT" 
+X      LISTENSTDIN=1
+X      USE_EDITOR=0
+X    done
+X  fi
+X}
+X
+X# generates INDEX file if none exists
+X default_setup()
+X{ mkdir -p "$DIR" || echo "$DIR" exists...
+X  if [ ! -e "$INDEX" ]; then
+X    echo
+X    echo "...creating $INDEX"
+X    echo "<!-- ;10000000000000000000000000; open pre tag --><!-- <?xml version=\"1.0\" encoding=\"UTF-8\" ?> --><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>my vee index</title><meta http-equiv=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\"></head><body><pre>" >> "$INDEX"
+X   # header stuff
+X    echo "<!-- ;100000000000000000000000; fixed content -->" >> "$INDEX"
+X    echo "<!-- ;10000000000000000000000;  fixed content -->" >> "$INDEX"
+X    echo "<!-- ;1000000000000000000000;   fixed content -->" >> "$INDEX"
+X   # footer stuff
+X    echo "<!-- ;3; fixed content -->" >> "$INDEX"
+X    echo "<!-- ;2; fixed content -->" >> "$INDEX"
+X    echo "<!-- ;1; fixed content -->Powered by <a href=\"http://www.0x743.com/vee\">vee</a>" >> "$INDEX"
+X    echo "<!-- ;0; closing pre tag --></pre></body></html>" >> "$INDEX"
+X    echo
+X  fi
+X}
+X
+X use_editor()
+X{ if [ $USE_EDITOR -eq 1 ]; then 
+X    OK=0
+X    $EDITOR "$DRAFT" && OK=1
+X    if [ "$OK" -ne 1 ]; then
+X      echo there has been a problem with your editor session
+X      exit
+X    fi
+X  #else
+X    #echo ...vi mode off
+X  fi
+X}
+X
+X# ask for title if not set with -t and not in batch mode
+X# if in batch mode with no -t set, use default title below
+X get_title()
+X{ if [ -z "$TITLE"  ]; then
+X    TITLE=$DEFAULT_TITLE
+X  fi
+X}
+X
+X read_config()
+X{ if [ -e ./.veerc ]; then
+X    . ./.veerc
+X  fi
+X} 
+X
+X# this case statement may be overkill if "sort -t';' -nr -k2,2" works across platforms
+X sort_index()
+X{ case $ARCH in
+X  linux)   sort -t';' +0f -1 +1nr "$INDEX" > ".$INDEX.$$.sorted"
+X     ;;
+X  freebsd) sort -t';' +0f -1 +1nr "$INDEX" > ".$INDEX.$$.sorted"
+X     ;;
+X  macosx)  # -k2,2 sorts by second field as delimted by -t';' - this may actually work 
+X           # for all platforms 
+X           sort -t';' -nr -k2,2 "$INDEX" > ".$INDEX.$$.sorted"
+X     ;;
+X  *)       sort -t';' +0f -1 +1nr "$INDEX" > ".$INDEX.$$.sorted"
+X     ;;
+X  esac
+X  mv ".$INDEX.$$.sorted" "$INDEX" # "rebuild $INDEX
+X}
+X
+X#-- main program body
+X
+Xread_config   # done after all options are read in, could look in -d before
+X              # opts are processed though so opts could override defaults
+X              # and config file .. yeah do that
+X"$CUSTOM_SETUP" # can be defined in .veerc
+Xpost_opts
+Xget_title 
+Xuse_editor
+X
+Xif [ -e "$DRAFT" ]; then
+X  RAWFILE="$$.$SEC.$TIME.raw" # uses process id, $$, assuming there will
+X                                  # not be duplicate process ids within 1 sec of each other
+X  format_main "$SEC.$TIME.$FORMAT" "$RAWFILE" 
+X  "$UPDATE_INDEX" 
+X  sort_index
+X  die_cleanly
+Xelse
+X  echo Error! "$DRAFT" not found
+Xfi
+X
+e7a83801293654bbf807ad7c5e9cca6a
+echo x - ./bin/veecat
+sed 's/^X//' >./bin/veecat << '55a6f6f471b4d47fcbc05f29ebc6540b'
+X#!/bin/sh
+X
+X# preserve new lines
+XOLD_IFS=$IFS
+XIFS=
+X
+X die_error()
+X{ 
+X  echo "$1"
+X  exit 1
+X}
+X
+X die_cleanly()
+X{ 
+X  exit 0
+X}
+X
+X usage() 
+X{
+X  man veecat
+X}
+X
+X get_title()
+X{
+X  TITLE=$(head -n 3 "$1" | tail -n 1)
+X  echo "$TITLE"
+X}
+X
+X get_date()
+X{
+X  DATE=$(head -n 1 "$1")
+X  echo "$DATE"
+X}
+X
+X get_header()
+X{
+X  # get line one through line 5, the entire header w/o separator
+X  echo $(cat "$1" | head -n 5)
+X}
+X
+X get_body()
+X{
+X  # figure out how many lones file is for $(tail) command
+X  LC=$(wc -l "$1" | awk '{print "$1"}')
+X  BC=$(($LC-6))
+X  $(cat "$1" | tail -n "$BC")
+X    
+X}
+X
+X get_all() 
+X{
+X  cat "$1"
+X}
+X
+X die_error()
+X{ 
+X  echo "$1"
+X  exit 1
+X}
+X
+X die_cleanly()
+X{ 
+X  exit 0
+X}
+X
+XSHOWBODY=0
+XSHOWTITLE=0
+XSHOWDATE=0
+XSHOWALL=0
+X
+Xwhile getopts 'abdt' option; do
+X    case $option in
+X       a) SHOWALL=1
+X          ;;
+X       b) SHOWBODY=1
+X          ;; 
+X       d) SHOWDATE=1
+X          ;; 
+X       t) SHOWTITLE=1
+X          ;; 
+X    esac
+Xdone
+X
+X# if -tdb detected, do the right thing and do a SHOWALL (i.e., -tbd == -a )
+Xif [ $SHOWTITLE -eq 1 ] && [ $SHOWDATE -eq 1 ] && [ $SHOWBODY -eq 1 ]; then
+X    SHOWALL=1
+Xfi
+X
+Xwhile read -r IN <&0 ; do 
+X  # make sure file exists, else just ignore line (more Unix-y this way)
+X  if [ -e "$IN" ]; then
+X      # assumes file is a proper *.raw , else GIGO
+X      if [ $SHOWALL -eq 1 ]; then
+X                        echo $(get_all "$IN")
+X      else
+X          if [ $SHOWTITLE -eq 1 ]; then
+X                        echo $(get_title "$IN")
+X          fi
+X          if [ $SHOWDATE -eq 1 ]; then
+X                        echo $(get_date "$IN")
+X          fi 
+X          if [ $SHOWBODY -eq 1 ]; then
+X                        echo $(get_body "$IN")
+X          fi
+X      fi
+X  fi
+Xdone
+55a6f6f471b4d47fcbc05f29ebc6540b
+echo x - ./bin/veefind
+sed 's/^X//' >./bin/veefind << 'f8143f73c0311b45f7e1ca3e00e15183'
+X#!/bin/sh
+X
+XDIR=.vee
+XFIND=`which find`
+X
+XSORT_NEW_FIRST='sort -t. -nr'
+XSORT_OLD_FIRST='sort -t. -n'
+XSORT="$SORT_NEW_FIRST"
+XSTRIPEXT=0
+XUSEFIND=0
+XFINDOPTS=
+XMAXDEPTH=1
+X
+X die_error()
+X{ 
+X  echo "$1"
+X  exit 1
+X}
+X
+X die_cleanly()
+X{ 
+X  exit 0
+X}
+X
+X usage() 
+X{
+X  man veefind
+X}
+X
+Xwhile getopts 'd:hF:M:rx' option; do
+X    case $option in
+X    d) if [ -d "$OPTARG" ]; then
+X         cd "$OPTARG"
+X       else
+X         echo "$OPTARG" is not a directory!
+X         die_cleanly
+X       fi
+X       ;;
+X    F) USEFIND=1 #use find with custom opts
+X       FINDOPTS="$OPTARG"
+X       ;;
+X    M) MAXDEPTH="$OPTARG"
+X       ;;
+X    r) SORT=$SORT_OLD_FIRST  # list in reverse post order
+X       ;;
+X    x) STRIPEXT=1 #strip .raw from output
+X       ;;
+X    h) usage # some help page
+X       die_cleanly
+X       ;;
+X    esac
+Xdone
+X
+X read_config()
+X{ if [ -e ./.veerc ]; then
+X    . ./.veerc
+X  fi
+X} 
+X
+X get_sorted()
+X{
+X    $FIND $DIR -maxdepth $MAXDEPTH -name "*.raw" | $SORT
+X}
+X
+X get_title()
+X{
+X    TITLE=$(head -n 3 "$1" | tail -n 1)
+X    echo "$TITLE"
+X}
+X
+X get_date()
+X{
+X    DATE=$(head -n 1 "$1")
+X    echo "$DATE"
+X}
+X
+X#-- main program body
+X
+X#-- read config, $(pwd)/.veerc (happens after "-d" so it's consistent
+X#--      with how bin/vee does it)
+Xread_config   
+X
+Xfor f in $(get_sorted); 
+Xdo
+X    # title is the 3rd line
+X    TITLE=$(get_title "$f")
+X
+X    # full date string (not epoch) is the first line
+X    DATE=$(get_date "$f")
+X
+X    if [ 1 -eq $STRIPEXT ]; then
+X      echo "${f%\.*}"
+X    else 
+X      echo "$f"
+X    fi
+Xdone
+f8143f73c0311b45f7e1ca3e00e15183
+echo x - ./man/vee-reindex.1
+sed 's/^X//' >./man/vee-reindex.1 << '61b27ac3e781cff45978d3bfca42b9df'
+X.\" Automatically generated by Pod::Man 2.25 (Pod::Simple 3.16)
+X.\"
+X.\" Standard preamble:
+X.\" ========================================================================
+X.de Sp \" Vertical space (when we can't use .PP)
+X.if t .sp .5v
+X.if n .sp
+X..
+X.de Vb \" Begin verbatim text
+X.ft CW
+X.nf
+X.ne \\$1
+X..
+X.de Ve \" End verbatim text
+X.ft R
+X.fi
+X..
+X.\" Set up some character translations and predefined strings.  \*(-- will
+X.\" give an unbreakable dash, \*(PI will give pi, \*(L" will give a left
+X.\" double quote, and \*(R" will give a right double quote.  \*(C+ will
+X.\" give a nicer C++.  Capital omega is used to do unbreakable dashes and
+X.\" therefore won't be available.  \*(C` and \*(C' expand to `' in nroff,
+X.\" nothing in troff, for use with C<>.
+X.tr \(*W-
+X.ds C+ C\v'-.1v'\h'-1p'\s-2+\h'-1p'+\s0\v'.1v'\h'-1p'
+X.ie n \{\
+X.    ds -- \(*W-
+X.    ds PI pi
+X.    if (\n(.H=4u)&(1m=24u) .ds -- \(*W\h'-12u'\(*W\h'-12u'-\" diablo 10 pitch
+X.    if (\n(.H=4u)&(1m=20u) .ds -- \(*W\h'-12u'\(*W\h'-8u'-\"  diablo 12 pitch
+X.    ds L" ""
+X.    ds R" ""
+X.    ds C` ""
+X.    ds C' ""
+X'br\}
+X.el\{\
+X.    ds -- \|\(em\|
+X.    ds PI \(*p
+X.    ds L" ``
+X.    ds R" ''
+X'br\}
+X.\"
+X.\" Escape single quotes in literal strings from groff's Unicode transform.
+X.ie \n(.g .ds Aq \(aq
+X.el       .ds Aq '
+X.\"
+X.\" If the F register is turned on, we'll generate index entries on stderr for
+X.\" titles (.TH), headers (.SH), subsections (.SS), items (.Ip), and index
+X.\" entries marked with X<> in POD.  Of course, you'll have to process the
+X.\" output yourself in some meaningful fashion.
+X.ie \nF \{\
+X.    de IX
+X.    tm Index:\\$1\t\\n%\t"\\$2"
+X..
+X.    nr % 0
+X.    rr F
+X.\}
+X.el \{\
+X.    de IX
+X..
+X.\}
+X.\"
+X.\" Accent mark definitions (@(#)ms.acc 1.5 88/02/08 SMI; from UCB 4.2).
+X.\" Fear.  Run.  Save yourself.  No user-serviceable parts.
+X.    \" fudge factors for nroff and troff
+X.if n \{\
+X.    ds #H 0
+X.    ds #V .8m
+X.    ds #F .3m
+X.    ds #[ \f1
+X.    ds #] \fP
+X.\}
+X.if t \{\
+X.    ds #H ((1u-(\\\\n(.fu%2u))*.13m)
+X.    ds #V .6m
+X.    ds #F 0
+X.    ds #[ \&
+X.    ds #] \&
+X.\}
+X.    \" simple accents for nroff and troff
+X.if n \{\
+X.    ds ' \&
+X.    ds ` \&
+X.    ds ^ \&
+X.    ds , \&
+X.    ds ~ ~
+X.    ds /
+X.\}
+X.if t \{\
+X.    ds ' \\k:\h'-(\\n(.wu*8/10-\*(#H)'\'\h"|\\n:u"
+X.    ds ` \\k:\h'-(\\n(.wu*8/10-\*(#H)'\`\h'|\\n:u'
+X.    ds ^ \\k:\h'-(\\n(.wu*10/11-\*(#H)'^\h'|\\n:u'
+X.    ds , \\k:\h'-(\\n(.wu*8/10)',\h'|\\n:u'
+X.    ds ~ \\k:\h'-(\\n(.wu-\*(#H-.1m)'~\h'|\\n:u'
+X.    ds / \\k:\h'-(\\n(.wu*8/10-\*(#H)'\z\(sl\h'|\\n:u'
+X.\}
+X.    \" troff and (daisy-wheel) nroff accents
+X.ds : \\k:\h'-(\\n(.wu*8/10-\*(#H+.1m+\*(#F)'\v'-\*(#V'\z.\h'.2m+\*(#F'.\h'|\\n:u'\v'\*(#V'
+X.ds 8 \h'\*(#H'\(*b\h'-\*(#H'
+X.ds o \\k:\h'-(\\n(.wu+\w'\(de'u-\*(#H)/2u'\v'-.3n'\*(#[\z\(de\v'.3n'\h'|\\n:u'\*(#]
+X.ds d- \h'\*(#H'\(pd\h'-\w'~'u'\v'-.25m'\f2\(hy\fP\v'.25m'\h'-\*(#H'
+X.ds D- D\\k:\h'-\w'D'u'\v'-.11m'\z\(hy\v'.11m'\h'|\\n:u'
+X.ds th \*(#[\v'.3m'\s+1I\s-1\v'-.3m'\h'-(\w'I'u*2/3)'\s-1o\s+1\*(#]
+X.ds Th \*(#[\s+2I\s-2\h'-\w'I'u*3/5'\v'-.3m'o\v'.3m'\*(#]
+X.ds ae a\h'-(\w'a'u*4/10)'e
+X.ds Ae A\h'-(\w'A'u*4/10)'E
+X.    \" corrections for vroff
+X.if v .ds ~ \\k:\h'-(\\n(.wu*9/10-\*(#H)'\s-2\u~\d\s+2\h'|\\n:u'
+X.if v .ds ^ \\k:\h'-(\\n(.wu*10/11-\*(#H)'\v'-.4m'^\v'.4m'\h'|\\n:u'
+X.    \" for low resolution devices (crt and lpr)
+X.if \n(.H>23 .if \n(.V>19 \
+X\{\
+X.    ds : e
+X.    ds 8 ss
+X.    ds o a
+X.    ds d- d\h'-1'\(ga
+X.    ds D- D\h'-1'\(hy
+X.    ds th \o'bp'
+X.    ds Th \o'LP'
+X.    ds ae ae
+X.    ds Ae AE
+X.\}
+X.rm #[ #] #H #V #F C
+X.\" ========================================================================
+X.\"
+X.IX Title "VEE-REINDEX.1 1"
+X.TH VEE-REINDEX.1 1 "2014-07-11" "perl v5.14.4" "User Contributed Perl Documentation"
+X.\" For nroff, turn off justification.  Always turn off hyphenation; it makes
+X.\" way too many mistakes in technical documents.
+X.if n .ad l
+X.nh
+X.SH "NAME"
+X.Vb 1
+X\&    vee\-reindex
+X.Ve
+X.SH "SYNOPSIS"
+X.IX Header "SYNOPSIS"
+X.Vb 1
+X\&    vee\-reindex [\-d|\-h]
+X.Ve
+X.SH "OPTIONS"
+X.IX Header "OPTIONS"
+X.IP "\-d direcory" 4
+X.IX Item "-d direcory"
+XSpecify directory inwhich to locate the \fI.vee\fR directory, which contains the
+X\&\fI*.raw\fR files.
+X.IP "\-h" 4
+X.IX Item "-h"
+XShow usage
+X.SH "DESCRIPTION"
+X.IX Header "DESCRIPTION"
+X\&\f(CW\*(C`vee\-reindex\*(C'\fR is a part of the \fIvee\fR family of utilities that is used for
+Xrebuilding the index based on the \fI*.raw\fR contents of \fI.vee\fR.
+X.PP
+XIt is provided as a basic utility required to build tools to manage \fIvee\fR
+Xposts.
+X.SH "EXAMPLE"
+X.IX Header "EXAMPLE"
+X.Vb 1
+X\&    vee\-rebuild \-d $HOME/public_html
+X.Ve
+X.SH "AUTHOR"
+X.IX Header "AUTHOR"
+XB. Estrade estrabd@gmail.com
+61b27ac3e781cff45978d3bfca42b9df
+echo x - ./man/vee.1
+sed 's/^X//' >./man/vee.1 << '09b4f72288afe7e2786c6df36e654910'
+X.\" Automatically generated by Pod::Man 2.25 (Pod::Simple 3.16)
+X.\"
+X.\" Standard preamble:
+X.\" ========================================================================
+X.de Sp \" Vertical space (when we can't use .PP)
+X.if t .sp .5v
+X.if n .sp
+X..
+X.de Vb \" Begin verbatim text
+X.ft CW
+X.nf
+X.ne \\$1
+X..
+X.de Ve \" End verbatim text
+X.ft R
+X.fi
+X..
+X.\" Set up some character translations and predefined strings.  \*(-- will
+X.\" give an unbreakable dash, \*(PI will give pi, \*(L" will give a left
+X.\" double quote, and \*(R" will give a right double quote.  \*(C+ will
+X.\" give a nicer C++.  Capital omega is used to do unbreakable dashes and
+X.\" therefore won't be available.  \*(C` and \*(C' expand to `' in nroff,
+X.\" nothing in troff, for use with C<>.
+X.tr \(*W-
+X.ds C+ C\v'-.1v'\h'-1p'\s-2+\h'-1p'+\s0\v'.1v'\h'-1p'
+X.ie n \{\
+X.    ds -- \(*W-
+X.    ds PI pi
+X.    if (\n(.H=4u)&(1m=24u) .ds -- \(*W\h'-12u'\(*W\h'-12u'-\" diablo 10 pitch
+X.    if (\n(.H=4u)&(1m=20u) .ds -- \(*W\h'-12u'\(*W\h'-8u'-\"  diablo 12 pitch
+X.    ds L" ""
+X.    ds R" ""
+X.    ds C` ""
+X.    ds C' ""
+X'br\}
+X.el\{\
+X.    ds -- \|\(em\|
+X.    ds PI \(*p
+X.    ds L" ``
+X.    ds R" ''
+X'br\}
+X.\"
+X.\" Escape single quotes in literal strings from groff's Unicode transform.
+X.ie \n(.g .ds Aq \(aq
+X.el       .ds Aq '
+X.\"
+X.\" If the F register is turned on, we'll generate index entries on stderr for
+X.\" titles (.TH), headers (.SH), subsections (.SS), items (.Ip), and index
+X.\" entries marked with X<> in POD.  Of course, you'll have to process the
+X.\" output yourself in some meaningful fashion.
+X.ie \nF \{\
+X.    de IX
+X.    tm Index:\\$1\t\\n%\t"\\$2"
+X..
+X.    nr % 0
+X.    rr F
+X.\}
+X.el \{\
+X.    de IX
+X..
+X.\}
+X.\"
+X.\" Accent mark definitions (@(#)ms.acc 1.5 88/02/08 SMI; from UCB 4.2).
+X.\" Fear.  Run.  Save yourself.  No user-serviceable parts.
+X.    \" fudge factors for nroff and troff
+X.if n \{\
+X.    ds #H 0
+X.    ds #V .8m
+X.    ds #F .3m
+X.    ds #[ \f1
+X.    ds #] \fP
+X.\}
+X.if t \{\
+X.    ds #H ((1u-(\\\\n(.fu%2u))*.13m)
+X.    ds #V .6m
+X.    ds #F 0
+X.    ds #[ \&
+X.    ds #] \&
+X.\}
+X.    \" simple accents for nroff and troff
+X.if n \{\
+X.    ds ' \&
+X.    ds ` \&
+X.    ds ^ \&
+X.    ds , \&
+X.    ds ~ ~
+X.    ds /
+X.\}
+X.if t \{\
+X.    ds ' \\k:\h'-(\\n(.wu*8/10-\*(#H)'\'\h"|\\n:u"
+X.    ds ` \\k:\h'-(\\n(.wu*8/10-\*(#H)'\`\h'|\\n:u'
+X.    ds ^ \\k:\h'-(\\n(.wu*10/11-\*(#H)'^\h'|\\n:u'
+X.    ds , \\k:\h'-(\\n(.wu*8/10)',\h'|\\n:u'
+X.    ds ~ \\k:\h'-(\\n(.wu-\*(#H-.1m)'~\h'|\\n:u'
+X.    ds / \\k:\h'-(\\n(.wu*8/10-\*(#H)'\z\(sl\h'|\\n:u'
+X.\}
+X.    \" troff and (daisy-wheel) nroff accents
+X.ds : \\k:\h'-(\\n(.wu*8/10-\*(#H+.1m+\*(#F)'\v'-\*(#V'\z.\h'.2m+\*(#F'.\h'|\\n:u'\v'\*(#V'
+X.ds 8 \h'\*(#H'\(*b\h'-\*(#H'
+X.ds o \\k:\h'-(\\n(.wu+\w'\(de'u-\*(#H)/2u'\v'-.3n'\*(#[\z\(de\v'.3n'\h'|\\n:u'\*(#]
+X.ds d- \h'\*(#H'\(pd\h'-\w'~'u'\v'-.25m'\f2\(hy\fP\v'.25m'\h'-\*(#H'
+X.ds D- D\\k:\h'-\w'D'u'\v'-.11m'\z\(hy\v'.11m'\h'|\\n:u'
+X.ds th \*(#[\v'.3m'\s+1I\s-1\v'-.3m'\h'-(\w'I'u*2/3)'\s-1o\s+1\*(#]
+X.ds Th \*(#[\s+2I\s-2\h'-\w'I'u*3/5'\v'-.3m'o\v'.3m'\*(#]
+X.ds ae a\h'-(\w'a'u*4/10)'e
+X.ds Ae A\h'-(\w'A'u*4/10)'E
+X.    \" corrections for vroff
+X.if v .ds ~ \\k:\h'-(\\n(.wu*9/10-\*(#H)'\s-2\u~\d\s+2\h'|\\n:u'
+X.if v .ds ^ \\k:\h'-(\\n(.wu*10/11-\*(#H)'\v'-.4m'^\v'.4m'\h'|\\n:u'
+X.    \" for low resolution devices (crt and lpr)
+X.if \n(.H>23 .if \n(.V>19 \
+X\{\
+X.    ds : e
+X.    ds 8 ss
+X.    ds o a
+X.    ds d- d\h'-1'\(ga
+X.    ds D- D\h'-1'\(hy
+X.    ds th \o'bp'
+X.    ds Th \o'LP'
+X.    ds ae ae
+X.    ds Ae AE
+X.\}
+X.rm #[ #] #H #V #F C
+X.\" ========================================================================
+X.\"
+X.IX Title "VEE.1 1"
+X.TH VEE.1 1 "2014-07-11" "perl v5.14.4" "User Contributed Perl Documentation"
+X.\" For nroff, turn off justification.  Always turn off hyphenation; it makes
+X.\" way too many mistakes in technical documents.
+X.if n .ad l
+X.nh
+X.SH "NAME"
+X.Vb 1
+X\&    vee
+X.Ve
+X.SH "VERSION"
+X.IX Header "VERSION"
+X.SH "USAGE"
+X.IX Header "USAGE"
+X.Vb 1
+X\&    vee \-t "my post title" [\-m "check this out f00 bar herp derp" ]
+X.Ve
+X.SS "Batch mode"
+X.IX Subsection "Batch mode"
+X.Vb 1
+X\&    cat some_file.txt | vee \-b \-t "my post title"
+X.Ve
+X.SH "REQUIRED ARGUMENTS"
+X.IX Header "REQUIRED ARGUMENTS"
+XIt is recommend to use the \fI\-t\fR flag to set the title.
+X.SH "OPTIONS"
+X.IX Header "OPTIONS"
+X.IP "\-b" 4
+X.IX Item "-b"
+XPuts vee into batch mode, allowing it to  accept  \fI\s-1STDIN\s0\fR  as  the
+Xbody of the post. This makes vee useful for creating a web-accessible log index.
+X.IP "\-B file" 4
+X.IX Item "-B file"
+XDefine bottom template; default is \fI./vee\-bottom.tpl\fR
+X.IP "\-c [1\-9*]" 4
+X.IX Item "-c [1-9*]"
+XSpecifiy the number of characters fold allows per line.
+X.IP "\-d publish_dir" 4
+X.IX Item "-d publish_dir"
+XSpecify the directory .vee is in; defaults to the present working 
+Xdirectory as known to `pwd`
+X.IP "\-f format [groff|fold|none]" 4
+X.IX Item "-f format [groff|fold|none]"
+XUse defined format instead of the default, groff; \fIgroff\fR(1), \fIfold\fR(1), 
+Xand \fInone\fR are supported out of the box.
+X.IP "\-h" 4
+X.IX Item "-h"
+Xprints help message, then quits.
+X.IP "\-i \fIcustom.html\fR" 4
+X.IX Item "-i custom.html"
+Xspecifies a custom index file to use.
+X.IP "\-I" 4
+X.IX Item "-I"
+XForces the index file to be index.html
+X.IP "\-l" 4
+X.IX Item "-l"
+XEdit the lastest post's .raw file directly. Republishes it using
+Xthe \-r option.
+X.IP "\-L [1\-9*]" 4
+X.IX Item "-L [1-9*]"
+XEdit the Nth latest, relative to the last post. Last post's
+Xindex number is 1.
+X.IP "\-m message" 4
+X.IX Item "-m message"
+XSpecify the entry message at the  commandline,  avoids \f(CW$EDITOR\fR.
+XIgnored when used with \-b (batch mode).
+X.IP "\-n" 4
+X.IX Item "-n"
+XLists all entries, newest first, then quits (deprecated in favor
+Xof the \fIveels\fR utility.
+X.IP "\-o" 4
+X.IX Item "-o"
+XLists all entries, oldest first, then quits (deprecated in favor
+Xof the \fIveels\fR utility.
+X.IP "\-P" 4
+X.IX Item "-P"
+XForever deletes all .raw files and formatted files that are
+Xassociated with all posts listed with \f(CW\*(C`\-p\*(C'\fR
+X.ie n .IP "\-p Shows what .raw files don't have an entry in $INDEX." 4
+X.el .IP "\-p Shows what .raw files don't have an entry in \f(CW$INDEX\fR." 4
+X.IX Item "-p Shows what .raw files don't have an entry in $INDEX."
+X.PD 0
+X.IP "\-r [1\-9*]" 4
+X.IX Item "-r [1-9*]"
+X.PD
+XReformats the Nth latests post.
+X.IP "\-R Reformats all .raw files; will respect \-c" 4
+X.IX Item "-R Reformats all .raw files; will respect -c"
+X.PD 0
+X.IP "\-s summary" 4
+X.IX Item "-s summary"
+X.PD
+XPlaces a summary below the title in the \f(CW$INDEX\fR.
+X.IP "\-t title" 4
+X.IX Item "-t title"
+XSpecify the title at the commandline.
+X.IP "\-T file" 4
+X.IX Item "-T file"
+XDefines the top template, defaults to ./vee\-top.tpl
+X.IP "\-v" 4
+X.IX Item "-v"
+XPrints version information, then quits.
+X.IP "\-x" 4
+X.IX Item "-x"
+XDefines a hook if not using the default, ./vee\-pre ;  hook  must
+Xbe executable (0755) by effective user.
+X.SH "DESCRIPTION"
+X.IX Header "DESCRIPTION"
+X\&\f(CW\*(C`vee\*(C'\fR is a command-line blog tool that is very portable across Unix  systems.  
+XIt provides an interactive as well as a batch interface to maintain a log of entries. 
+XFormatting is done using a  module  architecture that allows a high degree of customization. 
+XThere are minimal flags and no set up is required.
+X.SH "DIAGNOSTICS"
+X.IX Header "DIAGNOSTICS"
+X.SH "CONFIGURATION AND ENVIRONMENT"
+X.IX Header "CONFIGURATION AND ENVIRONMENT"
+X.IP "\s-1EDITOR\s0" 4
+X.IX Item "EDITOR"
+XIf set in the environment, this is the editor that \fIvee\fR will attempt to use.
+XThe default it \fIvi\fR found in \s-1PATH\s0.
+X.IP "\s-1PREFORMAT_HOOK\s0" 4
+X.IX Item "PREFORMAT_HOOK"
+XIf \f(CW\*(C`PREFORMAT_HOOK\*(C'\fR is defined and points to an executable file that accepts
+X\&\s-1STDIN\s0 and prints to \s-1STOUT\s0. It is run immediately before the main formatting
+Xtakes place.
+X.Sp
+XThis variable must be set directly in \fIvee\fR or in \fI.veerc\fR.
+X.IP "\s-1POSTFORMAT_HOOK\s0" 4
+X.IX Item "POSTFORMAT_HOOK"
+X\&\fB\s-1NOTE:\s0 This hook is currently disabled.\fR
+X.Sp
+XIf \f(CW\*(C`POSTFORMAT_HOOK\*(C'\fR is defined and points to an executable file that accepts
+X\&\s-1STDIN\s0 and prints to \s-1STOUT\s0. It is run immediately before the main formatting
+Xtakes place.
+X.Sp
+XThis variable must be set directly in \fIvee\fR or in \fI.veerc\fR.
+X.IP "\fI.veerc\fR" 4
+X.IX Item ".veerc"
+XPrimary configuration file, read after all options are read. Settins
+Xoverridable via commandline options.  Use \fI\-d\fR to specify a directory in which
+Xto look for \fI.veerc\fR. By default, it looks in `pwd`.
+X.IP "\fIvee\-top.tpl\fR" 4
+X.IX Item "vee-top.tpl"
+XIf this file exists, it is prepended to the post. Use the \fI\-T\fR flag to define
+Xa top template at runtime.
+X.IP "\fIvee\-bottom.tpl\fR" 4
+X.IX Item "vee-bottom.tpl"
+XIf this file exists, it is appended to the post. Use the \fI\-B\fR flag to define a
+Xtop template at runtime.
+X.IP "\fIvee.index\fR" 4
+X.IX Item "vee.index"
+XThe main index. It is kept properly sorted through the use of line numbers
+Xembedded inside of \s-1HTML\s0 comments. It may be customized, but each line must
+Xcontain a number based on the ordering one wishes to maintain during the
+Xaddition of a new post link.
+X.IP ".vee/*.raw" 4
+X.IX Item ".vee/*.raw"
+XThese are the main record files of each post; they contain header information
+Xand the original unformatted text.
+X.Sp
+XThe utilities \fIveecat\fR is used to query these fields and \fIveels\fR is used to
+Xiterate over them.
+X.SH "DEPENDENCIES"
+X.IX Header "DEPENDENCIES"
+XThe idea is that \fIvee\fR can deployed on any minimal Unix-like environment
+Xwithout the overhead of any additional 3rd\-party software tools or libraries.
+X.PP
+XCertainly these can enhance \fIvee\fR, but the goal is to still have it useful and
+Xfunctional on bare systems.
+X.SH "INCOMPATIBILITIES"
+X.IX Header "INCOMPATIBILITIES"
+X.SH "BUGS AND LIMITATIONS"
+X.IX Header "BUGS AND LIMITATIONS"
+XThe \fIsort\fR tool on \s-1OS\s0 X is funky and causes some weirdness in some cases.
+X.SH "AUTHOR"
+X.IX Header "AUTHOR"
+XB. Estrade estrabd@gmail.com
+X.SH "LICENSE AND COPYRIGHT"
+X.IX Header "LICENSE AND COPYRIGHT"
+XThis has been released under a variety of licenses, but the one that applies
+Xmost directly is the \f(CW\*(C`Do What the F*** You Want\*(C'\fR.
+X.SH "EXAMPLES"
+X.IX Header "EXAMPLES"
+X.SS "Basic using \s-1EDITOR\s0"
+X.IX Subsection "Basic using EDITOR"
+X.Vb 1
+X\&    $ vee \-t "title of my post"
+X.Ve
+X.SS "Basic no \s-1EDITOR\s0"
+X.IX Subsection "Basic no EDITOR"
+XIn this example, the message body is being specified at the commandline using
+X\&\fI\-m\fR.
+X.PP
+X.Vb 1
+X\&    $ vee \-t "title of my post" \-m "this is the body of my message"
+X.Ve
+X.SS "Basic batch (no \s-1EDITOR\s0)"
+X.IX Subsection "Basic batch (no EDITOR)"
+X.Vb 1
+X\&    $ echo "this is the body of my message" | vee \-b \-t "title of my post"
+X.Ve
+X.PP
+XThis is really useful if you want to log the output of cronjobs or other batch
+Xprocesses.
+X.SH "SEE ALSO"
+X.IX Header "SEE ALSO"
+X\&\fIveels\fR(1)  \- used to iterate over \fI*.raw\fR files
+X.PP
+X\&\fIveecat\fR(1)  \- used to query specific parts of a \fI*.raw\fR file
+X.PP
+X\&\fIvee-rebuild\fR(1)  \- rebuilds the \fIveeindex\fR based on the existing \fI*.raw\fR
+Xfiles.
+X.PP
+X\&\fIveerc\fR(5) \- the primary method of customizing the environment
+X.PP
+X\&\fIveeindex\fR(5) \- the HTML-based listing of posts
+09b4f72288afe7e2786c6df36e654910
+echo x - ./man/veecat.1
+sed 's/^X//' >./man/veecat.1 << '4ce16b604c608f591303d80bdf7133a9'
+X.\" Automatically generated by Pod::Man 2.25 (Pod::Simple 3.16)
+X.\"
+X.\" Standard preamble:
+X.\" ========================================================================
+X.de Sp \" Vertical space (when we can't use .PP)
+X.if t .sp .5v
+X.if n .sp
+X..
+X.de Vb \" Begin verbatim text
+X.ft CW
+X.nf
+X.ne \\$1
+X..
+X.de Ve \" End verbatim text
+X.ft R
+X.fi
+X..
+X.\" Set up some character translations and predefined strings.  \*(-- will
+X.\" give an unbreakable dash, \*(PI will give pi, \*(L" will give a left
+X.\" double quote, and \*(R" will give a right double quote.  \*(C+ will
+X.\" give a nicer C++.  Capital omega is used to do unbreakable dashes and
+X.\" therefore won't be available.  \*(C` and \*(C' expand to `' in nroff,
+X.\" nothing in troff, for use with C<>.
+X.tr \(*W-
+X.ds C+ C\v'-.1v'\h'-1p'\s-2+\h'-1p'+\s0\v'.1v'\h'-1p'
+X.ie n \{\
+X.    ds -- \(*W-
+X.    ds PI pi
+X.    if (\n(.H=4u)&(1m=24u) .ds -- \(*W\h'-12u'\(*W\h'-12u'-\" diablo 10 pitch
+X.    if (\n(.H=4u)&(1m=20u) .ds -- \(*W\h'-12u'\(*W\h'-8u'-\"  diablo 12 pitch
+X.    ds L" ""
+X.    ds R" ""
+X.    ds C` ""
+X.    ds C' ""
+X'br\}
+X.el\{\
+X.    ds -- \|\(em\|
+X.    ds PI \(*p
+X.    ds L" ``
+X.    ds R" ''
+X'br\}
+X.\"
+X.\" Escape single quotes in literal strings from groff's Unicode transform.
+X.ie \n(.g .ds Aq \(aq
+X.el       .ds Aq '
+X.\"
+X.\" If the F register is turned on, we'll generate index entries on stderr for
+X.\" titles (.TH), headers (.SH), subsections (.SS), items (.Ip), and index
+X.\" entries marked with X<> in POD.  Of course, you'll have to process the
+X.\" output yourself in some meaningful fashion.
+X.ie \nF \{\
+X.    de IX
+X.    tm Index:\\$1\t\\n%\t"\\$2"
+X..
+X.    nr % 0
+X.    rr F
+X.\}
+X.el \{\
+X.    de IX
+X..
+X.\}
+X.\"
+X.\" Accent mark definitions (@(#)ms.acc 1.5 88/02/08 SMI; from UCB 4.2).
+X.\" Fear.  Run.  Save yourself.  No user-serviceable parts.
+X.    \" fudge factors for nroff and troff
+X.if n \{\
+X.    ds #H 0
+X.    ds #V .8m
+X.    ds #F .3m
+X.    ds #[ \f1
+X.    ds #] \fP
+X.\}
+X.if t \{\
+X.    ds #H ((1u-(\\\\n(.fu%2u))*.13m)
+X.    ds #V .6m
+X.    ds #F 0
+X.    ds #[ \&
+X.    ds #] \&
+X.\}
+X.    \" simple accents for nroff and troff
+X.if n \{\
+X.    ds ' \&
+X.    ds ` \&
+X.    ds ^ \&
+X.    ds , \&
+X.    ds ~ ~
+X.    ds /
+X.\}
+X.if t \{\
+X.    ds ' \\k:\h'-(\\n(.wu*8/10-\*(#H)'\'\h"|\\n:u"
+X.    ds ` \\k:\h'-(\\n(.wu*8/10-\*(#H)'\`\h'|\\n:u'
+X.    ds ^ \\k:\h'-(\\n(.wu*10/11-\*(#H)'^\h'|\\n:u'
+X.    ds , \\k:\h'-(\\n(.wu*8/10)',\h'|\\n:u'
+X.    ds ~ \\k:\h'-(\\n(.wu-\*(#H-.1m)'~\h'|\\n:u'
+X.    ds / \\k:\h'-(\\n(.wu*8/10-\*(#H)'\z\(sl\h'|\\n:u'
+X.\}
+X.    \" troff and (daisy-wheel) nroff accents
+X.ds : \\k:\h'-(\\n(.wu*8/10-\*(#H+.1m+\*(#F)'\v'-\*(#V'\z.\h'.2m+\*(#F'.\h'|\\n:u'\v'\*(#V'
+X.ds 8 \h'\*(#H'\(*b\h'-\*(#H'
+X.ds o \\k:\h'-(\\n(.wu+\w'\(de'u-\*(#H)/2u'\v'-.3n'\*(#[\z\(de\v'.3n'\h'|\\n:u'\*(#]
+X.ds d- \h'\*(#H'\(pd\h'-\w'~'u'\v'-.25m'\f2\(hy\fP\v'.25m'\h'-\*(#H'
+X.ds D- D\\k:\h'-\w'D'u'\v'-.11m'\z\(hy\v'.11m'\h'|\\n:u'
+X.ds th \*(#[\v'.3m'\s+1I\s-1\v'-.3m'\h'-(\w'I'u*2/3)'\s-1o\s+1\*(#]
+X.ds Th \*(#[\s+2I\s-2\h'-\w'I'u*3/5'\v'-.3m'o\v'.3m'\*(#]
+X.ds ae a\h'-(\w'a'u*4/10)'e
+X.ds Ae A\h'-(\w'A'u*4/10)'E
+X.    \" corrections for vroff
+X.if v .ds ~ \\k:\h'-(\\n(.wu*9/10-\*(#H)'\s-2\u~\d\s+2\h'|\\n:u'
+X.if v .ds ^ \\k:\h'-(\\n(.wu*10/11-\*(#H)'\v'-.4m'^\v'.4m'\h'|\\n:u'
+X.    \" for low resolution devices (crt and lpr)
+X.if \n(.H>23 .if \n(.V>19 \
+X\{\
+X.    ds : e
+X.    ds 8 ss
+X.    ds o a
+X.    ds d- d\h'-1'\(ga
+X.    ds D- D\h'-1'\(hy
+X.    ds th \o'bp'
+X.    ds Th \o'LP'
+X.    ds ae ae
+X.    ds Ae AE
+X.\}
+X.rm #[ #] #H #V #F C
+X.\" ========================================================================
+X.\"
+X.IX Title "VEECAT.1 1"
+X.TH VEECAT.1 1 "2014-07-11" "perl v5.14.4" "User Contributed Perl Documentation"
+X.\" For nroff, turn off justification.  Always turn off hyphenation; it makes
+X.\" way too many mistakes in technical documents.
+X.if n .ad l
+X.nh
+X.SH "NAME"
+X.Vb 1
+X\&    veecat
+X.Ve
+X.SH "SYNOPSIS"
+X.IX Header "SYNOPSIS"
+X.Vb 1
+X\&    echo file.raw | veecat
+X.Ve
+X.PP
+X\&\fBNote: in order to make it easier to write scripts, the \f(BI*.raw\fB file name is
+Xpassed in via \s-1STDIN\s0.\fR
+X.SH "OPTIONS"
+X.IX Header "OPTIONS"
+X.IP "\-a" 4
+X.IX Item "-a"
+XShow the entire contents of the \fI*.raw\fR file
+X.IP "\-b" 4
+X.IX Item "-b"
+XShow just the body contents
+X.IP "\-d" 4
+X.IX Item "-d"
+XShow just the value of the date field
+X.IP "\-t" 4
+X.IX Item "-t"
+XShow just the titla
+X.IP "\-h" 4
+X.IX Item "-h"
+XShow usage
+X.SH "DESCRIPTION"
+X.IX Header "DESCRIPTION"
+X\&\f(CW\*(C`veecat\*(C'\fR is a part of the \fIvee\fR family of utilities that is useful for
+Xextracting information from \fI*.raw\fR files.
+X.PP
+XIt is provided as a basic utility required to build tools to manage \fIvee\fR
+Xposts.
+X.SH "EXAMPLES"
+X.IX Header "EXAMPLES"
+XThe best example of all is to take a look at the \fIvee-rebuild\fR tool.
+X.PP
+XUsed in conjunction with \fIveels\fR:
+X.PP
+X.Vb 5
+X\&    for f in \`veels\`; 
+X\&    do
+X\&        TITLE=\`echo $f | veecat \-t\`
+X\&        echo $TITLE
+X\&    done
+X.Ve
+X.SH "BUGS AND LIMITATIONS"
+X.IX Header "BUGS AND LIMITATIONS"
+XCurrently, \fIveecat\fR can't be used at the commandline as one would expect,
+Xe.g.:
+X.PP
+X.Vb 1
+X\&    veels | veecat \-t
+X.Ve
+X.SH "AUTHOR"
+X.IX Header "AUTHOR"
+XB. Estrade estrabd@gmail.com
+4ce16b604c608f591303d80bdf7133a9
+echo x - ./man/veels.1
+sed 's/^X//' >./man/veels.1 << 'a139ae8f3b3f631114d0a172b77c2533'
+X.\" Automatically generated by Pod::Man 2.25 (Pod::Simple 3.16)
+X.\"
+X.\" Standard preamble:
+X.\" ========================================================================
+X.de Sp \" Vertical space (when we can't use .PP)
+X.if t .sp .5v
+X.if n .sp
+X..
+X.de Vb \" Begin verbatim text
+X.ft CW
+X.nf
+X.ne \\$1
+X..
+X.de Ve \" End verbatim text
+X.ft R
+X.fi
+X..
+X.\" Set up some character translations and predefined strings.  \*(-- will
+X.\" give an unbreakable dash, \*(PI will give pi, \*(L" will give a left
+X.\" double quote, and \*(R" will give a right double quote.  \*(C+ will
+X.\" give a nicer C++.  Capital omega is used to do unbreakable dashes and
+X.\" therefore won't be available.  \*(C` and \*(C' expand to `' in nroff,
+X.\" nothing in troff, for use with C<>.
+X.tr \(*W-
+X.ds C+ C\v'-.1v'\h'-1p'\s-2+\h'-1p'+\s0\v'.1v'\h'-1p'
+X.ie n \{\
+X.    ds -- \(*W-
+X.    ds PI pi
+X.    if (\n(.H=4u)&(1m=24u) .ds -- \(*W\h'-12u'\(*W\h'-12u'-\" diablo 10 pitch
+X.    if (\n(.H=4u)&(1m=20u) .ds -- \(*W\h'-12u'\(*W\h'-8u'-\"  diablo 12 pitch
+X.    ds L" ""
+X.    ds R" ""
+X.    ds C` ""
+X.    ds C' ""
+X'br\}
+X.el\{\
+X.    ds -- \|\(em\|
+X.    ds PI \(*p
+X.    ds L" ``
+X.    ds R" ''
+X'br\}
+X.\"
+X.\" Escape single quotes in literal strings from groff's Unicode transform.
+X.ie \n(.g .ds Aq \(aq
+X.el       .ds Aq '
+X.\"
+X.\" If the F register is turned on, we'll generate index entries on stderr for
+X.\" titles (.TH), headers (.SH), subsections (.SS), items (.Ip), and index
+X.\" entries marked with X<> in POD.  Of course, you'll have to process the
+X.\" output yourself in some meaningful fashion.
+X.ie \nF \{\
+X.    de IX
+X.    tm Index:\\$1\t\\n%\t"\\$2"
+X..
+X.    nr % 0
+X.    rr F
+X.\}
+X.el \{\
+X.    de IX
+X..
+X.\}
+X.\"
+X.\" Accent mark definitions (@(#)ms.acc 1.5 88/02/08 SMI; from UCB 4.2).
+X.\" Fear.  Run.  Save yourself.  No user-serviceable parts.
+X.    \" fudge factors for nroff and troff
+X.if n \{\
+X.    ds #H 0
+X.    ds #V .8m
+X.    ds #F .3m
+X.    ds #[ \f1
+X.    ds #] \fP
+X.\}
+X.if t \{\
+X.    ds #H ((1u-(\\\\n(.fu%2u))*.13m)
+X.    ds #V .6m
+X.    ds #F 0
+X.    ds #[ \&
+X.    ds #] \&
+X.\}
+X.    \" simple accents for nroff and troff
+X.if n \{\
+X.    ds ' \&
+X.    ds ` \&
+X.    ds ^ \&
+X.    ds , \&
+X.    ds ~ ~
+X.    ds /
+X.\}
+X.if t \{\
+X.    ds ' \\k:\h'-(\\n(.wu*8/10-\*(#H)'\'\h"|\\n:u"
+X.    ds ` \\k:\h'-(\\n(.wu*8/10-\*(#H)'\`\h'|\\n:u'
+X.    ds ^ \\k:\h'-(\\n(.wu*10/11-\*(#H)'^\h'|\\n:u'
+X.    ds , \\k:\h'-(\\n(.wu*8/10)',\h'|\\n:u'
+X.    ds ~ \\k:\h'-(\\n(.wu-\*(#H-.1m)'~\h'|\\n:u'
+X.    ds / \\k:\h'-(\\n(.wu*8/10-\*(#H)'\z\(sl\h'|\\n:u'
+X.\}
+X.    \" troff and (daisy-wheel) nroff accents
+X.ds : \\k:\h'-(\\n(.wu*8/10-\*(#H+.1m+\*(#F)'\v'-\*(#V'\z.\h'.2m+\*(#F'.\h'|\\n:u'\v'\*(#V'
+X.ds 8 \h'\*(#H'\(*b\h'-\*(#H'
+X.ds o \\k:\h'-(\\n(.wu+\w'\(de'u-\*(#H)/2u'\v'-.3n'\*(#[\z\(de\v'.3n'\h'|\\n:u'\*(#]
+X.ds d- \h'\*(#H'\(pd\h'-\w'~'u'\v'-.25m'\f2\(hy\fP\v'.25m'\h'-\*(#H'
+X.ds D- D\\k:\h'-\w'D'u'\v'-.11m'\z\(hy\v'.11m'\h'|\\n:u'
+X.ds th \*(#[\v'.3m'\s+1I\s-1\v'-.3m'\h'-(\w'I'u*2/3)'\s-1o\s+1\*(#]
+X.ds Th \*(#[\s+2I\s-2\h'-\w'I'u*3/5'\v'-.3m'o\v'.3m'\*(#]
+X.ds ae a\h'-(\w'a'u*4/10)'e
+X.ds Ae A\h'-(\w'A'u*4/10)'E
+X.    \" corrections for vroff
+X.if v .ds ~ \\k:\h'-(\\n(.wu*9/10-\*(#H)'\s-2\u~\d\s+2\h'|\\n:u'
+X.if v .ds ^ \\k:\h'-(\\n(.wu*10/11-\*(#H)'\v'-.4m'^\v'.4m'\h'|\\n:u'
+X.    \" for low resolution devices (crt and lpr)
+X.if \n(.H>23 .if \n(.V>19 \
+X\{\
+X.    ds : e
+X.    ds 8 ss
+X.    ds o a
+X.    ds d- d\h'-1'\(ga
+X.    ds D- D\h'-1'\(hy
+X.    ds th \o'bp'
+X.    ds Th \o'LP'
+X.    ds ae ae
+X.    ds Ae AE
+X.\}
+X.rm #[ #] #H #V #F C
+X.\" ========================================================================
+X.\"
+X.IX Title "VEELS.1 1"
+X.TH VEELS.1 1 "2014-07-11" "perl v5.14.4" "User Contributed Perl Documentation"
+X.\" For nroff, turn off justification.  Always turn off hyphenation; it makes
+X.\" way too many mistakes in technical documents.
+X.if n .ad l
+X.nh
+X.SH "DEPRECATED"
+X.IX Header "DEPRECATED"
+XThis utility is being deprecated before it even makes it into a release.
+X.SH "NAME"
+X.Vb 1
+X\&    veels
+X.Ve
+X.SH "SYNOPSIS"
+X.IX Header "SYNOPSIS"
+X.Vb 1
+X\&    veels
+X.Ve
+X.SH "OPTIONS"
+X.IX Header "OPTIONS"
+X.IP "\-d direcory" 4
+X.IX Item "-d direcory"
+XSpecify directory inwhich to locate the \fI.vee\fR directory, which contains the
+X\&\fI*.raw\fR files.
+X.IP "\-l" 4
+X.IX Item "-l"
+XUse \fIls\fR as found in \s-1PATH\s0 with default options
+X.IP "\-L \fIls options\fR" 4
+X.IX Item "-L ls options"
+XUse \fIls\fR as found in \s-1PATH\s0 with provided options (must be valid \fIls\fR options)
+X.IP "\-r" 4
+X.IX Item "-r"
+XSort oldest to newest
+X.IP "\-x" 4
+X.IX Item "-x"
+XStrip \f(CW\*(C`.raw\*(C'\fR from file name; this is useful for also iterating over other
+Xfiles that might share a name with the \fI*.raw\fR file (e.g., \fI*.html\fR).
+X.IP "\-h" 4
+X.IX Item "-h"
+XUsage output
+X.SH "DESCRIPTION"
+X.IX Header "DESCRIPTION"
+X\&\f(CW\*(C`veels\*(C'\fR is a part of the \fIvee\fR family of utilities that is useful for
+Xiterating over \fI*.raw\fR files.
+X.PP
+XIt is provided as a basic utility required to build tools to manage \fIvee\fR
+Xposts.
+X.SH "EXAMPLES"
+X.IX Header "EXAMPLES"
+XThe best example of all is to take a look at the \fIvee-rebuild\fR tool.
+X.PP
+X.Vb 4
+X\&    for f in \`veels\`; 
+X\&    do
+X\&        # do stuff with $f
+X\&    done
+X.Ve
+X.SH "AUTHOR"
+X.IX Header "AUTHOR"
+XB. Estrade estrabd@gmail.com
+a139ae8f3b3f631114d0a172b77c2533
+echo x - ./man/veerc.5
+sed 's/^X//' >./man/veerc.5 << 'dd3d20fe5f004b129b800d69e853b1e8'
+X.\" Automatically generated by Pod::Man 2.25 (Pod::Simple 3.16)
+X.\"
+X.\" Standard preamble:
+X.\" ========================================================================
+X.de Sp \" Vertical space (when we can't use .PP)
+X.if t .sp .5v
+X.if n .sp
+X..
+X.de Vb \" Begin verbatim text
+X.ft CW
+X.nf
+X.ne \\$1
+X..
+X.de Ve \" End verbatim text
+X.ft R
+X.fi
+X..
+X.\" Set up some character translations and predefined strings.  \*(-- will
+X.\" give an unbreakable dash, \*(PI will give pi, \*(L" will give a left
+X.\" double quote, and \*(R" will give a right double quote.  \*(C+ will
+X.\" give a nicer C++.  Capital omega is used to do unbreakable dashes and
+X.\" therefore won't be available.  \*(C` and \*(C' expand to `' in nroff,
+X.\" nothing in troff, for use with C<>.
+X.tr \(*W-
+X.ds C+ C\v'-.1v'\h'-1p'\s-2+\h'-1p'+\s0\v'.1v'\h'-1p'
+X.ie n \{\
+X.    ds -- \(*W-
+X.    ds PI pi
+X.    if (\n(.H=4u)&(1m=24u) .ds -- \(*W\h'-12u'\(*W\h'-12u'-\" diablo 10 pitch
+X.    if (\n(.H=4u)&(1m=20u) .ds -- \(*W\h'-12u'\(*W\h'-8u'-\"  diablo 12 pitch
+X.    ds L" ""
+X.    ds R" ""
+X.    ds C` ""
+X.    ds C' ""
+X'br\}
+X.el\{\
+X.    ds -- \|\(em\|
+X.    ds PI \(*p
+X.    ds L" ``
+X.    ds R" ''
+X'br\}
+X.\"
+X.\" Escape single quotes in literal strings from groff's Unicode transform.
+X.ie \n(.g .ds Aq \(aq
+X.el       .ds Aq '
+X.\"
+X.\" If the F register is turned on, we'll generate index entries on stderr for
+X.\" titles (.TH), headers (.SH), subsections (.SS), items (.Ip), and index
+X.\" entries marked with X<> in POD.  Of course, you'll have to process the
+X.\" output yourself in some meaningful fashion.
+X.ie \nF \{\
+X.    de IX
+X.    tm Index:\\$1\t\\n%\t"\\$2"
+X..
+X.    nr % 0
+X.    rr F
+X.\}
+X.el \{\
+X.    de IX
+X..
+X.\}
+X.\"
+X.\" Accent mark definitions (@(#)ms.acc 1.5 88/02/08 SMI; from UCB 4.2).
+X.\" Fear.  Run.  Save yourself.  No user-serviceable parts.
+X.    \" fudge factors for nroff and troff
+X.if n \{\
+X.    ds #H 0
+X.    ds #V .8m
+X.    ds #F .3m
+X.    ds #[ \f1
+X.    ds #] \fP
+X.\}
+X.if t \{\
+X.    ds #H ((1u-(\\\\n(.fu%2u))*.13m)
+X.    ds #V .6m
+X.    ds #F 0
+X.    ds #[ \&
+X.    ds #] \&
+X.\}
+X.    \" simple accents for nroff and troff
+X.if n \{\
+X.    ds ' \&
+X.    ds ` \&
+X.    ds ^ \&
+X.    ds , \&
+X.    ds ~ ~
+X.    ds /
+X.\}
+X.if t \{\
+X.    ds ' \\k:\h'-(\\n(.wu*8/10-\*(#H)'\'\h"|\\n:u"
+X.    ds ` \\k:\h'-(\\n(.wu*8/10-\*(#H)'\`\h'|\\n:u'
+X.    ds ^ \\k:\h'-(\\n(.wu*10/11-\*(#H)'^\h'|\\n:u'
+X.    ds , \\k:\h'-(\\n(.wu*8/10)',\h'|\\n:u'
+X.    ds ~ \\k:\h'-(\\n(.wu-\*(#H-.1m)'~\h'|\\n:u'
+X.    ds / \\k:\h'-(\\n(.wu*8/10-\*(#H)'\z\(sl\h'|\\n:u'
+X.\}
+X.    \" troff and (daisy-wheel) nroff accents
+X.ds : \\k:\h'-(\\n(.wu*8/10-\*(#H+.1m+\*(#F)'\v'-\*(#V'\z.\h'.2m+\*(#F'.\h'|\\n:u'\v'\*(#V'
+X.ds 8 \h'\*(#H'\(*b\h'-\*(#H'
+X.ds o \\k:\h'-(\\n(.wu+\w'\(de'u-\*(#H)/2u'\v'-.3n'\*(#[\z\(de\v'.3n'\h'|\\n:u'\*(#]
+X.ds d- \h'\*(#H'\(pd\h'-\w'~'u'\v'-.25m'\f2\(hy\fP\v'.25m'\h'-\*(#H'
+X.ds D- D\\k:\h'-\w'D'u'\v'-.11m'\z\(hy\v'.11m'\h'|\\n:u'
+X.ds th \*(#[\v'.3m'\s+1I\s-1\v'-.3m'\h'-(\w'I'u*2/3)'\s-1o\s+1\*(#]
+X.ds Th \*(#[\s+2I\s-2\h'-\w'I'u*3/5'\v'-.3m'o\v'.3m'\*(#]
+X.ds ae a\h'-(\w'a'u*4/10)'e
+X.ds Ae A\h'-(\w'A'u*4/10)'E
+X.    \" corrections for vroff
+X.if v .ds ~ \\k:\h'-(\\n(.wu*9/10-\*(#H)'\s-2\u~\d\s+2\h'|\\n:u'
+X.if v .ds ^ \\k:\h'-(\\n(.wu*10/11-\*(#H)'\v'-.4m'^\v'.4m'\h'|\\n:u'
+X.    \" for low resolution devices (crt and lpr)
+X.if \n(.H>23 .if \n(.V>19 \
+X\{\
+X.    ds : e
+X.    ds 8 ss
+X.    ds o a
+X.    ds d- d\h'-1'\(ga
+X.    ds D- D\h'-1'\(hy
+X.    ds th \o'bp'
+X.    ds Th \o'LP'
+X.    ds ae ae
+X.    ds Ae AE
+X.\}
+X.rm #[ #] #H #V #F C
+X.\" ========================================================================
+X.\"
+X.IX Title "VEERC.5 1"
+X.TH VEERC.5 1 "2014-07-11" "perl v5.14.4" "User Contributed Perl Documentation"
+X.\" For nroff, turn off justification.  Always turn off hyphenation; it makes
+X.\" way too many mistakes in technical documents.
+X.if n .ad l
+X.nh
+X.SH "NAME"
+X\&.veerc
+X.SH "SYNOPSIS"
+X.IX Header "SYNOPSIS"
+X.Vb 1
+X\&    # Sample .veerc, used to override default variables...
+X\&
+X\&    INDEX=index.html
+X\&    FOOTERTXT="hijacked by .veerc"
+X\&
+X\&    EDITOR=vi
+X\&    MARGIN=64
+X\&    FORMAT=html
+X\&    INDEX=vee.html
+X\&    DIR=.vee
+X\&    DRAFT=${DIR}/.vee.tmp.$$
+X\&    DATE=\`date\`
+X\&    YEAR=\`date "+%Y"\`
+X\&    TIME=\`date "+%Y\-%m\-%dT%H:%M:%S"\`
+X\&    SEC=\`date "+%s"\`
+X\&    DEFAULT_TITLE="Entry ${SEC}";
+X\&    HEADERTXT=   text or \`cat some.header.txt\` 
+X\&    TOP_TPL=./vee\-top.tpl
+X\&    BOT_TPL=./vee\-bottom.tpl
+X\&    PREFORMAT_HOOK=./my\-pre\-hook.sh    the filter is assumed to be executable, else it is ignored
+X\&    PUBLISHED=\`date "+%m/%d/%Y"\`       date formated for index page entry
+X\&    FORMAT_FUNC=format_with_groff
+X\&    FORMAT_DISPATCHER=default_set_format_func
+X\&    FORMAT_CUSTOM_DISPATCHER=custom_set_format_func
+X\&    FORMAT_CUSTOM_DEFS=./vee\-custom.sh               see example in vee/sample\-custom\-format/
+X.Ve
+X.SH "DESCRIPTION"
+X.IX Header "DESCRIPTION"
+XA local configuration file that is used if located in `pwd`. If \fI\-d\fR is used
+Xwith \fIvee\fR, then this is where the file will be expected if it exists at all.
+X.PP
+XCorresponding commandline options override what is set herein, if there is a
+Xflag for it.
+X.SH "ENVIRONMENT"
+X.IX Header "ENVIRONMENT"
+XThis file can basically redefine many parts of the original \fIvee\fR script.
+X.PP
+X\&\fIvee\fR looks for this file in `pwd` and works as expected with the \fI\-d\fR
+Xoption.
+X.SH "AUTHOR"
+X.IX Header "AUTHOR"
+XB. Estrade estrabd@gmail.com
+dd3d20fe5f004b129b800d69e853b1e8
+echo x - .veeprofile
+sed 's/^X//' >.veeprofile << 'f538c8cadaca44e07f64e3532d181920'
+XPATH=$PATH:$HOME/bin
+XMANPATH=$MANPATH:$HOME/man
+f538c8cadaca44e07f64e3532d181920
+exit
+
