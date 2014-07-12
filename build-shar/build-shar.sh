@@ -33,7 +33,7 @@ echo "MANPATH=\$MANPATH:\$HOME/man" >> .veeprofile
 cd ..
 
 # FreeBSD shar(1)
-shar `find $WORKDIR -print` > ./dont-use-install-vee.shar.tmp
+shar $(find $WORKDIR -print) > ./dont-use-install-vee.shar.tmp
 
 echo "# kick off install process" >> ./dont-use-install-vee.shar.tmp
 echo "cd $WORKDIR" >> ./dont-use-install-vee.shar.tmp
