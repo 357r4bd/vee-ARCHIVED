@@ -1033,7 +1033,7 @@ X.rm #[ #] #H #V #F C
 X.\" ========================================================================
 X.\"
 X.IX Title "VEE-REINDEX.1 1"
-X.TH VEE-REINDEX.1 1 "2014-07-11" "perl v5.14.4" "User Contributed Perl Documentation"
+X.TH VEE-REINDEX.1 1 "2014-07-14" "perl v5.14.4" "User Contributed Perl Documentation"
 X.\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 X.\" way too many mistakes in technical documents.
 X.if n .ad l
@@ -1200,7 +1200,7 @@ X.rm #[ #] #H #V #F C
 X.\" ========================================================================
 X.\"
 X.IX Title "VEE.1 1"
-X.TH VEE.1 1 "2014-07-11" "perl v5.14.4" "User Contributed Perl Documentation"
+X.TH VEE.1 1 "2014-07-14" "perl v5.14.4" "User Contributed Perl Documentation"
 X.\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 X.\" way too many mistakes in technical documents.
 X.if n .ad l
@@ -1544,7 +1544,7 @@ X.rm #[ #] #H #V #F C
 X.\" ========================================================================
 X.\"
 X.IX Title "VEECAT.1 1"
-X.TH VEECAT.1 1 "2014-07-11" "perl v5.14.4" "User Contributed Perl Documentation"
+X.TH VEECAT.1 1 "2014-07-14" "perl v5.14.4" "User Contributed Perl Documentation"
 X.\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 X.\" way too many mistakes in technical documents.
 X.if n .ad l
@@ -1738,7 +1738,7 @@ X.rm #[ #] #H #V #F C
 X.\" ========================================================================
 X.\"
 X.IX Title "VEELS.1 1"
-X.TH VEELS.1 1 "2014-07-11" "perl v5.14.4" "User Contributed Perl Documentation"
+X.TH VEELS.1 1 "2014-07-14" "perl v5.14.4" "User Contributed Perl Documentation"
 X.\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 X.\" way too many mistakes in technical documents.
 X.if n .ad l
@@ -1926,7 +1926,7 @@ X.rm #[ #] #H #V #F C
 X.\" ========================================================================
 X.\"
 X.IX Title "VEERC.5 1"
-X.TH VEERC.5 1 "2014-07-11" "perl v5.14.4" "User Contributed Perl Documentation"
+X.TH VEERC.5 1 "2014-07-14" "perl v5.14.4" "User Contributed Perl Documentation"
 X.\" For nroff, turn off justification.  Always turn off hyphenation; it makes
 X.\" way too many mistakes in technical documents.
 X.if n .ad l
@@ -2635,7 +2635,48 @@ echo x - ./vee-builddir/install-vee.sh
 sed 's/^X//' >./vee-builddir/install-vee.sh << 'ab57f62def3ec0ffbf6b34fc85bd530a'
 X#!/bin/sh
 X
-Xecho HI, THERE
+XIFS=
+X
+Xecho Checking local environment...
+X
+XDEFAULT_PREFIX=$HOME/bin
+XDEFAULT_MANPATH=$HOME/man
+X
+Xecho "Install directory? [$DEFAULT_PREFIX]"
+Xread PREFIX 
+X
+Xif [ -z "$PREFIX" ]; then
+X  PREFIX=$DEFAULT_PREFIX
+Xfi
+X
+XyN=
+Xif [ ! -d "$PREFIX" ]; then
+X  echo "$PREFIX doesn't exist, create it? [yN] "
+X  read yN
+X   
+X  if [ "$yN" == "y" ]; then
+X    mkdir $PREFIX
+X  fi 
+Xfi
+X
+XyN=
+Xif [ ! -d "$MANPATH" ]; then
+X  echo "$MANPATH doesn't exist, create it? [yN] "
+X  read yN
+X   
+X  if [ "$yN" == "y" ]; then
+X    mkdir $MANPATH
+X  fi 
+Xfi
+X
+XyN=
+Xif [ -e "$PREFIX/vee" ]; then
+X  echo "$PREFIX/vee detected, proceed? [yN]"
+X  read yN
+X  exit 1
+Xfi
+X
+Xcp -vf ./bin/* $PREFIX
 ab57f62def3ec0ffbf6b34fc85bd530a
 echo x - ./vee-builddir/.veeprofile
 sed 's/^X//' >./vee-builddir/.veeprofile << 'c7ae5adea68df41741ebd6487e449764'

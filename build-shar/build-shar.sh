@@ -42,4 +42,4 @@ echo "sh ./install-vee.sh" >> ./dont-use-install-vee.shar.tmp
 # filter out the exit at the end that shar(1) added
 grep -v "^exit" ./dont-use-install-vee.shar.tmp > ./dont-use-install-vee.shar
 
-rm -rf $WORKDIR > /dev/null 2>&1
+#rm -rf $WORKDIR > /dev/null 2>&1
