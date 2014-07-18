@@ -27,17 +27,17 @@ fi
 echo "Manual directory? [$DEFAULT_MANPATH]"
 read MANPATH 
 
-if [ -z "$MANPATH" ]; then
+if [ -z "$MANPATHPREFIX" ]; then
   MANPATH=$DEFAULT_MANPATH
 fi
 
 yN=
-if [ ! -d "$MANPATH" ]; then
-  echo "$MANPATH doesn't exist, create it? [yN] "
+if [ ! -d "$MANPATHPREFIX" ]; then
+  echo "$MANPATHPREFIX doesn't exist, create it? [yN] "
   read yN
    
   if [ "$yN" == "y" ]; then
-    mkdir $MANPATH
+    mkdir $MANPATHPREFIX
   fi 
 fi
 
@@ -53,7 +53,7 @@ fi
 
 cp -vf ./bin/vee* $PREFIX
 chmod 0755 $PREFIX/vee*
-cp -vf ./man/vee* $MANPATH
+cp -vf ./man/vee* $MANPATHPREFIX
 
 echo
 echo "Checking if vee is in your \$PATH (using 'which vee')"
@@ -64,7 +64,7 @@ if [ -z $(which vee) ]; then
   echo "Please add the following lines to your $HOME/.profile"
   echo
   echo "export PATH=$PREFIX:\$PATH"
-  echo "export MANPATH=$MANPATH:\$MANPATH"
+  echo "export MANPATH=$MANPATHPREFIX:\$MANPATHPREFIX"
 else
   echo
   echo "... found"
