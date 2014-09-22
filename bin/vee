@@ -230,6 +230,50 @@ CUSTOM_SETUP=default_setup
   exit 1
 }
 
+ rel_path_between()
+{
+    # both $1 and $2 are absolute paths beginning with /
+    # returns relative path to $2/$tgt from $1/$src
+
+    src=$1
+    tgt=$2
+
+    common=$src
+    res=""
+
+    while [[ "${tgt#$common}" == "${tgt}" ]]; do
+        # no match, means that candidate common part is not correct
+        # go up one level (reduce common part)
+        common="$(dirname $common)"
+        # and record that we went back, with correct / handling
+        if [[ -z $res ]]; then
+            res=".."
+        else
+            res="../$res"
+        fi
+    done
+
+    if [[ $common == "/" ]]; then
+        # special case for root (no common path)
+        res="$res/"
+    fi
+
+    # since we now have identified the common part,
+    # compute the non-common part
+    forward_path="${tgt#$common}"
+
+    # and now stick all parts together
+    if [[ -n $res ]] && [[ -n $forward_part ]]; then
+        res="${res$forward_path}"
+    elif [[ -n $forward_part ]]; then
+        # extra slash removal
+        res="${forward_path:1}"
+    fi
+
+    echo "$res"
+}
+
+
 # formats post link on index page
  default_update_index() 
 { echo "<!-- ;$SEC; -->$PUBLISHED:<a href=\"$DIR/$SEC.$TIME.$FORMAT\"> $TITLE</a>" >> $INDEX
