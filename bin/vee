@@ -621,18 +621,18 @@ done
 # this case statement may be overkill if "sort -t';' -nr -k2,2" works across platforms
  sort_index()
 { case $ARCH in
-  linux)   sort -t';' +0f -1 +1nr "$INDEX" > ".$INDEX.$$.sorted"
+  linux)   sort -t';' +0f -1 +1nr "$INDEX" > "$INDEX.$$.sorted"
      ;;
-  freebsd) sort -t';' +0f -1 +1nr "$INDEX" > ".$INDEX.$$.sorted"
+  freebsd) sort -t';' +0f -1 +1nr "$INDEX" > "$INDEX.$$.sorted"
      ;;
   macosx)  # -k2,2 sorts by second field as delimted by -t';' - this may actually work 
            # for all platforms 
-           sort -t';' -nr -k2,2 "$INDEX" > ".$INDEX.$$.sorted"
+           sort -t';' -nr -k2,2 "$INDEX" > "$INDEX.$$.sorted"
      ;;
-  *)       sort -t';' +0f -1 +1nr "$INDEX" > ".$INDEX.$$.sorted"
+  *)       sort -t';' +0f -1 +1nr "$INDEX" > "$INDEX.$$.sorted"
      ;;
   esac
-  mv ".$INDEX.$$.sorted" "$INDEX" # "rebuild $INDEX
+  mv "$INDEX.$$.sorted" "$INDEX" # "rebuild $INDEX
 }
 
 #-- main program body
