@@ -1,0 +1,56 @@
+#!/bin/sh
+
+RSYNC=$(which rsync)
+
+if [ "$RSYNC" == "" ]; then
+    echo "No rsync installed."
+    exit 1
+fi
+
+usage() {
+    cat <<EOS
+    $0 [options]
+        -v          | be verbose
+        -h          | show this and exit
+        -s <server> | SSH server path
+EOS
+}
+
+STD_VEERC_PATH=~/.veerc
+
+VERBOSE=0
+SERVER=
+
+while getopts 'hs:v' opt
+do
+    case $opt in
+        h) usage && exit 1
+            ;;
+
+        v) VERBOSE=1
+            ;;
+
+        s) SERVER=$OPTARG
+            ;;
+
+        *) usage && exit 1
+            ;;
+    esac
+done
+
+if [ "$SERVER" == "" ]; then
+    echo "No server."
+    exit 1
+fi
+
+putstr() {
+    [[ $VERBOSE -eq 1 ]] && echo -e "[$(basename $0)}: $*"
+}
+
+putstr "Reading veerc"
+. $STD_VEERC_PATH || exit 1
+
+putstr "Syncing $DIR/* -> $SERVER"
+rsync -ptuvPzh --stats -e ssh --exclude "*.raw" $DIR/* $SERVER
+
+echo "Done."
