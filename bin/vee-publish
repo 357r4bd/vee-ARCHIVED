@@ -9,7 +9,7 @@ fi
 
 usage() {
     cat <<EOS
-    $0 [options]
+    $(basename $0) [options]
         -v          | be verbose
         -h          | show this and exit
         -s <server> | SSH server path
