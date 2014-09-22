@@ -276,7 +276,17 @@ CUSTOM_SETUP=default_setup
 
 # formats post link on index page
  default_update_index() 
-{ echo "<!-- ;$SEC; -->$PUBLISHED:<a href=\"$DIR/$SEC.$TIME.$FORMAT\"> $TITLE</a>" >> $INDEX
+{
+
+  indp=$(dirname `readlink -f $INDEX`)
+  dirp=$(readlink -f $DIR)
+  relp=$(rel_path_between "$indp" "$dirp")
+
+  if [[ "$relp" == "" ]]; then
+    relp="."
+  fi
+
+    echo "<!-- ;$SEC; -->$PUBLISHED:<a href=\"$relp/$SEC.$TIME.$FORMAT\"> $TITLE</a>" >> $INDEX
   if [ -n "$SUMMARY" ]; then
 	SEC=$(expr "$SEC" - 1)
     echo "<!-- ;$SEC; -->$SUMMARY" >> "$INDEX"
