@@ -299,12 +299,22 @@ CUSTOM_SETUP=default_setup
      cat "$TOP_TPL" >> "$FINAL"
      echo "<pre>"   >> "$FINAL"
    else
+     indp=$(dirname `readlink -f $INDEX`)
+     dirp=$(readlink -f $DIR)
+     relp=$(rel_path_between "$indp" "$dirp")
+
+     if [[ "$relp" == "" ]]; then
+       relp="."
+     fi
+
+     index_link="$relp/$(basename $INDEX)"
+
      echo "<!-- <?xml version=\"1.0\" encoding=\"UTF-8\" ?> --><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\">"  >> "$FINAL"
      echo "<meta http-equiv=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">" >> "$FINAL"
      echo "<head><title>$TITLE - $DATE</title></head>"  >> "$FINAL"
      echo "<body>"  >> "$FINAL"
      echo "<pre>"   >> "$FINAL"
-     echo "<a href=\"../$INDEX\">[index]</a><a href=\"./$RAWNAME\">[raw]</a><a href=\"../\">[main]</a>" >> "$FINAL"
+     echo "<a href=\"$index_link\">[index]</a><a href=\"./$RAWNAME\">[raw]</a><a href=\"../\">[main]</a>" >> "$FINAL"
    fi
    echo           >> "$FINAL"
 }
