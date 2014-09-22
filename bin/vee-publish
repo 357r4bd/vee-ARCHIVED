@@ -44,7 +44,7 @@ if [ "$SERVER" == "" ]; then
 fi
 
 putstr() {
-    [[ $VERBOSE -eq 1 ]] && echo -e "[$(basename $0)}: $*"
+    [[ $VERBOSE -eq 1 ]] && echo -e "[$(basename $0)]: $*"
 }
 
 putstr "Reading veerc"
