@@ -51,6 +51,6 @@ putstr "Reading veerc"
 . $STD_VEERC_PATH || exit 1
 
 putstr "Syncing $DIR/* -> $SERVER"
-rsync -ptuvPzh --stats -e ssh --exclude "*.raw" $DIR/* $SERVER
+rsync -ptuvPzh --stats -e ssh $DIR/* $SERVER
 
 echo "Done."
