@@ -5,17 +5,17 @@ OLD_IFS=$IFS
 IFS=
 
  die_error()
-{ 
+{
   echo "$1"
   exit 1
 }
 
  die_cleanly()
-{ 
+{
   exit 0
 }
 
- usage() 
+ usage()
 {
   man veecat
 }
@@ -44,22 +44,22 @@ IFS=
   LC=$(wc -l "$1" | awk '{print "$1"}')
   BC=$(($LC-6))
   $(cat "$1" | tail -n "$BC")
-    
+
 }
 
- get_all() 
+ get_all()
 {
   cat "$1"
 }
 
  die_error()
-{ 
+{
   echo "$1"
   exit 1
 }
 
  die_cleanly()
-{ 
+{
   exit 0
 }
 
@@ -73,11 +73,11 @@ while getopts 'abdt' option; do
        a) SHOWALL=1
           ;;
        b) SHOWBODY=1
-          ;; 
+          ;;
        d) SHOWDATE=1
-          ;; 
+          ;;
        t) SHOWTITLE=1
-          ;; 
+          ;;
     esac
 done
 
@@ -86,7 +86,7 @@ if [ $SHOWTITLE -eq 1 ] && [ $SHOWDATE -eq 1 ] && [ $SHOWBODY -eq 1 ]; then
     SHOWALL=1
 fi
 
-while read -r IN <&0 ; do 
+while read -r IN <&0 ; do
   # make sure file exists, else just ignore line (more Unix-y this way)
   if [ -e "$IN" ]; then
       # assumes file is a proper *.raw , else GIGO
@@ -98,7 +98,7 @@ while read -r IN <&0 ; do
           fi
           if [ $SHOWDATE -eq 1 ]; then
                         echo $(get_date "$IN")
-          fi 
+          fi
           if [ $SHOWBODY -eq 1 ]; then
                         echo $(get_body "$IN")
           fi
