@@ -342,7 +342,7 @@ CUSTOM_SETUP=default_setup
 }
 
  reformat_all()
-{ FILES=$(find "$DIR" -maxdepth 1 -name "*.raw" | "$SORT_OLDEST")
+{ FILES=$(find "$DIR" -maxdepth 1 -name "*.raw" | $SORT_OLDEST)
    for RAW in "$FILES"; do
      # From: Randall R Schulz <rrschulz at cris dot com>
      FULLNAME="$RAW"
@@ -357,7 +357,7 @@ CUSTOM_SETUP=default_setup
 }
 
  newest_first() 
-{ FILES=$(find "$DIR" -maxdepth 1 -name "*.raw" | "$SORT_NEWEST")
+{ FILES=$(find "$DIR" -maxdepth 1 -name "*.raw" | $SORT_NEWEST)
   echo "$FILES"
 }
 
@@ -377,7 +377,7 @@ CUSTOM_SETUP=default_setup
 }
 
  oldest_first()
-{ FILES=$(find "$DIR" -maxdepth 1 -name "*.raw" | "$SORT_OLDEST")
+{ FILES=$(find "$DIR" -maxdepth 1 -name "*.raw" | $SORT_OLDEST)
   echo "$FILES"
 }
 
@@ -394,7 +394,7 @@ CUSTOM_SETUP=default_setup
 }
 
  get_path2post()
-{ FILES=$(find "$DIR" -maxdepth 1 -name "*.raw" | "$SORT_NEWEST")
+{ FILES=$(find "$DIR" -maxdepth 1 -name "*.raw" | $SORT_NEWEST)
   GOAL=$1
   COUNT=1
   for FILE in "$FILES"; do
