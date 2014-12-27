@@ -1,0 +1,14 @@
+I am more than fine with anyone wishing to fork vee with the intention of creating 
+a new tool that may never be incorporated back into vee.
+
+There are only 2 requests that I have if you wish to do this:
+
+1. conspicuously mention that vee provided the starting point for your tool
+2. issue pull requests for backward compatible changes; these included but are limited to:
+  a. whitespace, code formatting fixes
+  b. syntax updates that make the code more robust, consistent, or cross-compatible
+  
+I am always happy to hear from anyone using vee as a tool or as the start of a new tool.
+  
+Thank you,
+estrabd
