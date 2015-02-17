@@ -522,7 +522,7 @@ done
   fi
 
   if [ -n "$SET_DEFAULT_FORMAT_FUNC" ]; then 
-    "$FORMAT_DISPATCHER" "$OPTARG"  # default is set_format_func
+    "$FORMAT_DISPATCHER" "$SET_DEFAULT_FORMAT_FUNC"  # default is set_format_func
   fi
 
   if [ "$PURGELEVEL" -ge 1 ]; then
