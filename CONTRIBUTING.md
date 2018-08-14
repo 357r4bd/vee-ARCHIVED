@@ -10,6 +10,8 @@ Contributions should be attached to an issue even if it is not necessarily a bug
   * Make sure you fill in the earliest version that you know has the issue.
 * Fork the repository on GitHub
 
+Note: all accepted changes fall under the WTFPL, which is used for all released vee source.
+
 ## Making Changes
 
 * Create a topic branch from where you want to base your work.
