@@ -12,6 +12,10 @@ Version:
 
 0.9.9-zeta
 
+License:
+
+vee is released under the WTFPL. See the LICENSE file for more information.
+
 Portability Goals:
 
 0. no external dependencies other than Bourne Shell and traditional 
