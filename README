@@ -8,6 +8,9 @@ however I am always interested in improving it in some basic way.
 It's available in a variety of package repositories, like pkgsrc and
 FreeBSD Ports.
 
+vee is one of hundreds of "static site generators", many of which are
+listed at https://staticsitegenerators.net.
+
 Version: 
 
 0.9.9-zeta
