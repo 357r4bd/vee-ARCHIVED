@@ -18,6 +18,7 @@ FOOTERTXT="hijacked by .veerc"
 #TOP_TPL=./vee-top.tpl
 #BOT_TPL=./vee-bottom.tpl
 #PREFORMAT_HOOK=./my-pre-hook.sh   # the filter is assumed to be executable, else it is ignored
+#POSTFORMAT_HOOK=./my-post-hook.sh # not a filter, passes name of final file as argument $1
 #PUBLISHED=`date "+%m/%d/%Y"`      # date formated for index page entry
 #FORMAT_FUNC=format_with_groff
 #FORMAT_DISPATCHER=default_set_format_func

@@ -303,12 +303,19 @@ CUSTOM_SETUP=default_setup
   fi 
 }
 
-# postformat()
-#{ if [ -x "$POSTFORMAT_HOOK" ]; then
-#    cat "$FINAL" | "$POSTFORMAT_HOOK" > "$FINAL.tmp" 
-#    mv -f "$FINAL.tmp" "$FINAL" 
-#  fi 
-#}
+#
+# this hook is for any things to do after the post; a good example for use
+# would be to integrate git or another SCM; another is a notification script
+#
+# NOTE: it doesn't get passed anything via STDIN, but the path to the final and
+# formatted post is passed as the first (and only) argument. There is no error
+# checking on $?
+#
+ postformat()
+{ if [ -x "$POSTFORMAT_HOOK" ]; then
+    "$POSTFORMAT_HOOK" "$FINAL"
+  fi 
+}
 
  format_main()
 { FINAL=$DIR/$1
@@ -330,7 +337,9 @@ CUSTOM_SETUP=default_setup
   $OUTPUT_TOP 
   $FORMAT_FUNC 
   $OUTPUT_BOT 
-  #postformat # not sure about this one yet
+  # do final tasks by setting POSTFORMAT_HOOK; useful for:
+  # git commit, push; notifications, etc
+  postformat
 }
 
  reformat_singleton()
