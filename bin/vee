@@ -21,7 +21,7 @@ SEC=$(date "+%s")
 TITLE=
 DEFAULT_TITLE="Entry #$SEC";
 HEADERTXT=  # text or $(cat some.header.txt)
-FOOTERTXT="Powered by <a href=\"http://www.0x743.com/vee\">vee</a><br/>Copyright &copy; 2006-$YEAR"  
+FOOTERTXT="Powered by vee<br/>Copyright &copy; 2006-$YEAR"
 TOP_TPL=./vee-top.tpl
 BOT_TPL=./vee-bottom.tpl
 PREFORMAT_HOOK=./vee-pre # the hook is assumed to be executable, else it is ignored
@@ -594,7 +594,7 @@ done
    # footer stuff
     echo "<!-- ;3; fixed content -->" >> "$INDEX"
     echo "<!-- ;2; fixed content -->" >> "$INDEX"
-    echo "<!-- ;1; fixed content -->Powered by <a href=\"http://www.0x743.com/vee\">vee</a>" >> "$INDEX"
+    echo "<!-- ;1; fixed content -->Powered by vee" >> "$INDEX"
     echo "<!-- ;0; closing pre tag --></pre></body></html>" >> "$INDEX"
     echo
   fi

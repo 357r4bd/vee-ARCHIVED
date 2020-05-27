@@ -123,5 +123,5 @@ do
 done
 
 echo "<!-- ;2; closing -->"
-echo '<!-- ;1; closing -->Powered by <a href="http://www.0x743.com/vee">vee</a>'
+echo '<!-- ;1; closing -->Powered by vee'
 echo "<!-- ;0; closing pre tag --></pre>"
