@@ -263,8 +263,7 @@ CUSTOM_SETUP=default_setup
   exit 1
 }
 
-# formats post link on index page
- default_update_index()
+ default_update_html_index()
 { echo "<!-- ;$SEC; -->$PUBLISHED:<a href=\"$1\"> $3</a>" >> $INDEX
   if [ -n "$SUMMARY" ]; then
 	SEC=$(expr "$SEC" - 1)
@@ -273,16 +272,21 @@ CUSTOM_SETUP=default_setup
 }
 
  default_update_gophermap()
-{ echo "0$3\t$2" >> $GOPHERMAP
+{ echo "0$3\t$1" >> $GOPHERMAP
   # Note, gophermap entries for now are order oldest->newest since there is no way
   # to embed ordering like we do via HTML comment; may require rebuilding the gophermap
   # each time
 }
 
- default_update_index_and_gophermap()
+ #"$FINAL" "$gFINAL" "$RAW" "$gRAW" "$TITLE"
+ default_update_index()
 {
-  default_update_index     "$FINAL"  "$RAW"  "$TITLE"
-  default_update_gophermap "$gFINAL" "$gRAW" "$TITLE"
+  if [ 2 != $GOPHERMODE ]; then
+    default_update_html_index "$1" "$3" "$5"
+  fi
+  if [ 0 != $GOPHERMODE ]; then
+    default_update_gophermap  "$2" "$4" "$5"
+  fi
 }
 
  output_top()
@@ -317,12 +321,14 @@ CUSTOM_SETUP=default_setup
 
  format_with_groff()
 { #sed 1liner from http://sed.sourceforge.net/sed1line.txt
-  groff -man -Tascii "$RAW" > $$.tmp.$RAWEXT
-  sed '/^$/N;/\n$/D' < $$.tmp.$RAWEXT > $$.tmp.final
-  if [ "html" == $OUTPUT_TYPE ]; then
+  if [ "html" == $_OUTPUT_TYPE ]; then
+    groff -man -Tascii "$RAW" > $$.tmp.$RAWEXT
+    sed '/^$/N;/\n$/D' < $$.tmp.$RAWEXT > $$.tmp.final
     cat $$.tmp.final >> "$FINAL"
   fi
-  if [ "gopher" == $OUTPUT_TYPE ]; then
+  if [ "gopher" == $_OUTPUT_TYPE ]; then
+    groff -man -Tascii "$gRAW" > $$.tmp.$RAWEXT
+    sed '/^$/N;/\n$/D' < $$.tmp.$RAWEXT > $$.tmp.final
     cat $$.tmp.final  > "$gFINAL"
   fi
   rm $$.tmp.$RAWEXT $$.tmp.final
@@ -330,11 +336,12 @@ CUSTOM_SETUP=default_setup
 
  format_with_fmt()
 { if [ 0 -lt $MARGIN ]; then
-    fmt -s -w $MARGIN "$RAW" > $$.tmp.$RAWEXT 
-    if [ "html" == $OUTPUT_TYPE ]; then
+    if [ "html" == $_OUTPUT_TYPE ]; then
+      fmt -s -w $MARGIN "$RAW" > $$.tmp.$RAWEXT 
       cat $$.tmp.$RAWEXT >> "$FINAL"
     fi
-    if [ "gopher" == $OUTPUT_TYPE ]; then
+    if [ "gopher" == $_OUTPUT_TYPE ]; then
+      fmt -s -w $MARGIN "$gRAW" > $$.tmp.$RAWEXT 
       cat $$.tmp.$RAWEXT  > "$gFINAL"
     fi
     rm $$.tmp.$RAWEXT
@@ -345,11 +352,12 @@ CUSTOM_SETUP=default_setup
 
  format_with_fold()
 { if [ 0 -lt $MARGIN ]; then
-    fold -s -w $MARGIN "$RAW" > $$.tmp.$RAWEXT 
-    if [ "html" == $OUTPUT_TYPE ]; then
+    if [ "html" == $_OUTPUT_TYPE ]; then
+      fold -s -w $MARGIN "$RAW" > $$.tmp.$RAWEXT 
       cat $$.tmp.$RAWEXT >> "$FINAL"
     fi
-    if [ "gopher" == $OUTPUT_TYPE ]; then
+    if [ "gopher" == $_OUTPUT_TYPE ]; then
+      fold -s -w $MARGIN "$gRAW" > $$.tmp.$RAWEXT 
       cat $$.tmp.$RAWEXT  > "$gFINAL"
     fi
     rm $$.tmp.$RAWEXT
@@ -359,11 +367,11 @@ CUSTOM_SETUP=default_setup
 }
 
  with_no_formatting()
-{ if [ "html" == $OUTPUT_TYPE ]; then
+{ if [ "html" == $_OUTPUT_TYPE ]; then
     cat "$RAW" >> "$FINAL"
   fi
-  if [ "gopher" == $OUTPUT_TYPE ]; then
-    cat "$RAW"  > "$gFINAL"
+  if [ "gopher" == $_OUTPUT_TYPE ]; then
+    cat "$gRAW"  > "$gFINAL"
   fi
 }
 
@@ -390,30 +398,15 @@ CUSTOM_SETUP=default_setup
   fi
 }
 
-# dispatches formatting based on $GOPHERMODE; sets $OUTPUT_TYPE
-# for called functions to know for what $OUTPUT_TYPE they're doing stuff
-
- format_main()
-{ if [ 2 != $GOPHERMODE ]; then
-    OUTPUT_TYPE=html     # tracks formatting type
-    format_main_html "$1" "$3"
-  fi
-
-  if [ 0 != $GOPHERMODE ]; then
-    OUTPUT_TYPE=gopher  # tracks formatting type
-    format_main_gopher "$2" "$3"
-  fi
-  OUTPUT_TYPE=none
-}
+# dispatches formatting based on $GOPHERMODE; sets $_OUTPUT_TYPE
+# for called functions to know for what $_OUTPUT_TYPE they're doing stuff
 
  format_main_html()
 { FINAL=$DIR/$1
   FINALNAME=$1
   RAW=$DIR/$2
   RAWNAME=$2
-  preformat $OUTPUT_TYPE       # expecting 'html'
-  # save raw form before formatting if it doesn't exist
-  # which is the case when reformatting all
+  preformat $_OUTPUT_TYPE     # expecting 'html'
   if [ ! -e "$RAW" ]; then
     echo "$DATE"   > "$RAW"   # in RAW, line 1 is date
     echo          >> "$RAW"
@@ -426,7 +419,7 @@ CUSTOM_SETUP=default_setup
   $OUTPUT_TOP
   $FORMAT_FUNC
   $OUTPUT_BOT
-  postformat $OUTPUT_TYPE     # expecting 'html' 
+  postformat $_OUTPUT_TYPE    # expecting 'html' 
 }
 
  format_main_gopher()
@@ -434,9 +427,7 @@ CUSTOM_SETUP=default_setup
   gFINALNAME=$1
   gRAW=$DIR/$2
   gRAWNAME=$2
-  preformat $OUTPUT_TYPE      # expecting 'gopher'
-  # save raw form before formatting if it doesn't exist
-  # which is the case when reformatting all
+  preformat $_OUTPUT_TYPE    # expecting 'gopher'
   if [ ! -e "$gRAW" ]; then
     echo "$DATE"   > "$gRAW" # in gRAW, line 1 is date
     echo          >> "$gRAW"
@@ -449,7 +440,20 @@ CUSTOM_SETUP=default_setup
   $OUTPUT_TOP_GOPHER         # NOTE: not set by default
   $FORMAT_FUNC
   $OUTPUT_BOT_GOPHER         # NOTE not set by default
-  postformat $OUTPUT_TYPE    # expecting 'gopher'
+  postformat $_OUTPUT_TYPE   # expecting 'gopher'
+}
+
+ format_main()
+{ if [ 2 != $GOPHERMODE ]; then
+    _OUTPUT_TYPE=html     # tracks formatting type
+    format_main_html "$1" "$3"
+  fi
+
+  if [ 0 != $GOPHERMODE ]; then
+    _OUTPUT_TYPE=gopher  # tracks formatting type
+    format_main_gopher "$2" "$3"
+  fi
+  _OUTPUT_TYPE=none
 }
 
  reformat_singleton()
@@ -460,10 +464,10 @@ CUSTOM_SETUP=default_setup
 }
 
  reformat_all()
-{ FILES=$(find "$DIR" -maxdepth 1 -name "*.$RAWEXT" | $SORT_OLDEST)
-   for RAW in "$FILES"; do
+{
+   for f in $(find "$DIR" -maxdepth 1 -name "*.$RAWEXT" | $SORT_OLDEST); do
      # From: Randall R Schulz <rrschulz at cris dot com>
-     FULLNAME="$RAW"
+     FULLNAME="$f"
      DIR=${FULLNAME%/*}
      FILE=${FULLNAME##*/}
      MAXBASE=${FILE%.*}
@@ -475,56 +479,52 @@ CUSTOM_SETUP=default_setup
 }
 
  newest_first()
-{ FILES=$(find "$DIR" -maxdepth 1 -name "*.$RAWEXT" | $SORT_NEWEST)
-  echo "$FILES"
+{ find "$DIR" -maxdepth 1 -name "*.$RAWEXT" | $SORT_NEWEST
 }
 
  list_newest_first()
-{ FILES=$(newest_first)
-  COUNT=1
-  for FILE in "$FILES"; do
+{ COUNT=1
+  for FILE in $(newest_first); do
      FULLNAME=$FILE
      DIR=${FULLNAME%/*}
      FILE=${FULLNAME##*/}
      MAXBASE=${FILE%.*}
-	 TITLE=$(head -n 3 "$DIR/$FILE" | tail -n 1)
+     TITLE=$(head -n 3 "$DIR/$FILE" | tail -n 1)
      printf "%7d)  " "$COUNT"
      echo "$MAXBASE ::  $TITLE"
-	 COUNT=$(expr $COUNT + 1)
+     COUNT=$(expr $COUNT + 1)
   done
 }
 
  oldest_first()
-{ FILES=$(find "$DIR" -maxdepth 1 -name "*.$RAWEXT" | $SORT_OLDEST)
-  echo "$FILES"
+{ find "$DIR" -maxdepth 1 -name "*.$RAWEXT" | $SORT_OLDEST
 }
 
  list_oldest_first()
-{ FILES=$(oldest_first)
-  for FILE in "$FILES"; do
+{ for FILE in $(oldest_first); do
      FULLNAME=$FILE
      DIR=${FULLNAME%/*}
      FILE=${FULLNAME##*/}
      MAXBASE=${FILE%.*}
-	 TITLE=$(head -n 3 "$DIR/$FILE" | tail -n 1)
+     TITLE=$(head -n 3 "$DIR/$FILE" | tail -n 1)
      echo "$MAXBASE ::  $TITLE"
   done
 }
 
  get_path2post()
-{ FILES=$(find "$DIR" -maxdepth 1 -name "*.$RAWEXT" | $SORT_NEWEST)
+{
   GOAL=$1
   COUNT=1
-  for FILE in "$FILES"; do
+  for FILE in $(find "$DIR" -maxdepth 1 -name "*.$RAWEXT" | $SORT_NEWEST); do
      FULLNAME=$FILE
      DIR=${FULLNAME%/*}
      FILE=${FULLNAME##*/}
      MAXBASE=${FILE%.*}
-    if [ "$COUNT" -eq "$GOAL" ]; then
-     echo "$MAXBASE"
-     break
-    fi
-	COUNT=$(expr "$COUNT" + 1)
+     if [ "$COUNT" -eq "$GOAL" ]; then
+       echo "$MAXBASE"
+       break
+      fi
+      COUNT=$(expr "$COUNT" + 1)
   done
 }
 
@@ -535,24 +535,27 @@ CUSTOM_SETUP=default_setup
     echo "Can't find index, \"$INDEX\""
     die_cleanly
   fi
-  FILES=$(newest_first)
-  for FILE in "$FILES"; do
+  for FILE in $(newest_first); do
      FULLNAME=$FILE
      DIR=${FULLNAME%/*}
      FILE=${FULLNAME##*/}
      MAXBASE=${FILE%.*}
-	 ENTRY=$(grep "$MAXBASE" "$INDEX")
+     ENTRY=$(grep "$MAXBASE" "$INDEX")
      if [ -z "$ENTRY" ]; then
-	   COUNT=$(expr "$COUNT" + 1)
+       COUNT=$(expr "$COUNT" + 1)
        if [ "$LEVEL" -eq 1 ]; then
          echo "$DIR/$FILE (not really purged, use -P for realz)"
        elif [ "$LEVEL" -eq 2 ]; then
-         echo "$DIR/$MAXBASE[.$RAWEXT,$FORMAT] (purged for realz)"
+         echo "$DIR/$MAXBASE[.$RAWEXT,$FORMAT] (delebed)"
          rm -f "$DIR/$MAXBASE"*
        fi
      fi
   done
-  echo "removed $COUNT entrie(s)..."
+  if [ "$LEVEL" -eq 1 ]; then
+    echo "use -P to remove all $COUNT entrie(s)"
+  elif [ "$LEVEL" -eq 2 ]; then
+    echo "removed $COUNT entrie(s)..."
+  fi
 }
 
  die_cleanly()
@@ -641,18 +644,7 @@ while getopts 'gGf:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:' option; do
 done
 
  post_opts()
-{ # NOTE UPDATE_INDEX and CUSTOM_SETUP are initialized assuming
-  # GOPHERMODE=0
-  if [ $GOPHERMODE -eq 1 ]; then
-    UPDATE_INDEX=default_update_index_and_gophermap
-    CUSTOM_SETUP=default_setup_index_and_gophermap
-  fi
-  if [ $GOPHERMODE -eq 2 ]; then
-    UPDATE_INDEX=default_update_gophermap
-    CUSTOM_SETUP=default_setup_gophermap
-  fi
-
-  if [ -e "$FORMAT_CUSTOM_DEFS" ]; then
+{ if [ -e "$FORMAT_CUSTOM_DEFS" ]; then
     . "$FORMAT_CUSTOM_DEFS"
   fi
 
@@ -707,7 +699,7 @@ done
 }
 
 # generates INDEX file if none exists
- default_setup()
+ default_setup_html()
 { if [ ! -e "$INDEX" ]; then
     echo
     echo "...creating $INDEX"
@@ -735,10 +727,14 @@ done
   fi
 }
 
- default_setup_index_and_gophermap()
+ default_setup()
 {
-  default_setup
-  default_setup_gophermap
+  if [ 2 != $GOPHERMODE ]; then
+    default_setup_html
+  fi
+  if [ 0 != $GOPHERMODE ]; then
+    default_setup_gophermap
+  fi
 }
 
  use_editor()
@@ -770,19 +766,21 @@ done
 
 # this case statement may be overkill if "sort -t';' -nr -k2,2" works across platforms
  sort_index()
-{ case $ARCH in
-  linux)   sort -t';' +0f -1 +1nr "$INDEX" > ".$INDEX.$$.sorted"
-     ;;
-  freebsd) sort -t';' +0f -1 +1nr "$INDEX" > ".$INDEX.$$.sorted"
-     ;;
-  macosx)  # -k2,2 sorts by second field as delimted by -t';' - this may actually work
-           # for all platforms
-           sort -t';' -nr -k2,2   "$INDEX" > ".$INDEX.$$.sorted"
-     ;;
-  *)       sort -t';' +0f -1 +1nr "$INDEX" > ".$INDEX.$$.sorted"
-     ;;
-  esac
-  mv ".$INDEX.$$.sorted" "$INDEX" # "rebuild $INDEX
+{ if [ -e "$INDEX" ]; then
+    case $ARCH in
+     linux)   sort -t';' +0f -1 +1nr "$INDEX" > ".$INDEX.$$.sorted"
+        ;;
+     freebsd) sort -t';' +0f -1 +1nr "$INDEX" > ".$INDEX.$$.sorted"
+        ;;
+     macosx)  # -k2,2 sorts by second field as delimted by -t';' - this may actually work
+              # for all platforms
+              sort -t';' -nr -k2,2   "$INDEX" > ".$INDEX.$$.sorted"
+        ;;
+     *)       sort -t';' +0f -1 +1nr "$INDEX" > ".$INDEX.$$.sorted"
+        ;;
+     esac
+     mv ".$INDEX.$$.sorted" "$INDEX" # "rebuild $INDEX
+  fi
 }
 
 #-- main program body
@@ -791,23 +789,22 @@ mkdir -p "$DIR" || echo "found $DIR ..."
 read_config     # done after all options are read in, could look in -d before
                 # opts are processed though so opts could override defaults
                 # and config file .. yeah do that
-
 post_opts       # process options
-
-"$CUSTOM_SETUP" # can be defined in .veerc
-
+"$CUSTOM_SETUP" # initialized indexes, can be defined in .veerc
 get_title
-
 use_editor
 
-if [ -e "$DRAFT" ]; then
+ main()
+{ if [ -e "$DRAFT" ]; then
   RAWFILE="$$.$SEC.$TIME.$RAWEXT" # uses process id, $$, assuming there will
                                   # not be duplicate process ids within 1 sec of each other
   format_main "$$.$SEC.$TIME.$FORMAT" "$$.$SEC.$TIME.$GOPHER_FORMAT" "$RAWFILE"
-  "$UPDATE_INDEX" # updates index and/or gophermap depending on $GOPHERMODE
-  sort_index      # applies to html index only
+  "$UPDATE_INDEX" "$FINAL" "$gFINAL" "$RAW" "$gRAW" "$TITLE"
+  sort_index     
   die_cleanly
 else
   echo Error! "$DRAFT" not found
 fi
+}
 
+main
