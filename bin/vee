@@ -3,7 +3,7 @@
 # PLEASE SUBMIT BUGS AND REQUESTS AT:
 # 	https://github.com/estrabd/vee/issues
 
-VERSION=1.00
+VERSION=2.0-alpha
 
 if [ ! "$EDITOR" ]; then
   EDITOR=vi
@@ -20,7 +20,7 @@ YEAR=$(date "+%Y")
 TIME=$(date "+%Y-%m-%dT%H:%M:%S")
 SEC=$(date "+%s")
 TITLE=
-DEFAULT_TITLE="Entry #$SEC";
+DEFAULT_TITLE="Entry #$SEC (pid: $$)";
 HEADERTXT=  # text or $(cat some.header.txt)
 FOOTERTXT="Powered by vee<br/>Copyright &copy; 2006-$YEAR"
 GOPHER_FOOTERTXT="Powered by vee. Copyright 2006-$YEAR"
@@ -162,7 +162,21 @@ CUSTOM_SETUP=default_setup
 
  usage()
 { echo "                                                                              "
-  echo " vee - the Zero-conf, commandline blog tool thingy                            "
+  echo "                                                                              "
+  echo "           .----------------.  .----------------.  .----------------.         "
+  echo "          | .--------------. || .--------------. || .--------------. |        "
+  echo "          | | ____   ____  | || |  _________   | || |  _________   | |        "
+  echo "          | ||_  _| |_  _| | || | |_   ___  |  | || | |_   ___  |  | |        "
+  echo "          | |  \ \   / /   | || |   | |_  \_|  | || |   | |_  \_|  | |        "
+  echo "          | |   \ \ / /    | || |   |  _|  _   | || |   |  _|  _   | |        "
+  echo "          | |    \ ' /     | || |  _| |___/ |  | || |  _| |___/ |  | |        "
+  echo "          | |     \_/      | || | |_________|  | || | |_________|  | |        "
+  echo "          | |              | || |              | || |              | |        "
+  echo "          | '--------------' || '--------------' || '--------------' |        "
+  echo "           '----------------'  '----------------'  '----------------'         "
+  echo "                 the Zero-conf, commandline blog tool thingy                  "
+  echo "                     ... now with gopher phlog support                        "
+  echo "                                 (see -g|-G)                                  "
   echo "                                                                              "
   echo "Version: $VERSION                                                             "
   echo "                                                                              "
@@ -196,7 +210,7 @@ CUSTOM_SETUP=default_setup
   echo "                    posts that are listed with -p;                            "
   echo "  -r  [1-9\d*]      reformats the Nth latest post                             "
   echo "  -R                reformats _all_ .vee/*.raw files; -c applies as well      "
-  echo '  -s  'summary'     placed below title in INDEX                               '
+  echo "  -s  'summary'     placed below title in INDEX                               "
   echo "  -t  'title'       specify title at commandline and avoid annoying default prompt"
   echo "  -T  file          define top template; default is ./vee-top.tpl             "
   echo "  -v                version and exit                                          "
@@ -246,13 +260,12 @@ CUSTOM_SETUP=default_setup
   echo "                                                                              "
   echo "3. Gopher support (-g|-G) is limited and users may discover weird issues with "
   echo "   updating posts or the batch reformatting options. It's a best effort. Also "
-  echo "   the gophermap is currently only appended to whenever a new post is added;  "
-  echo "   this means the new posts are always listed last. This may be fixed in future"
-  echo "   versions since it's clearly annoying and not consistent with what vee is meant"
-  echo "   to provide.                                                                "
+  echo "   the gophermap is fully regenerated whenever a new post is added; for a large"
+  echo "   number of posts this may take a few seconds.                               "
   echo "                                                                              "
   echo "4. Patches are welcome; the goal is not more feature bloat, but a nicer       "
-  echo "   way of dealing with standard in, etc would be welcomed.                    "
+  echo "   way of dealing with STDIN, etc and reports/fixes for any weird gopher phlog"
+  echo "   bugs or UX would be greatly welcomed.                                      "
   echo "                                                                              "
   disclaimer
   exit 1
@@ -634,7 +647,7 @@ while getopts 'gGf:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:' option; do
        ;;
     P) PURGELEVEL=2
        ;;
-    h) usage
+    h) usage | less
        die_cleanly
        ;;
     x) PREFORMAT_HOOK=$OPTARG
