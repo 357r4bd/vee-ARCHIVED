@@ -76,20 +76,15 @@ CUSTOM_SETUP=default_setup
 #
 
 # System utilities required via PATH:
-# cat cd date env find fold grep groff head ls pwd sort tail which
-
-# change log
-# Applied patch from efbeha@gmail.com:
-#   added code to keep words whole when using fold
-#   added code to remove extraneous lines from groff
-# made sort options customizable
-# made publish date format customizable
-# initial implementation of pre format hook
-# externalized the use of custom formats
-# added ability to edit and reformat any post
+#   cat, cd, date, env, find, fmt, fold, grep, groff,
+#   head, ls, pwd, sort, tail, which
+#
+# vee provided utilities that must also be in PATH:
+#   vee (duh!), veels, veecat
+#
 
  disclaimer()
-{ echo "Copyright (c) 2007 /me"
+{ echo "Copyright (c) 2007-infinity /me"
   echo "Permission is hereby granted, free of charge, to any person"
   echo "obtaining a copy of this software and associated documentation"
   echo "files (the \"Software\"), to deal in the Software without"
@@ -272,10 +267,26 @@ CUSTOM_SETUP=default_setup
 }
 
  default_update_gophermap()
-{ echo "0$3\t$1" >> $GOPHERMAP
-  # Note, gophermap entries for now are order oldest->newest since there is no way
-  # to embed ordering like we do via HTML comment; may require rebuilding the gophermap
-  # each time
+{ # rebuild the entire $GOPHERMAP
+  # toggle IFS if in -b mode
+  if [ 1 -eq $LISTENSTDIN ]; then
+    _OLDIFS=$IFS
+    IFS=$OLDIFS
+  fi
+  if [ -e $GOPHERMAP ]; then
+    echo Found existing $GOPHERMAP, renaming to $GOPHERMAP.bkp
+    mv $GOPHERMAP $GOPHERMAP.bkp #(be nice, just move to the side)
+  fi
+  default_setup_gophermap        # initialize gophermap
+  for f in $(veels -e "$GOPHER_FORMAT"); do
+    _RAW=$(echo $f | sed 's/$GOPHER_FORMAT/$RAWEXT/')
+    _TITLE=$(echo $_RAW | veecat -t)
+    echo "0$_TITLE\t$f" >> $GOPHERMAP
+  done 
+  # toggle IFS back
+  if [ 1 -eq $LISTENSTDIN ]; then
+    IFS=$_OLDIFS
+  fi
 }
 
  #"$FINAL" "$gFINAL" "$RAW" "$gRAW" "$TITLE"
@@ -465,7 +476,7 @@ CUSTOM_SETUP=default_setup
 
  reformat_all()
 {
-   for f in $(find "$DIR" -maxdepth 1 -name "*.$RAWEXT" | $SORT_OLDEST); do
+   for f in $(veels -r); do
      # From: Randall R Schulz <rrschulz at cris dot com>
      FULLNAME="$f"
      DIR=${FULLNAME%/*}
@@ -474,40 +485,31 @@ CUSTOM_SETUP=default_setup
      MINBASE=${FILE%%.*}
      MAXSUF=${FILE#*.}
      MINSUF=${FILE##*.}
+     _TITLE=$(echo $f | veecat -t)
+     echo "..reformatting '$_TITLE'"
      reformat_singleton "$MAXBASE"
    done
 }
 
- newest_first()
-{ find "$DIR" -maxdepth 1 -name "*.$RAWEXT" | $SORT_NEWEST
-}
-
  list_newest_first()
 { COUNT=1
-  for FILE in $(newest_first); do
-     FULLNAME=$FILE
-     DIR=${FULLNAME%/*}
-     FILE=${FULLNAME##*/}
-     MAXBASE=${FILE%.*}
-     TITLE=$(head -n 3 "$DIR/$FILE" | tail -n 1)
-     printf "%7d)  " "$COUNT"
-     echo "$MAXBASE ::  $TITLE"
-     COUNT=$(expr $COUNT + 1)
+  for _RAW  in $(veels); do
+    _TITLE=$(echo $_RAW | veecat -t)
+    _DATE=$(echo $_RAW | veecat -d)
+    printf "%4d)  " "$COUNT"
+    echo  $_DATE - $_TITLE
+    COUNT=$(expr $COUNT + 1)
   done
 }
 
- oldest_first()
-{ find "$DIR" -maxdepth 1 -name "*.$RAWEXT" | $SORT_OLDEST
-}
-
  list_oldest_first()
-{ for FILE in $(oldest_first); do
-     FULLNAME=$FILE
-     DIR=${FULLNAME%/*}
-     FILE=${FULLNAME##*/}
-     MAXBASE=${FILE%.*}
-     TITLE=$(head -n 3 "$DIR/$FILE" | tail -n 1)
-     echo "$MAXBASE ::  $TITLE"
+{ COUNT=1
+  for _RAW  in $(veels -r); do
+    _TITLE=$(echo $_RAW | veecat -t)
+    _DATE=$(echo $_RAW | veecat -d)
+    printf "%4d)  " "$COUNT"
+    echo  $_DATE - $_TITLE
+    COUNT=$(expr $COUNT + 1)
   done
 }
 
@@ -515,7 +517,7 @@ CUSTOM_SETUP=default_setup
 {
   GOAL=$1
   COUNT=1
-  for FILE in $(find "$DIR" -maxdepth 1 -name "*.$RAWEXT" | $SORT_NEWEST); do
+  for FILE in $(veels); do
      FULLNAME=$FILE
      DIR=${FULLNAME%/*}
      FILE=${FULLNAME##*/}
@@ -535,7 +537,7 @@ CUSTOM_SETUP=default_setup
     echo "Can't find index, \"$INDEX\""
     die_cleanly
   fi
-  for FILE in $(newest_first); do
+  for FILE in $(veels); do
      FULLNAME=$FILE
      DIR=${FULLNAME%/*}
      FILE=${FULLNAME##*/}
@@ -688,6 +690,7 @@ done
   fi
 
   if [ $LISTENSTDIN -eq 1 ]; then
+    OLDIFS=$IFS
     IFS="" # ensures that leading spaces are retained
     while read -r IN <&0 ; do # break after 1 sec of no stdin
       echo "$IN"            # echo's stdin back out so user can see
@@ -720,7 +723,7 @@ done
  default_setup_gophermap()
 { if [ ! -e "$GOPHERMAP" ]; then
     echo
-    echo "...creating $GOPHERMAP"
+    echo "...generating updated $GOPHERMAP"
     echo "Welcome to my Gopherspace!" > $GOPHERMAP
     echo                             >> $GOPHERMAP
     echo
