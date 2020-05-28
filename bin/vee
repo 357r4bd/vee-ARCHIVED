@@ -26,15 +26,18 @@ FOOTERTXT="Powered by vee<br/>Copyright &copy; 2006-$YEAR"
 GOPHER_FOOTERTXT="Powered by vee. Copyright 2006-$YEAR"
 TOP_TPL=./vee-top.tpl
 BOT_TPL=./vee-bottom.tpl
-PREFORMAT_HOOK=./vee-pre # the hook is assumed to be executable, else it is ignored
+PREFORMAT_HOOK=./vee-pre      # the hook is assumed to be executable, else it is ignored
 USE_EDITOR=1
 LISTENSTDIN=0
-SORT_NEWEST="sort -t. -nr" # sorts all new to old
-SORT_OLDEST="sort -t. -n"  # sorts all old to new
-PUBLISHED=$(date "+%m/%d/%Y")       # date formated for index page entry
+SORT_NEWEST="sort -t. -nr"    # sorts all new to old
+SORT_OLDEST="sort -t. -n"     # sorts all old to new
+PUBLISHED=$(date "+%m/%d/%Y") # date formated for index page entry
 OUTPUT_TOP=output_top
 OUTPUT_BOT=output_bottom
+OUTPUT_TOP_GOPHER=            # may define a top "template" function for gopher posts
+OUTPUT_BOT_GOPHER=            # may define a bottom "template" function for gopher posts
 GOPHERMODE=0  # -g set it to 1, -G sets it to 2
+GOPHER_FORMAT=txt # extension for files linked in gophermap
 RAWEXT=raw    # default .raw (non-HTML) files, can change to .txt or something else in .veerc
               # also used for updating $GOPHERMAP when $GOPHERMODE is 1 (-g) or 2 (-G)
 
@@ -141,19 +144,17 @@ CUSTOM_SETUP=default_setup
  default_set_format_func()
 { case $1 in
     default) FORMAT_FUNC=format_with_groff
-             echo using $FORMAT_FUNC
              ;;
     groff)   FORMAT_FUNC=format_with_groff
-             echo using $FORMAT_FUNC
              ;;
     fold)    FORMAT_FUNC=format_with_fold
-             echo using $FORMAT_FUNC
              ;;
+     fmt)    FORMAT_FUNC=format_with_fmt
+             ;; 
     none)    FORMAT_FUNC=with_no_formatting
-             echo using $FORMAT_FUNC
              ;;
              # if not a supplied format, see if it is in the custom format file, if it exists
-    *)       if [ -e "$FORMAT_CUSTOM_DEFS" ]; then
+       *)    if [ -e "$FORMAT_CUSTOM_DEFS" ]; then
                # call dispatch function that is defined in
                # the custom format file, pass on format nickname
                $FORMAT_CUSTOM_DISPATCHER "$1"
@@ -180,7 +181,7 @@ CUSTOM_SETUP=default_setup
   echo "                    this only applies when 'fold' (-f) is used                "
   echo "  -d  'publis_dir'  specify the directory .vee is in - defaults to PWD        "
   echo "  -f  'format'      use defined format instead of the default, groff;         "
-  echo "                    'groff', 'fold', and 'none' are supported out of the box  "
+  echo "                    'groff', 'fmt', 'fold', and 'none' are supported by default"
   echo "  -g                update the gophermap file with the INDEX                  "
   echo "  -G                exclusively update the gophermap file rather than INDEX   "
   echo "                    Note: for -g|-G, the gophermap is merely appended to, there"
@@ -264,7 +265,7 @@ CUSTOM_SETUP=default_setup
 
 # formats post link on index page
  default_update_index()
-{ echo "<!-- ;$SEC; -->$PUBLISHED:<a href=\"$DIR/$SEC.$TIME.$FORMAT\"> $TITLE</a>" >> $INDEX
+{ echo "<!-- ;$SEC; -->$PUBLISHED:<a href=\"$1\"> $3</a>" >> $INDEX
   if [ -n "$SUMMARY" ]; then
 	SEC=$(expr "$SEC" - 1)
     echo "<!-- ;$SEC; -->$SUMMARY" >> "$INDEX"
@@ -272,7 +273,7 @@ CUSTOM_SETUP=default_setup
 }
 
  default_update_gophermap()
-{ echo "0$TITLE\t$RAW" >> $GOPHERMAP
+{ echo "0$3\t$2" >> $GOPHERMAP
   # Note, gophermap entries for now are order oldest->newest since there is no way
   # to embed ordering like we do via HTML comment; may require rebuilding the gophermap
   # each time
@@ -280,36 +281,35 @@ CUSTOM_SETUP=default_setup
 
  default_update_index_and_gophermap()
 {
-  default_update_index
-  default_update_gophermap
+  default_update_index     "$FINAL"  "$RAW"  "$TITLE"
+  default_update_gophermap "$gFINAL" "$gRAW" "$TITLE"
 }
 
  output_top()
-{ echo "$HEADERTXT" > "$FINAL"
+{ echo "$HEADERTXT"          > "$FINAL"
   if [ -e "$TOP_TPL" ]; then
-     cat "$TOP_TPL" >> "$FINAL"
-     echo "<pre>"   >> "$FINAL"
+     cat "$TOP_TPL"         >> "$FINAL"
    else
      echo "<!-- <?xml version=\"1.0\" encoding=\"UTF-8\" ?> --><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\">"  >> "$FINAL"
-     echo "<meta http-equiv=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">" >> "$FINAL"
-     echo "<head><title>$TITLE - $DATE</title></head>"  >> "$FINAL"
-     echo "<body>"  >> "$FINAL"
-     echo "<pre>"   >> "$FINAL"
+     echo "<meta http-equiv=\"Content-Type\" CONTENT=\"text/html; charset=UTF-8\">"                     >> "$FINAL"
+     echo "  <head><title>$TITLE - $DATE</title></head>"                                                >> "$FINAL"
+     echo "  <body>"                                                                                    >> "$FINAL"
+     echo "    <pre>"                                                                                   >> "$FINAL"
      echo "<a href=\"../$INDEX\">[index]</a><a href=\"./$RAWNAME\">[raw]</a><a href=\"../\">[main]</a>" >> "$FINAL"
    fi
-   echo           >> "$FINAL"
+   echo                   >> "$FINAL"
 }
 
  output_bottom()
-{ echo          >> "$FINAL"
-  echo --       >> "$FINAL"
-  echo "$FOOTERTXT" >> "$FINAL"
+{ echo                   >> "$FINAL"
+  echo --                >> "$FINAL"
+  echo "$FOOTERTXT"      >> "$FINAL"
   if [ -e "$BOT_TPL" ]; then
-    cat "$BOT_TPL" >> "$FINAL"
+    cat "$BOT_TPL"       >> "$FINAL"
   else
-    echo "</pre>" >>  "$FINAL"
-    echo "</body>" >>  "$FINAL"
-    echo "</html>" >>  "$FINAL"
+    echo "    </pre>"    >> "$FINAL"
+    echo "  </body>"     >> "$FINAL"
+    echo "</html>"       >> "$FINAL"
   fi
 }
 
@@ -317,34 +317,64 @@ CUSTOM_SETUP=default_setup
 
  format_with_groff()
 { #sed 1liner from http://sed.sourceforge.net/sed1line.txt
-  groff -man -Tascii "$RAW" >> bla.$RAWEXT
-  sed '/^$/N;/\n$/D' bla.$RAWEXT >> "$FINAL"
-  rm bla.$RAWEXT
-#  groff -man -Tascii "$RAW" >> "$FINAL"
+  groff -man -Tascii "$RAW" > $$.tmp.$RAWEXT
+  sed '/^$/N;/\n$/D' < $$.tmp.$RAWEXT > $$.tmp.final
+  if [ "html" == $OUTPUT_TYPE ]; then
+    cat $$.tmp.final >> "$FINAL"
+  fi
+  if [ "gopher" == $OUTPUT_TYPE ]; then
+    cat $$.tmp.final  > "$gFINAL"
+  fi
+  rm $$.tmp.$RAWEXT $$.tmp.final
 }
 
- with_no_formatting()
-{ cat "$RAW" >> "$FINAL"
-}
-
- format_with_fold()
+ format_with_fmt()
 { if [ 0 -lt $MARGIN ]; then
-    fold -s -w $MARGIN "$RAW" >> "$FINAL"
+    fmt -s -w $MARGIN "$RAW" > $$.tmp.$RAWEXT 
+    if [ "html" == $OUTPUT_TYPE ]; then
+      cat $$.tmp.$RAWEXT >> "$FINAL"
+    fi
+    if [ "gopher" == $OUTPUT_TYPE ]; then
+      cat $$.tmp.$RAWEXT  > "$gFINAL"
+    fi
+    rm $$.tmp.$RAWEXT
   else
     with_no_formatting
   fi
 }
 
+ format_with_fold()
+{ if [ 0 -lt $MARGIN ]; then
+    fold -s -w $MARGIN "$RAW" > $$.tmp.$RAWEXT 
+    if [ "html" == $OUTPUT_TYPE ]; then
+      cat $$.tmp.$RAWEXT >> "$FINAL"
+    fi
+    if [ "gopher" == $OUTPUT_TYPE ]; then
+      cat $$.tmp.$RAWEXT  > "$gFINAL"
+    fi
+    rm $$.tmp.$RAWEXT
+  else
+    with_no_formatting
+  fi
+}
+
+ with_no_formatting()
+{ if [ "html" == $OUTPUT_TYPE ]; then
+    cat "$RAW" >> "$FINAL"
+  fi
+  if [ "gopher" == $OUTPUT_TYPE ]; then
+    cat "$RAW"  > "$gFINAL"
+  fi
+}
+
 #
-# all hooks must accepted STDIN and output via STDOUT
-# default arguments include:
+# preformat hook has been changed to NOT be a filter;
+#
+# $1 is 'html' or 'gopher'
 #
  preformat()
-{ if [ -e "$PREFORMAT_HOOK" ]; then
-    if [ -x "$PREFORMAT_HOOK" ]; then
-      cat "$DRAFT" | "$PREFORMAT_HOOK" "$FORMAT_FUNC" > "$DRAFT.tmp"
-      mv -f "$DRAFT.tmp" "$DRAFT"
-    fi
+{ if [ -x "$PREFORMAT_HOOK" ]; then
+    "$PREFORMAT_HOOK" "$1"
   fi
 }
 
@@ -352,46 +382,80 @@ CUSTOM_SETUP=default_setup
 # this hook is for any things to do after the post; a good example for use
 # would be to integrate git or another SCM; another is a notification script
 #
-# NOTE: it doesn't get passed anything via STDIN, but the path to the final and
-# formatted post is passed as the first (and only) argument. There is no error
-# checking on $?
+# $1 is 'html' or 'gopher'
 #
  postformat()
 { if [ -x "$POSTFORMAT_HOOK" ]; then
-    "$POSTFORMAT_HOOK" "$FINAL"
+    "$POSTFORMAT_HOOK" "$1"
   fi
 }
 
+# dispatches formatting based on $GOPHERMODE; sets $OUTPUT_TYPE
+# for called functions to know for what $OUTPUT_TYPE they're doing stuff
+
  format_main()
+{ if [ 2 != $GOPHERMODE ]; then
+    OUTPUT_TYPE=html     # tracks formatting type
+    format_main_html "$1" "$3"
+  fi
+
+  if [ 0 != $GOPHERMODE ]; then
+    OUTPUT_TYPE=gopher  # tracks formatting type
+    format_main_gopher "$2" "$3"
+  fi
+  OUTPUT_TYPE=none
+}
+
+ format_main_html()
 { FINAL=$DIR/$1
   FINALNAME=$1
   RAW=$DIR/$2
   RAWNAME=$2
-  preformat
+  preformat $OUTPUT_TYPE       # expecting 'html'
   # save raw form before formatting if it doesn't exist
   # which is the case when reformatting all
   if [ ! -e "$RAW" ]; then
-    echo "$DATE"   > "$RAW"     # in RAW, line 1 is date
+    echo "$DATE"   > "$RAW"   # in RAW, line 1 is date
     echo          >> "$RAW"
-    echo "$TITLE" >> "$RAW"     # in RAW, line 2 is title
+    echo "$TITLE" >> "$RAW"   # in RAW, line 2 is title
     echo          >> "$RAW"
     echo "--"     >> "$RAW"
-    echo          >> "$RAW"     # this blank line is important
+    echo          >> "$RAW"   # this blank line is important
     cat "$DRAFT"  >> "$RAW"
   fi
   $OUTPUT_TOP
   $FORMAT_FUNC
   $OUTPUT_BOT
-  # do final tasks by setting POSTFORMAT_HOOK; useful for:
-  # git commit, push; notifications, etc
-  postformat
+  postformat $OUTPUT_TYPE     # expecting 'html' 
+}
+
+ format_main_gopher()
+{ gFINAL=$DIR/$1
+  gFINALNAME=$1
+  gRAW=$DIR/$2
+  gRAWNAME=$2
+  preformat $OUTPUT_TYPE      # expecting 'gopher'
+  # save raw form before formatting if it doesn't exist
+  # which is the case when reformatting all
+  if [ ! -e "$gRAW" ]; then
+    echo "$DATE"   > "$gRAW" # in gRAW, line 1 is date
+    echo          >> "$gRAW"
+    echo "$TITLE" >> "$gRAW" # in gRAW, line 2 is title
+    echo          >> "$gRAW"
+    echo "--"     >> "$gRAW"
+    echo          >> "$gRAW" # this blank line is important
+    cat "$DRAFT"  >> "$gRAW"
+  fi
+  $OUTPUT_TOP_GOPHER         # NOTE: not set by default
+  $FORMAT_FUNC
+  $OUTPUT_BOT_GOPHER         # NOTE not set by default
+  postformat $OUTPUT_TYPE    # expecting 'gopher'
 }
 
  reformat_singleton()
 {  if [ -e "$DIR/$1.$RAWEXT" ]; then
-     #echo "Reformatting message: \"$1\""
      cat "$DIR/$1.$RAWEXT" > "$DRAFT"
-     format_main "$1.$FORMAT" "$1.raw"
+     format_main "$1.$FORMAT" "$1.$GOPHER_FORMAT" "$1.$RAWEXT"
    fi
 }
 
@@ -537,7 +601,7 @@ while getopts 'gGf:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:' option; do
        ;;
     f) SET_DEFAULT_FORMAT_FUNC=$OPTARG
        ;;
-    c) MARGIN=$OPTARG # this option is about to be deprecated
+    c) MARGIN=$OPTARG
        ;;
     l) POST2EDIT=1
        ;;
@@ -577,11 +641,12 @@ while getopts 'gGf:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:' option; do
 done
 
  post_opts()
-{ if [ $GOPHERMODE -eq 1 ]; then
+{ # NOTE UPDATE_INDEX and CUSTOM_SETUP are initialized assuming
+  # GOPHERMODE=0
+  if [ $GOPHERMODE -eq 1 ]; then
     UPDATE_INDEX=default_update_index_and_gophermap
     CUSTOM_SETUP=default_setup_index_and_gophermap
   fi
-
   if [ $GOPHERMODE -eq 2 ]; then
     UPDATE_INDEX=default_update_gophermap
     CUSTOM_SETUP=default_setup_gophermap
@@ -601,7 +666,7 @@ done
   fi
 
   if [ "$POST2EDIT" -ge 1 ]; then
-	LATEST=$(get_path2post "$POST2EDIT")
+    LATEST=$(get_path2post "$POST2EDIT")
     $EDITOR "$DIR/$LATEST.$RAWEXT"
     POST2REFORMAT=$POST2EDIT
   fi
@@ -712,7 +777,7 @@ done
      ;;
   macosx)  # -k2,2 sorts by second field as delimted by -t';' - this may actually work
            # for all platforms
-           sort -t';' -nr -k2,2 "$INDEX" > ".$INDEX.$$.sorted"
+           sort -t';' -nr -k2,2   "$INDEX" > ".$INDEX.$$.sorted"
      ;;
   *)       sort -t';' +0f -1 +1nr "$INDEX" > ".$INDEX.$$.sorted"
      ;;
@@ -738,9 +803,9 @@ use_editor
 if [ -e "$DRAFT" ]; then
   RAWFILE="$$.$SEC.$TIME.$RAWEXT" # uses process id, $$, assuming there will
                                   # not be duplicate process ids within 1 sec of each other
-  format_main "$SEC.$TIME.$FORMAT" "$RAWFILE"
-  "$UPDATE_INDEX"
-  sort_index
+  format_main "$$.$SEC.$TIME.$FORMAT" "$$.$SEC.$TIME.$GOPHER_FORMAT" "$RAWFILE"
+  "$UPDATE_INDEX" # updates index and/or gophermap depending on $GOPHERMODE
+  sort_index      # applies to html index only
   die_cleanly
 else
   echo Error! "$DRAFT" not found
