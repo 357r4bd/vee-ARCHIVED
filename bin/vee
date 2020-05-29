@@ -9,10 +9,9 @@ if [ ! "$EDITOR" ]; then
   EDITOR=vi
 fi
 
-MARGIN=64
+MARGIN=67
 FORMAT=html
 INDEX=vee.html
-GOPHERMAP=gophermap
 DIR=.vee
 DRAFT="$DIR/.vee.tmp.$$"
 DATE=$(date)
@@ -23,7 +22,6 @@ TITLE=
 DEFAULT_TITLE="Entry #$SEC (pid: $$)";
 HEADERTXT=  # text or $(cat some.header.txt)
 FOOTERTXT="Powered by vee<br/>Copyright &copy; 2006-$YEAR"
-GOPHER_FOOTERTXT="Powered by vee. Copyright 2006-$YEAR"
 TOP_TPL=./vee-top.tpl
 BOT_TPL=./vee-bottom.tpl
 PREFORMAT_HOOK=./vee-pre      # the hook is assumed to be executable, else it is ignored
@@ -38,6 +36,9 @@ OUTPUT_TOP_GOPHER=            # may define a top "template" function for gopher 
 OUTPUT_BOT_GOPHER=            # may define a bottom "template" function for gopher posts
 GOPHERMODE=0  # -g set it to 1, -G sets it to 2
 GOPHER_FORMAT=txt # extension for files linked in gophermap
+GOPHERMAP=gophermap           # pretty standard, so low chance of this needing to be changed
+GOPHERMAP_HEADER="Welcome to my Gophertunnel!"
+GOPHERMAP_FOOTER="Carl Spackler: [preparing to dynamite the gopher tunnel] In the immortal words of Jean Paul Sartre, Au revoir, gopher."
 RAWEXT=raw    # default .raw (non-HTML) files, can change to .txt or something else in .veerc
               # also used for updating $GOPHERMAP when $GOPHERMODE is 1 (-g) or 2 (-G)
 
@@ -46,6 +47,8 @@ RAWEXT=raw    # default .raw (non-HTML) files, can change to .txt or something e
   Linux)   ARCH='linux'
      ;;
   FreeBSD) ARCH='freebsd'
+     ;;
+  NetBSD)  ARCH='netbsd'
      ;;
   Darwin)  ARCH='macosx'
      ;;
@@ -109,13 +112,14 @@ CUSTOM_SETUP=default_setup
 # vee - the minimal, zero configuration command line blog thingy
 #
 # Contact (bugs, patches, suggestions)
-#  estrabd+vee 'at' gmail
+#  https://github.com/estrabd/vee/issues
 #
 # Instructions:
 #  1. put in directory accessible via PATH
 #  2. go to a web visible directory and type 'vee'
 #  3. put in your title and write your post in vi
 #  4. tell your mom to visit: http://..../yourdir/vee.html
+#  5. tell your gen Z nephew to visit your gopherhole :E
 #
 # Tips:
 #
@@ -127,6 +131,9 @@ CUSTOM_SETUP=default_setup
 # 2 vee respects your EDITOR environmental variable
 #
 # 3 What you do with vee.html or the formatting is up to you :)
+#
+# 4 Gopher support (-g|-G) may be lacking some parity with http/s
+#   support, but with feedback this can be fixed and go well beyond
 #
 
 # CREDITS
@@ -174,47 +181,47 @@ CUSTOM_SETUP=default_setup
   echo "          | |              | || |              | || |              | |        "
   echo "          | '--------------' || '--------------' || '--------------' |        "
   echo "           '----------------'  '----------------'  '----------------'         "
-  echo "                 the Zero-conf, commandline blog tool thingy                  "
-  echo "                     ... now with gopher phlog support                        "
+  echo "                   the Zero-conf, commandline blog tool thingy                "
+  echo "                 .... now with GopherMode! ("gopherlog" support)              "
   echo "                                 (see -g|-G)                                  "
   echo "                                                                              "
   echo "Version: $VERSION                                                             "
   echo "                                                                              "
-  echo "Usage:                                                                        "
-  echo "  See below.                                                                  "
-  echo "                                                                              "
   echo "Options:                                                                      "
-  echo "  -b                batch mode; used when piping in msg via stdin             "
-  echo "  -B  file          define bottom template; default is ./vee-bottom.tpl       "
-  echo "  -c  [1-9\d*]      specify the number of characters 'fold' allows per line   "
+  echo "  -b                Batch mode; used when piping in msg via stdin             "
+  echo "  -B  file          Define bottom template; default is ./vee-bottom.tpl       "
+  echo "  -c  [1-9\d*]      Specify the number of characters 'fold' allows per line   "
   echo "                    this only applies when 'fold' (-f) is used                "
-  echo "  -d  'publis_dir'  specify the directory .vee is in - defaults to PWD        "
-  echo "  -f  'format'      use defined format instead of the default, groff;         "
-  echo "                    'groff', 'fmt', 'fold', and 'none' are supported by default"
-  echo "  -g                update the gophermap file with the INDEX                  "
-  echo "  -G                exclusively update the gophermap file rather than INDEX   "
+  echo "  -d  'publis_dir'  Specify the directory .vee is in - defaults to PWD        "
+  echo "  -D                Debug mode with, set -x                                   "
+  echo "  -f  'format'      Option for setting formatinstead of the default, groff;   "
+  echo "                    'groff', 'fmt', 'fold', and 'none' are all supported      "
+  echo "  -g                Update the gophermap file with the INDEX                  "
+  echo "  -G                Exclusively update the gophermap file rather than INDEX   "
   echo "                    Note: for -g|-G, the gophermap is merely appended to, there"
   echo "                    is no maintaining of the order from newest first to last; "
   echo "                    -g|-G will create the gophermap if it isn't found.        "
-  echo "  -h                prints this blurb                                         "
-  echo "  -i  'custom.html' specify a custom index file over the default              "
+  echo "  -h                Prints this blurb                                         "
+  echo "  -i  'custom.html' Specify a custom index file over the default              "
   echo "  -I                force index file to be \"index.html\"                     "
   echo "  -l                edit latest post's *.raw; used with '-r' publishes changes;"
   echo "                    calls reformat automatically;                             "
   echo "  -L  [1-9\d*]      edit the Nth latest, relative to last post; lp starts at 1"
-  echo "  -m  'message ...' specify entry message at commandline and avoid vi         "
-  echo "  -n                lists all entries, newest first, then quits               "
-  echo "  -o                lists all entries, oldest first, then quits               "
-  echo "  -p                see what *raw files don't have an entry in the INDEX      "
-  echo "  -P                forever deletes all *raw and formatted files associated with"
+  echo "  -m  'message ...' Epecify entry message at commandline and avoid vi         "
+  echo "  -n                Lists all entries, newest first, then quits               "
+  echo "  -o                Lists all entries, oldest first, then quits               "
+  echo "  -p                See what *raw files don't have an entry in the INDEX      "
+  echo "  -P                Forever deletes all *raw and formatted files associated with"
   echo "                    posts that are listed with -p;                            "
-  echo "  -r  [1-9\d*]      reformats the Nth latest post                             "
+  echo "  -r  [1-9\d*]      Reformats the Nth latest post                             "
   echo "  -R                reformats _all_ .vee/*.raw files; -c applies as well      "
-  echo "  -s  'summary'     placed below title in INDEX                               "
-  echo "  -t  'title'       specify title at commandline and avoid annoying default prompt"
-  echo "  -T  file          define top template; default is ./vee-top.tpl             "
-  echo "  -v                version and exit                                          "
-  echo "  -x  hook          defines hook if not using default "./vee-pre"; hook       "
+  echo "  -s  'summary'     Placed below title in INDEX                               "
+  echo "  -t  'title'       Specify title at commandline and avoid annoying default prompt"
+  echo "  -T  file          Define top template; default is ./vee-top.tpl             "
+  echo "  -u  <octal>       Temporarily set umask to <octal>                          "
+  echo "  -U                Temporarily set umask to 0022                             "
+  echo "  -v                Version and exit                                          "
+  echo "  -x  hook          Defines hook if not using default "./vee-pre"; hook       "
   echo "                    must be executable, i.e., chmod 755 vee-pre               "
   echo "                                                                              "
   echo "Examples:                                                                     "
@@ -231,16 +238,21 @@ CUSTOM_SETUP=default_setup
   echo "                                                                              "
   echo "%cat text.txt | vee -b -t \"my title\" -m \"text to go before stdin\"         "
   echo "                                                                              "
-  echo " publishes contents of text.txt with provided title; -m's msg will be         "
-  echo " shown above the cat'd text                                                   "
+  echo " This publishes contents of text.txt with provided title; -m's msg will be    "
+  echo " shown above the cat'd text. This means of publishing content is well suited  "
+  echo " for use with cronjobs or batch processes. It also works when GopherMode! is  "
+  echo " invoked (-g|-G).                                                             "
   echo "                                                                              "
   echo "%vee -l       # edit and reformat the latest post                             "
   echo "%vee -L 5     # allows one to edit and reformats the fifth latest post        "
   echo "%vee -r 8     # reformats the 8th latest post                                 "
+  echo "%vee -n       # see which post is the 8th latest post                         "
   echo "%vee -R       # reformats ALL posts that have *.raw files                     "
   echo "                                                                              "
   echo "To delete a post forever:                                                     "
+  echo "                                                                              "
   echo "1) delete the entry in the INDEX                                              "
+  echo "                                                                              "
   echo "2) purge the entry:                                                           "
   echo "  %vee -p    # make sure it is the one you want to purge                      "
   echo "  %vee -P    # purge it!                                                      "
@@ -248,7 +260,29 @@ CUSTOM_SETUP=default_setup
   echo " brings up the latest entry as a vi sessions; when changes are save,          "
   echo " all messages are reformatted                                                 "
   echo "                                                                              "
+  echo "              :E We Need to Talk About Gopher Support :E                      "
+  echo "                                                                              "
+  echo "vee supports the creation of content in the gophersphere by formatting text-only"
+  echo "posts using the provided formatters (meant for text-only anyway). vee also goes"
+  echo "a step further and generates the gophermap (index listing) for you.           "
+  echo "                                                                              "
+  echo "All of the vee commands immediately above *should* work when GopherMode! is on"
+  echo "which is as simple as adding the -g xor -G flags. -g invokes the Gopher bits  "
+  echo "*and* the default www support. -G only invokes the Gopher bits. Not using -g  "
+  echo " or -G only involes the traditional www support.                              "
+  echo "                                                                              "
+  echo "Usage examples from above, with GopherMode! enabled:                          "
+  echo "                                                                              "
+  echo "%vee -l -G      # edit and reformat the latest post                           "
+  echo "%vee -L 5 -g    # allows one to edit and reformats the fifth latest post      "
+  echo "%vee -r 8 -G    # reformats the 8th latest post                               "
+  echo "%vee -n         # see which post is the 8th latest post                       "
+  echo "%vee -R -g      # reformats ALL posts that have *.raw files                   "
+  echo "                                                                              "
   echo "Notes:                                                                        "
+  echo "                                                                              "
+  echo "0. Reminder - vee requires zero configurations to start, but *can* be coed    "
+  echo "   by creating a .veerc file. This is also the case when in GopherGeb!Mode    "
   echo "                                                                              "
   echo "1. Batch mode looks for piped input via STDIN; if none after a short time,    "
   echo "   message creation fails UNLESS something was passed in via '-m' as well.    "
@@ -265,7 +299,9 @@ CUSTOM_SETUP=default_setup
   echo "                                                                              "
   echo "4. Patches are welcome; the goal is not more feature bloat, but a nicer       "
   echo "   way of dealing with STDIN, etc and reports/fixes for any weird gopher phlog"
-  echo "   bugs or UX would be greatly welcomed.                                      "
+  echo "   bugs or UX would be greatly welcomed. vee development laid dormant for years,"
+  echo "   being used as a niche static site generator. But the rediscovery of Gopher "
+  echo "   by the masses has made adding Gopher support a high priority.              "
   echo "                                                                              "
   disclaimer
   exit 1
@@ -291,12 +327,25 @@ CUSTOM_SETUP=default_setup
     mv $GOPHERMAP $GOPHERMAP.bkp #(be nice, just move to the side)
   fi
   default_setup_gophermap        # initialize gophermap
-  for f in $(veels -e "$GOPHER_FORMAT"); do
+  for f in $(veels -d "$DIR" -e "$GOPHER_FORMAT"); do
     _RAW=$(echo $f | sed 's/$GOPHER_FORMAT/$RAWEXT/')
     _TITLE=$(echo $_RAW | veecat -t)
-    echo "0$_TITLE\t$f" >> $GOPHERMAP
+    # creating a symlink to $DIR because the default $DIR
+    # starts with a '.' and the gopher server seems to not
+    # want to serve files in such a directory
+    fileLink=$(echo $f | sed "s/$DIR/phlogsrc/")
+    # seems relative paths can't be directories that start
+    # with a dot (e.g., ".vee")
+    ln -s $DIR phlogsrc > /dev/null 2>&1 # rather than check if link exists, just try it and hide error
+    printf "0$_TITLE\t$fileLink\n"   >> $GOPHERMAP
   done 
-  # toggle IFS back
+  echo                               >> $GOPHERMAP
+  echo                               >> $GOPHERMAP
+  echo $GOPHERMAP_FOOTER | fmt -w 67 >> $GOPHERMAP
+  echo                               >> $GOPHERMAP
+  echo                               >> $GOPHERMAP
+  echo Generated with vee.           >> $GOPHERMAP
+  # toggle IFS back if temporarily set to interactive IFS above
   if [ 1 -eq $LISTENSTDIN ]; then
     IFS=$_OLDIFS
   fi
@@ -345,12 +394,12 @@ CUSTOM_SETUP=default_setup
 
  format_with_groff()
 { #sed 1liner from http://sed.sourceforge.net/sed1line.txt
-  if [ "html" == $_OUTPUT_TYPE ]; then
+  if [ "html" = "$_OUTPUT_TYPE" ]; then
     groff -man -Tascii "$RAW" > $$.tmp.$RAWEXT
     sed '/^$/N;/\n$/D' < $$.tmp.$RAWEXT > $$.tmp.final
     cat $$.tmp.final >> "$FINAL"
   fi
-  if [ "gopher" == $_OUTPUT_TYPE ]; then
+  if [ "gopher" = "$_OUTPUT_TYPE" ]; then
     groff -man -Tascii "$gRAW" > $$.tmp.$RAWEXT
     sed '/^$/N;/\n$/D' < $$.tmp.$RAWEXT > $$.tmp.final
     cat $$.tmp.final  > "$gFINAL"
@@ -360,12 +409,12 @@ CUSTOM_SETUP=default_setup
 
  format_with_fmt()
 { if [ 0 -lt $MARGIN ]; then
-    if [ "html" == $_OUTPUT_TYPE ]; then
-      fmt -s -w $MARGIN "$RAW" > $$.tmp.$RAWEXT 
+    if [ "html" = $_OUTPUT_TYPE ]; then
+      fmt -w $MARGIN "$RAW" > $$.tmp.$RAWEXT 
       cat $$.tmp.$RAWEXT >> "$FINAL"
     fi
-    if [ "gopher" == $_OUTPUT_TYPE ]; then
-      fmt -s -w $MARGIN "$gRAW" > $$.tmp.$RAWEXT 
+    if [ "gopher" = $_OUTPUT_TYPE ]; then
+      fmt -w $MARGIN "$gRAW" > $$.tmp.$RAWEXT 
       cat $$.tmp.$RAWEXT  > "$gFINAL"
     fi
     rm $$.tmp.$RAWEXT
@@ -376,11 +425,11 @@ CUSTOM_SETUP=default_setup
 
  format_with_fold()
 { if [ 0 -lt $MARGIN ]; then
-    if [ "html" == $_OUTPUT_TYPE ]; then
+    if [ "html" = $_OUTPUT_TYPE ]; then
       fold -s -w $MARGIN "$RAW" > $$.tmp.$RAWEXT 
       cat $$.tmp.$RAWEXT >> "$FINAL"
     fi
-    if [ "gopher" == $_OUTPUT_TYPE ]; then
+    if [ "gopher" = $_OUTPUT_TYPE ]; then
       fold -s -w $MARGIN "$gRAW" > $$.tmp.$RAWEXT 
       cat $$.tmp.$RAWEXT  > "$gFINAL"
     fi
@@ -391,10 +440,10 @@ CUSTOM_SETUP=default_setup
 }
 
  with_no_formatting()
-{ if [ "html" == $_OUTPUT_TYPE ]; then
+{ if [ "html" = $_OUTPUT_TYPE ]; then
     cat "$RAW" >> "$FINAL"
   fi
-  if [ "gopher" == $_OUTPUT_TYPE ]; then
+  if [ "gopher" = $_OUTPUT_TYPE ]; then
     cat "$gRAW"  > "$gFINAL"
   fi
 }
@@ -489,7 +538,7 @@ CUSTOM_SETUP=default_setup
 
  reformat_all()
 {
-   for f in $(veels -r); do
+   for f in $(veels -d "$DIR" -r); do
      # From: Randall R Schulz <rrschulz at cris dot com>
      FULLNAME="$f"
      DIR=${FULLNAME%/*}
@@ -506,7 +555,7 @@ CUSTOM_SETUP=default_setup
 
  list_newest_first()
 { COUNT=1
-  for _RAW  in $(veels); do
+  for _RAW  in $(veels -d "$DIR"); do
     _TITLE=$(echo $_RAW | veecat -t)
     _DATE=$(echo $_RAW | veecat -d)
     printf "%4d)  " "$COUNT"
@@ -517,7 +566,7 @@ CUSTOM_SETUP=default_setup
 
  list_oldest_first()
 { COUNT=1
-  for _RAW  in $(veels -r); do
+  for _RAW  in $(veels -d "$DIR" -r); do
     _TITLE=$(echo $_RAW | veecat -t)
     _DATE=$(echo $_RAW | veecat -d)
     printf "%4d)  " "$COUNT"
@@ -530,7 +579,7 @@ CUSTOM_SETUP=default_setup
 {
   GOAL=$1
   COUNT=1
-  for FILE in $(veels); do
+  for FILE in $(veels -d "$DIR"); do
      FULLNAME=$FILE
      DIR=${FULLNAME%/*}
      FILE=${FULLNAME##*/}
@@ -550,7 +599,7 @@ CUSTOM_SETUP=default_setup
     echo "Can't find index, \"$INDEX\""
     die_cleanly
   fi
-  for FILE in $(veels); do
+  for FILE in $(veels -d "$DIR"); do
      FULLNAME=$FILE
      DIR=${FULLNAME%/*}
      FILE=${FULLNAME##*/}
@@ -589,8 +638,15 @@ MESSAGE=
 SET_DEFAULT_FORMAT_FUNC=
 
 # get opts ! stdin append to anything passed in by -m
-while getopts 'gGf:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:' option; do
+while getopts 'DgGf:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:u:U' option; do
     case $option in
+    u) umask $OPTARG 
+       ;;
+    U) umask 0022
+       ;;
+    D) set -x
+       echo Setting debug mode with, set -x
+       ;;
     g) # Gopher mode 1: output .txt and update $GOPHERMAP along side of HTML
        GOPHERMODE=1
        ;;
@@ -737,9 +793,9 @@ done
 { if [ ! -e "$GOPHERMAP" ]; then
     echo
     echo "...generating updated $GOPHERMAP"
-    echo "Welcome to my Gopherspace!" > $GOPHERMAP
-    echo                             >> $GOPHERMAP
-    echo
+    echo $GOPHERMAP_HEADER > $GOPHERMAP
+    echo                  >> $GOPHERMAP
+    echo                  >> $GOPHERMAP
   fi
 }
 
@@ -788,6 +844,8 @@ done
         ;;
      freebsd) sort -t';' +0f -1 +1nr "$INDEX" > ".$INDEX.$$.sorted"
         ;;
+     netbsd) sort -t';' +0f -1 +1nr "$INDEX" > ".$INDEX.$$.sorted"
+        ;;
      macosx)  # -k2,2 sorts by second field as delimted by -t';' - this may actually work
               # for all platforms
               sort -t';' -nr -k2,2   "$INDEX" > ".$INDEX.$$.sorted"
@@ -812,9 +870,9 @@ use_editor
 
  main()
 { if [ -e "$DRAFT" ]; then
-  RAWFILE="$$.$SEC.$TIME.$RAWEXT" # uses process id, $$, assuming there will
+  RAWFILE="$SEC.$$.$TIME.$RAWEXT" # uses process id, $$, assuming there will
                                   # not be duplicate process ids within 1 sec of each other
-  format_main "$$.$SEC.$TIME.$FORMAT" "$$.$SEC.$TIME.$GOPHER_FORMAT" "$RAWFILE"
+  format_main "$SEC.$$.$TIME.$FORMAT" "$SEC.$$.$TIME.$GOPHER_FORMAT" "$RAWFILE"
   "$UPDATE_INDEX" "$FINAL" "$gFINAL" "$RAW" "$gRAW" "$TITLE"
   sort_index     
   die_cleanly

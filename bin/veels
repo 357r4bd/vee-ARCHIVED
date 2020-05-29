@@ -1,7 +1,6 @@
 #!/bin/sh
 
 DIR=.vee
-
 SORT_NEW_FIRST='sort -t. -nr'
 SORT_OLD_FIRST='sort -t. -n'
 SORT="$SORT_NEW_FIRST"
@@ -29,7 +28,7 @@ EXT=raw
 while getopts 'd:e:hlL:rx' option; do
     case $option in
     d) if [ -d "$OPTARG" ]; then
-         cd "$OPTARG"
+         DIR="$OPTARG"
        else
          echo "$OPTARG" is not a directory!
          die_cleanly
