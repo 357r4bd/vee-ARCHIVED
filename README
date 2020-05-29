@@ -13,8 +13,7 @@ listed at https://staticsitegenerators.net.
 
 Version: 
 
-0.9.9-zeta
-
+2.0-rc1
 License:
 
 vee is released under the WTFPL. See the LICENSE file for more information.
@@ -69,33 +68,158 @@ It's also on Freshmeat:
 
  R.I.P. Freshmeat :(
 
-Usage: See below.                                                     
+Via `vee -h`:
 
+           .----------------.  .----------------.  .----------------.         
+          | .--------------. || .--------------. || .--------------. |        
+          | | ____   ____  | || |  _________   | || |  _________   | |        
+          | ||_  _| |_  _| | || | |_   ___  |  | || | |_   ___  |  | |        
+          | |  \ \   / /   | || |   | |_  \_|  | || |   | |_  \_|  | |        
+          | |   \ \ / /    | || |   |  _|  _   | || |   |  _|  _   | |        
+          | |    \ ' /     | || |  _| |___/ |  | || |  _| |___/ |  | |        
+          | |     \_/      | || | |_________|  | || | |_________|  | |        
+          | |              | || |              | || |              | |        
+          | '--------------' || '--------------' || '--------------' |        
+           '----------------'  '----------------'  '----------------'         
+                   the Zero-conf, commandline blog tool thingy                
+                 .... now with GopherMode! (gopherlog support)              
+                                 (see -g|-G)                                  
+                                                                              
+Version: 2.0-rc1                                                             
+                                                                              
 Options:                                                                      
-  -b                batch mode; used when piping in msg via stdin             
-  -B  file          define bottom template; default is ./vee-bottom.tpl       
-  -c  [1-9\d*]      specify the number of characters 'fold' allows per line   
+  -b                Batch mode; used when piping in msg via stdin             
+  -B  file          Define bottom template; default is ./vee-bottom.tpl       
+  -c  [1-9\d*]      Specify the number of characters 'fold' allows per line   
                     this only applies when 'fold' (-f) is used                
-  -d  'publis_dir'  specify the directory .vee is in - defaults to PWD        
-  -f  'format'      use defined format instead of the default, groff;         
-                    'groff', 'fold', and 'none' are supported out of the box  
-  -h                prints this blurb                                         
-  -i  'custom.html' specify a custom index file over the default              
+  -d  'publis_dir'  Specify the directory .vee is in - defaults to PWD        
+  -D                Debug mode with, set -x                                   
+  -f  'format'      Option for setting formatinstead of the default, groff;   
+                    'groff', 'fmt', 'fold', and 'none' are all supported      
+  -g                Update the gophermap file with the INDEX                  
+  -G                Exclusively update the gophermap file rather than INDEX   
+                    Note: for -g|-G, the gophermap is merely appended to, there
+                    is no maintaining of the order from newest first to last; 
+                    -g|-G will create the gophermap if it isn't found.        
+  -h                Prints this blurb                                         
+  -i  'custom.html' Specify a custom index file over the default              
   -I                force index file to be "index.html"                     
   -l                edit latest post's *.raw; used with '-r' publishes changes;
                     calls reformat automatically;                             
   -L  [1-9\d*]      edit the Nth latest, relative to last post; lp starts at 1
-  -m  'message ...' specify entry message at commandline and avoid vi         
-  -n                lists all entries, newest first, then quits               
-  -o                lists all entries, oldest first, then quits               
-  -p                see what *raw files don't have an entry in the INDEX      
-  -P                forever deletes all *raw and formatted files associated with
+  -m  'message ...' Epecify entry message at commandline and avoid vi         
+  -n                Lists all entries, newest first, then quits               
+  -o                Lists all entries, oldest first, then quits               
+  -p                See what *raw files don't have an entry in the INDEX      
+  -P                Forever deletes all *raw and formatted files associated with
                     posts that are listed with -p;                            
-  -r  [1-9\d*]      reformats the Nth latest post                             
+  -r  [1-9\d*]      Reformats the Nth latest post                             
   -R                reformats _all_ .vee/*.raw files; -c applies as well      
-  -s  summary       placed below title in INDEX                               
-  -t  'title'       specify title at commandline and avoid annoying default prompt
-  -T  file          define top template; default is ./vee-top.tpl             
-  -v                version and exit                                          
-  -x  filter        defines filter if not using default ./vee-pre; filter   
-                    must be executable, i.e., chmod 755 vee-pre
+  -s  'summary'     Placed below title in INDEX                               
+  -t  'title'       Specify title at commandline and avoid annoying default prompt
+  -T  file          Define top template; default is ./vee-top.tpl             
+  -u  <octal>       Temporarily set umask to <octal>                          
+  -U                Temporarily set umask to 0022                             
+  -v                Version and exit                                          
+  -x  hook          Defines hook if not using default ./vee-pre; hook       
+                    must be executable, i.e., chmod 755 vee-pre               
+                                                                              
+Examples:                                                                     
+                                                                              
+%vee                                                                          
+                                                                              
+ user will be prompted for title and presented with vi                        
+                                                                              
+ if no default dir/files are found, they will be created                      
+                                                                              
+%vee -t "this is the title"                                                 
+                                                                              
+ user will just be presented with a vi session;                               
+                                                                              
+%cat text.txt | vee -b -t "my title" -m "text to go before stdin"         
+                                                                              
+ This publishes contents of text.txt with provided title; -m's msg will be    
+ shown above the cat'd text. This means of publishing content is well suited  
+ for use with cronjobs or batch processes. It also works when GopherMode! is  
+ invoked (-g|-G).                                                             
+                                                                              
+%vee -l       # edit and reformat the latest post                             
+%vee -L 5     # allows one to edit and reformats the fifth latest post        
+%vee -r 8     # reformats the 8th latest post                                 
+%vee -n       # see which post is the 8th latest post                         
+%vee -R       # reformats ALL posts that have *.raw files                     
+                                                                              
+To delete a post forever:                                                     
+                                                                              
+1) delete the entry in the INDEX                                              
+                                                                              
+2) purge the entry:                                                           
+  %vee -p    # make sure it is the one you want to purge                      
+  %vee -P    # purge it!                                                      
+                                                                              
+ brings up the latest entry as a vi sessions; when changes are save,          
+ all messages are reformatted                                                 
+                                                                              
+              :E We Need to Talk About Gopher Support :E                      
+                                                                              
+vee supports the creation of content in the gophersphere by formatting text-only
+posts using the provided formatters (meant for text-only anyway). vee also goes
+a step further and generates the gophermap (index listing) for you.           
+                                                                              
+All of the vee commands immediately above *should* work when GopherMode! is on
+which is as simple as adding the -g xor -G flags. -g invokes the Gopher bits  
+*and* the default www support. -G only invokes the Gopher bits. Not using -g  
+ or -G only involes the traditional www support.                              
+                                                                              
+Usage examples from above, with GopherMode! enabled:                          
+                                                                              
+%vee -l -G      # edit and reformat the latest post                           
+%vee -L 5 -g    # allows one to edit and reformats the fifth latest post      
+%vee -r 8 -G    # reformats the 8th latest post                               
+%vee -n         # see which post is the 8th latest post                       
+%vee -R -g      # reformats ALL posts that have *.raw files                   
+                                                                              
+Notes:                                                                        
+                                                                              
+0. Reminder - vee requires zero configurations to start, but *can* be coed    
+   by creating a .veerc file. This is also the case when in GopherGeb!Mode    
+                                                                              
+1. Batch mode looks for piped input via STDIN; if none after a short time,    
+   message creation fails UNLESS something was passed in via '-m' as well.    
+   If nothing was passed in via '-t' for the title, some default is used;     
+   This is set at the top of the script as 'DEFAULT_TITLE'.                   
+                                                                              
+2. Interactive mode (default) prompts for a title if no '-t' is provided.     
+   Such is the case even if '-m' is used.  If '-m' is not used in this        
+                                                                              
+3. Gopher support (-g|-G) is limited and users may discover weird issues with 
+   updating posts or the batch reformatting options. It's a best effort. Also 
+   the gophermap is fully regenerated whenever a new post is added; for a large
+   number of posts this may take a few seconds.                               
+                                                                              
+4. Patches are welcome; the goal is not more feature bloat, but a nicer       
+   way of dealing with STDIN, etc and reports/fixes for any weird gopher phlog
+   bugs or UX would be greatly welcomed. vee development laid dormant for years,
+   being used as a niche static site generator. But the rediscovery of Gopher 
+   by the masses has made adding Gopher support a high priority.              
+                                                                              
+Copyright (c) 2007-infinity /me
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or
+sell copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY
+KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
+AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
