@@ -246,3 +246,7 @@ I<veerc>(5) - the primary method of customizing the environment
 I<veeindex>(5) - the HTML-based listing of posts
 
 =cut
+
+=head1 BUGS
+
+Please report them to L<https://github.com/estrabd/vee/issues>

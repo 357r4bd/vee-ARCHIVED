@@ -59,6 +59,7 @@ The best example of all is to take a look at the I<vee-rebuild> tool.
         # do stuff with $f
     done
 
-=head1 AUTHOR
+=head1 BUGS
 
-B. Estrade L<estrabd@gmail.com>
+Please report them to L<https://github.com/estrabd/vee/issues>
+

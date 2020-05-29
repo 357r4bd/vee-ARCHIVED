@@ -59,6 +59,6 @@ $FORMAT_FUNC.
 The default value of the pre-format hook is I<vee-pre>, but to change this one
 must define PREFORMAT_HOOK in I<.veerc>.
 
-=head1 AUTHOR
+=head1 BUGs 
 
-B. Estrade L<estrabd@gmail.com>
+Please report them to L<https://github.com/estrabd/vee/issues>

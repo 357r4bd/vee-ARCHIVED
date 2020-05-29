@@ -33,6 +33,6 @@ posts.
 
     vee-rebuild -d $HOME/public_html
 
-=head1 AUTHOR
+=head1 BUGS 
 
-B. Estrade L<estrabd@gmail.com>
+Please report them to L<https://github.com/estrabd/vee/issues>

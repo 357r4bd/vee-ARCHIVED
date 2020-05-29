@@ -45,6 +45,6 @@ This file can basically redefine many parts of the original I<vee> script.
 I<vee> looks for this file in `pwd` and works as expected with the I<-d>
 option.
 
-=head1 AUTHOR
+=head1 BUGS 
 
-B. Estrade L<estrabd@gmail.com>
+Please report them to L<https://github.com/estrabd/vee/issues>

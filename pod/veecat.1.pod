@@ -62,6 +62,6 @@ e.g.:
 
     veels | veecat -t
 
-=head1 AUTHOR
+=head1 BUGS 
 
-B. Estrade L<estrabd@gmail.com>
+Please report them to L<https://github.com/estrabd/vee/issues>
