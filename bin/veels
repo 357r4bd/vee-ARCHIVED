@@ -1,13 +1,13 @@
 #!/bin/sh
 
 DIR=.vee
-
 SORT_NEW_FIRST='sort -t. -nr'
 SORT_OLD_FIRST='sort -t. -n'
 SORT="$SORT_NEW_FIRST"
 STRIPEXT=0
 USELS=0
 LSOPTS='-lat'
+EXT=raw
 
  die_error()
 { 
@@ -22,17 +22,19 @@ LSOPTS='-lat'
 
  usage() 
 {
-	man veels
+  man veels
 }
 
-while getopts 'd:hlL:rx' option; do
+while getopts 'd:e:hlL:rx' option; do
     case $option in
     d) if [ -d "$OPTARG" ]; then
-         cd "$OPTARG"
+         DIR="$OPTARG"
        else
          echo "$OPTARG" is not a directory!
          die_cleanly
        fi
+       ;;
+    e) EXT=$OPTARG
        ;;
     l) USELS=1 #use ls with default opts
        ;;
@@ -57,24 +59,12 @@ done
 
  get_sorted()
 {
-    ls -1 "$DIR"/*.raw | $SORT
-}
-
- get_title()
-{
-	TITLE=$(head -n 3 "$1" | tail -n 1)
-    echo "$TITLE"
-}
-
- get_date()
-{
-	DATE=$(head -n 1 "$1")
-    echo "$DATE"
+  ls -1 ${DIR}/*.${EXT} | ${SORT}
 }
 
  _ls ()
 {
-   ls "$LSOPTS" "$1"
+  ls ${LSOPTS} ${1}
 }
 
 #-- main program body
@@ -83,21 +73,14 @@ done
 #--      with how bin/vee does it)
 read_config   
 
-for f in $(get_sorted); 
-do
-    # title is the 3rd line
-	TITLE=$(get_title "$f")
-
-    # full date string (not epoch) is the first line
-	DATE=$(get_date "$f")
-
-    if [ 1 -eq $USELS ]; then
-        _ls "$f"
-    else
-	    if [ 1 -eq $STRIPEXT ]; then
-                echo "${f%\.*}"
-	    else 
-		echo "$f"
-	    fi
+for f in $(get_sorted); do
+  if [ 1 -eq $USELS ]; then
+      _ls "$f"
+  else
+    if [ 1 -eq $STRIPEXT ]; then
+      echo "${f%\.*}"
+    else 
+      echo "$f"
     fi
+  fi
 done
