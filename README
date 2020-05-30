@@ -37,36 +37,18 @@ tamed.
 
 Project Status:
 
-Update - recently I have had some interest and time in addressing some
-issues that have been plaguing MacOS (i.e., sort), all platforms (date),
-and have a couple of goals to make vee easy to install locally to try out.
-Also included is an attempt to understand the utf8 issues that have been
-reported. My goal is to have a 1.0 release very soon.
-
 This is one of those "forever" projects that met my needs very early
 on, and I have revisited the code for only incremental improvements.
-I'd like to get to 1.0, but this would realy just mean a nice set
-of useful utilities (veels, veecat, vee-rebuild) and associated
-documentation. Work towards this has been spotty, but progress has
-been good. At some point, I'll have some time to wrap it up and
-present version 1.0 - at which point it's likely I'll cease any work
-on it other than bug fixes or applying patches from others.
+A flurry of current activity has been spurred by the 'rona "stay at
+home" orders and a feature request to support Gopher "phlogs". Current
+work onthat is moving us towards version 2.0.
 
-Project Home Page:
-
- http://estrabd.github.io/vee/
-
-Bug reports:
+Bug reports and Feature Requests:
 
  https://github.com/estrabd/vee/issues
-
-Developer contact:
-
-estrabd at gmail dot com
-
-It's also on Freshmeat:
-
- R.I.P. Freshmeat :(
+ 
+ Note: HTML support will only prioritize bug reports. Feature requests
+ related to Gopher support will receive the most interest.
 
 Via `vee -h`:
 
