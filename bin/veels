@@ -1,5 +1,13 @@
 #!/bin/sh
 
+# This is a companion tool to vee that is used internally by vee; if
+# you plan on writing custom scripts to manage your posts, I do suggest
+# using `veels` as the primary was of listing the files for iteration
+# or for whatever you use it for.
+
+#Usage:
+#  veels [ -d dir/with/.raw/files ] [ -r ] [ -e raw|txt ]
+
 DIR=.vee
 SORT_NEW_FIRST='sort -t. -nr'
 SORT_OLD_FIRST='sort -t. -n'
@@ -18,11 +26,6 @@ EXT=raw
  die_cleanly()
 { 
   exit 0
-}
-
- usage() 
-{
-  man veels
 }
 
 while getopts 'd:e:hlL:rx' option; do
@@ -69,8 +72,6 @@ done
 
 #-- main program body
 
-#-- read config, $(pwd)/.veerc (happens after "-d" so it's consistent
-#--      with how bin/vee does it)
 read_config   
 
 for f in $(get_sorted); do

@@ -1,0 +1,41 @@
+# Sample .veerc, used to override default variables...
+
+INDEX=index.html
+HEADERTXT=                     # text or `cat some.header.txt` 
+FOOTERTXT="hijacked by .veerc!"
+FORMAT_FUNC=format_with_groff  # default formating
+
+# GopherMode - 1 = -g, 2 = -G
+GOPHERMODE=0
+_CUSTOM_UMASK=0022             # needed for SDF, set per use with -U (force to 0022) or -u <octal>
+
+# gophermap header text and footer text - sorry didn't separate them out like was done
+# for the HTML support (but these can be customized in a .veerc!)
+GOPHERMAP_HEADER="Welcome to my Gophertunnel!"
+GOPHERMAP_FOOTER="Carl Spackler: [preparing to dynamite the gopher tunnel] In the immortal words of Jean Paul Sartre, Au revoir, gopher."
+
+#EDITOR=vi
+#FORMAT=html
+#INDEX=vee.html
+#DIR=.vee
+#DRAFT=${DIR}/.vee.tmp.$$
+#DATE=`date`
+#YEAR=`date "+%Y"`
+#TIME=`date "+%Y-%m-%dT%H:%M:%S"`
+#SEC=`date "+%s"`
+#DEFAULT_TITLE="Entry #${SEC}";
+#TOP_TPL=./vee-top.tpl
+#BOT_TPL=./vee-bottom.tpl
+#PREFORMAT_HOOK=./my-pre-hook.sh                 # the filter is assumed to be executable, else it is ignored
+#POSTFORMAT_HOOK=./my-post-hook.sh               # not a filter, passes name of final file as argument $1
+#PUBLISHED=`date "+%m/%d/%Y"`                    # date formated for index page entry
+#FORMAT_FUNC=format_with_groff
+#FORMAT_DISPATCHER=default_set_format_func
+#FORMAT_CUSTOM_DISPATCHER=custom_set_format_func
+#FORMAT_CUSTOM_DEFS=./vee-custom.sh              # see example in vee/sample-custom-format/ 
+
+#GOPHER_FORMAT=txt             # extension for files linked in gophermap
+#GOPHERMAP=gophermap           # pretty standard, so low chance of this needing to be changed
+#OUTPUT_TOP_GOPHER=            # may define a top "template" function for gopher posts
+#OUTPUT_BOT_GOPHER=            # may define a bottom "template" function for gopher posts
+

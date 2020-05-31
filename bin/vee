@@ -14,6 +14,14 @@ FORMAT=html
 INDEX=vee.html
 DIR=.vee
 DRAFT="$DIR/.vee.tmp.$$"
+USE_EDITOR=1
+LISTENSTDIN=0
+_CUSTOM_UMASK=                # use -U to force to 0022 or -u to set something during post
+PUBLISHED=$(date "+%m/%d/%Y") # date formated for index page entry
+SORT_NEWEST="sort -t. -nr"    # sorts all new to old
+SORT_OLDEST="sort -t. -n"     # sorts all old to new
+RAWEXT=raw                    # default .raw (non-HTML) files, can change to .txt or something else in .veerc
+                              # also used for updating $GOPHERMAP when $GOPHERMODE is 1 (-g) or 2 (-G)
 DATE=$(date)
 YEAR=$(date "+%Y")
 TIME=$(date "+%Y-%m-%dT%H:%M:%S")
@@ -22,25 +30,26 @@ TITLE=
 DEFAULT_TITLE="Entry #$SEC (pid: $$)";
 HEADERTXT=  # text or $(cat some.header.txt)
 FOOTERTXT="Powered by vee<br/>Copyright &copy; 2006-$YEAR"
-TOP_TPL=./vee-top.tpl
-BOT_TPL=./vee-bottom.tpl
+TOP_TPL=./vee-top.tpl         # if file exists, used to generate top of HTML post by OUTPUT_TOP func
+BOT_TPL=./vee-bottom.tpl      # if file exists, used to generate bottom of HTML post by OUTPUT_BOT func
+OUTPUT_TOP=output_top         # default template processor, uses TOP_TPL
+OUTPUT_BOT=output_bottom      # default template processor, use s BOT_TPL
+
+# PRE/POST Format Hooks; used in both HTML and Gopher modes; to differentiate, $1 is always
+# going to be 'html' or 'gopher'
 PREFORMAT_HOOK=./vee-pre      # the hook is assumed to be executable, else it is ignored
-USE_EDITOR=1
-LISTENSTDIN=0
-SORT_NEWEST="sort -t. -nr"    # sorts all new to old
-SORT_OLDEST="sort -t. -n"     # sorts all old to new
-PUBLISHED=$(date "+%m/%d/%Y") # date formated for index page entry
-OUTPUT_TOP=output_top
-OUTPUT_BOT=output_bottom
+POSTFORMAT_HOOK=./vee-post    # the hook is assumed to be executable, esle it is ignored
+
+# Gopher defaults
+GOPHERMODE=0                  # -g set it to 1, -G sets it to 2; set in .veerc to skip always typing -g or -G
+GOPHER_FORMAT=txt             # extension for files linked in gophermap
+GOPHERMAP=gophermap           # pretty standard, so low chance of this needing to be changed
 OUTPUT_TOP_GOPHER=            # may define a top "template" function for gopher posts
 OUTPUT_BOT_GOPHER=            # may define a bottom "template" function for gopher posts
-GOPHERMODE=0  # -g set it to 1, -G sets it to 2
-GOPHER_FORMAT=txt # extension for files linked in gophermap
-GOPHERMAP=gophermap           # pretty standard, so low chance of this needing to be changed
+# gophermap header text and footer text - sorry didn't separate them out like was done
+# for the HTML support (but these can be customized in a .veerc!)
 GOPHERMAP_HEADER="Welcome to my Gophertunnel!"
 GOPHERMAP_FOOTER="Carl Spackler: [preparing to dynamite the gopher tunnel] In the immortal words of Jean Paul Sartre, Au revoir, gopher."
-RAWEXT=raw    # default .raw (non-HTML) files, can change to .txt or something else in .veerc
-              # also used for updating $GOPHERMAP when $GOPHERMODE is 1 (-g) or 2 (-G)
 
  guess_arch()
 { case $(uname) in
@@ -152,7 +161,7 @@ CUSTOM_SETUP=default_setup
     fold)    FORMAT_FUNC=format_with_fold
              ;;
      fmt)    FORMAT_FUNC=format_with_fmt
-             ;; 
+             ;;
     none)    FORMAT_FUNC=with_no_formatting
              ;;
              # if not a supplied format, see if it is in the custom format file, if it exists
@@ -339,7 +348,7 @@ CUSTOM_SETUP=default_setup
     # with a dot (e.g., ".vee")
     ln -s $DIR phlogsrc > /dev/null 2>&1 # rather than check if link exists, just try it and hide error
     printf "0[$_DATE] $_TITLE\t$fileLink\n"   >> $GOPHERMAP
-  done 
+  done
   echo                               >> $GOPHERMAP
   echo                               >> $GOPHERMAP
   echo $GOPHERMAP_FOOTER | fmt -w 67 >> $GOPHERMAP
@@ -411,11 +420,11 @@ CUSTOM_SETUP=default_setup
  format_with_fmt()
 { if [ 0 -lt $MARGIN ]; then
     if [ "html" = $_OUTPUT_TYPE ]; then
-      fmt -w $MARGIN "$RAW" > $$.tmp.$RAWEXT 
+      fmt -w $MARGIN "$RAW" > $$.tmp.$RAWEXT
       cat $$.tmp.$RAWEXT >> "$FINAL"
     fi
     if [ "gopher" = $_OUTPUT_TYPE ]; then
-      fmt -w $MARGIN "$gRAW" > $$.tmp.$RAWEXT 
+      fmt -w $MARGIN "$gRAW" > $$.tmp.$RAWEXT
       cat $$.tmp.$RAWEXT  > "$gFINAL"
     fi
     rm $$.tmp.$RAWEXT
@@ -427,11 +436,11 @@ CUSTOM_SETUP=default_setup
  format_with_fold()
 { if [ 0 -lt $MARGIN ]; then
     if [ "html" = $_OUTPUT_TYPE ]; then
-      fold -s -w $MARGIN "$RAW" > $$.tmp.$RAWEXT 
+      fold -s -w $MARGIN "$RAW" > $$.tmp.$RAWEXT
       cat $$.tmp.$RAWEXT >> "$FINAL"
     fi
     if [ "gopher" = $_OUTPUT_TYPE ]; then
-      fold -s -w $MARGIN "$gRAW" > $$.tmp.$RAWEXT 
+      fold -s -w $MARGIN "$gRAW" > $$.tmp.$RAWEXT
       cat $$.tmp.$RAWEXT  > "$gFINAL"
     fi
     rm $$.tmp.$RAWEXT
@@ -493,7 +502,7 @@ CUSTOM_SETUP=default_setup
   $OUTPUT_TOP
   $FORMAT_FUNC
   $OUTPUT_BOT
-  postformat $_OUTPUT_TYPE    # expecting 'html' 
+  postformat $_OUTPUT_TYPE    # expecting 'html'
 }
 
  format_main_gopher()
@@ -630,10 +639,10 @@ CUSTOM_SETUP=default_setup
   exit 0
 }
 
-POST2REFORMAT=0
-REFORMATALL=0
-PURGELEVEL=0
-POST2EDIT=0
+_POST2REFORMAT=0
+_REFORMATALL=0
+_PURGELEVEL=0
+_POST2EDIT=0
 SUMMARY=
 MESSAGE=
 SET_DEFAULT_FORMAT_FUNC=
@@ -641,9 +650,9 @@ SET_DEFAULT_FORMAT_FUNC=
 # get opts ! stdin append to anything passed in by -m
 while getopts 'DgGf:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:u:U' option; do
     case $option in
-    u) umask $OPTARG 
+    u) _CUSTOM_UMASK=$OPTARG
        ;;
-    U) umask 0022
+    U) _CUSTOM_UMASK=0022
        ;;
     D) set -x
        echo Setting debug mode with, set -x
@@ -665,9 +674,9 @@ while getopts 'DgGf:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:u:U' option; do
          die_cleanly
        fi
        ;;
-    r) POST2REFORMAT=$OPTARG
+    r) _POST2REFORMAT=$OPTARG
        ;;
-    R) REFORMATALL=1
+    R) _REFORMATALL=1
        ;;
     b) LISTENSTDIN=1
        USE_EDITOR=0
@@ -678,9 +687,9 @@ while getopts 'DgGf:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:u:U' option; do
        ;;
     c) MARGIN=$OPTARG
        ;;
-    l) POST2EDIT=1
+    l) _POST2EDIT=1
        ;;
-    L) POST2EDIT=$OPTARG
+    L) _POST2EDIT=$OPTARG
        ;;
     m) MESSAGE=$OPTARG
        USE_EDITOR=0
@@ -700,9 +709,9 @@ while getopts 'DgGf:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:u:U' option; do
     v) echo $VERSION
        die_cleanly
        ;;
-    p) PURGELEVEL=1
+    p) _PURGELEVEL=1
        ;;
-    P) PURGELEVEL=2
+    P) _PURGELEVEL=2
        ;;
     h) usage | less
        die_cleanly
@@ -716,8 +725,12 @@ while getopts 'DgGf:m:t:T:c:d:i:IbB:hRr:lL:novx:X:Pps:u:U' option; do
 done
 
  post_opts()
-{ # brute check for umask 0022 if not using -b ($LISTENSTDIN -eq 1)
+{
+  if [ -n "$_CUSTOM_UMASK" ]; then
+    umask "$_CUSTOM_UMASK"
+  fi
   if [ $LISTENSTDIN -ne 1 ]; then
+    # brute check for umask 0022 if not using -b ($LISTENSTDIN -eq 1)
     if [ $(umask) != "0022" ]; then
       _default=yes
       read -p "Would you like to temporarily set umask to 0022, to create files that are world readable [$_default]?" tmp_set_umask
@@ -727,7 +740,7 @@ done
       if [ "$tmp_set_umask" = "yes" ]; then
         echo
         umask 0022 && \
-          echo OK. To avoid this message in the future use -U or set umask in your login environment.
+          echo OK. To avoid this message in the future use -U, set umask in your login environment, or set the _CUSTOM_UMASK variable in your ./.veerc.
       fi
     fi
   else
@@ -742,19 +755,19 @@ done
     "$FORMAT_DISPATCHER" "$SET_DEFAULT_FORMAT_FUNC"  # default is set_format_func
   fi
 
-  if [ "$PURGELEVEL" -ge 1 ]; then
-    purge_entries "$PURGELEVEL"
+  if [ "$_PURGELEVEL" -ge 1 ]; then
+    purge_entries "$_PURGELEVEL"
     die_cleanly
   fi
 
-  if [ "$POST2EDIT" -ge 1 ]; then
-    LATEST=$(get_path2post "$POST2EDIT")
+  if [ "$_POST2EDIT" -ge 1 ]; then
+    LATEST=$(get_path2post "$_POST2EDIT")
     $EDITOR "$DIR/$LATEST.$RAWEXT"
-    POST2REFORMAT=$POST2EDIT
+    _POST2REFORMAT=$_POST2EDIT
   fi
 
-  if [ "$POST2REFORMAT" -ge 1 ]; then
-    LATEST=$(get_path2post "$POST2REFORMAT")
+  if [ "$_POST2REFORMAT" -ge 1 ]; then
+    LATEST=$(get_path2post "$_POST2REFORMAT")
     reformat_singleton "$LATEST"
     if [ 0 != $GOPHERMODE ]; then
       default_update_gophermap
@@ -763,7 +776,7 @@ done
   fi
 
   # if "-R", or reformat all, is set
-  if [ "$REFORMATALL" -eq 1 ]; then
+  if [ "$_REFORMATALL" -eq 1 ]; then
     # future may yield seperate "rebuild reindex" functionality
     reformat_all
     if [ 0 != $GOPHERMODE ]; then
@@ -773,7 +786,7 @@ done
   fi
 
   # blocks vee -l (without the -r) from going on
-  if [ "$POST2EDIT" -ge 1 ]; then
+  if [ "$_POST2EDIT" -ge 1 ]; then
     die_cleanly
   fi
 
@@ -899,7 +912,7 @@ use_editor
                                   # not be duplicate process ids within 1 sec of each other
   format_main "$SEC.$$.$TIME.$FORMAT" "$SEC.$$.$TIME.$GOPHER_FORMAT" "$RAWFILE"
   "$UPDATE_INDEX" "$FINAL" "$gFINAL" "$RAW" "$gRAW" "$TITLE"
-  sort_index     
+  sort_index
   die_cleanly
 else
   echo Error! "$DRAFT" not found

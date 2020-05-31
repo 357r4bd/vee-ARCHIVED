@@ -1,5 +1,13 @@
 #!/bin/sh
 
+# This is a companion tool to vee that is used internally by vee; if
+# you wish to write your own custom scripts to manage your posts, then
+# then I suggest using this tool for extracting out the relevant bits
+# you wish to use for your scripts (e.g., title (-t), date (-d), etc).
+
+# Usage:
+#   echo "path/to/*.raw" | veecat [-t | -d | -a ]  # I know this is funky
+
 # preserve new lines
 OLD_IFS=$IFS
 IFS=
@@ -15,10 +23,11 @@ IFS=
   exit 0
 }
 
- usage()
-{
-  man veecat
-}
+ read_config()
+{ if [ -e ./.veerc ]; then
+    . ./.veerc
+  fi
+} 
 
  get_title()
 {
@@ -81,11 +90,14 @@ while getopts 'abdt' option; do
   esac
 done
 
+read_config
+
 # if -tdb detected, do the right thing and do a SHOWALL (i.e., -tbd == -a )
 if [ $SHOWTITLE -eq 1 ] && [ $SHOWDATE -eq 1 ] && [ $SHOWBODY -eq 1 ]; then
   SHOWALL=1
 fi
 
+# kind of funky, but accepts the name of the .raw file via standard in
 while read -r IN <&0 ; do
   # make sure file exists, else just ignore line (more Unix-y this way)
   if [ -e "$IN" ]; then
